@@ -19,31 +19,32 @@ This section summaries the main requirements we have identified for each.
 
 ### 1. Data Versioning
 ##### Background
+A trained model is fundamentally related to the data it was trained on. It is important to track the versions of data much like tracking the versions of a code. Git is geared towards tracking plain text files and is a suboptimal solution for this, therefore we require a dedicated data versioning tool.
 ##### Identified requirements:
 1. Ability to store and recall any particular version of data that has been used to train a model.
 2. Ability to associate any particular tagged data version to a particular trained model.
-###### DVC, Pachyderm, Azure
+###### Candidates: DVC, Pachyderm, Azure
 
 ### 2. Model registry
 ##### Background
 When the right candidate for production is found, it is pushed to a model registry — a centralized hub capturing all metadata for published models such as name, version, date etc. The registry acts as a communication layer between research and production environments, providing a deployed model with the information it needs in runtime.
 ##### Identified requirements:
 1. Ability to associate any trained model with a particular code and data version
-###### MLflow Model Registry, AI Hub, Azure
+###### Candidates: MLflow Model Registry, AI Hub, Azure
 
 ### 3. Model Serving
 ##### Background
 When a model is ready to be deployed a model serving tool can be used to automate and facilitate the process. Given we don't expect models to require frequent or continuous updates this requirement is a lower priority.
 ##### Identified requirements:
 1. Provides a simple method for moving a tested and approved model to deployment
-###### Docker, Seldon Core, MLflow Models, Algorithmia, Kubeflow, Azure
+###### Candidates: Docker, Seldon Core, MLflow Models, Algorithmia, Kubeflow, Azure
 
 ### 4. Model monitoring
 ##### Background
 An interface is required to evaluate model performance following changes to code and/or data.  Additionally, after release to deployment, the model performance may be affected by numerous factors, such as an initial mismatch between training data and live populations. Monitoring is required to continuously review model performance on a live implementation.  
 ##### Identified requirements:
 1. Ability to track testing and live model performance and associate performance metric with code and data versions.
-###### Clear ML, MLWatcher, DbLue, Qualdo, Azure
+###### Candidates: Clear ML, MLWatcher, DbLue, Qualdo, Azure
 
 ### 5. CI/CD integration
 ##### Background
@@ -52,7 +53,7 @@ CI/CD/CT will benefit from processing data and models on local hardware
 1. Functionality to run data processing/training on local hardware
 2. Automatic execution of training pipeline
 2. Conventional CI/CD tools: issue tracking, git integration, automated tests/pipelines.
-###### Gitlab, Github/Azure
+###### Candidates: Gitlab, Github/Azure
 
 ### Sources
 1. https://www.altexsoft.com/blog/mlops-methods-tools/
