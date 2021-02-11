@@ -2,3 +2,7 @@ torch
 monai
 pillow
 tensorboard
+mlflow
+torchvision
+psycopg2
+sqlalchemy

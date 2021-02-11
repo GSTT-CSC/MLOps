@@ -13,6 +13,7 @@ import logging
 import os
 import sys
 import tempfile
+import mlflow
 from glob import glob
 
 import torch
@@ -101,14 +102,26 @@ def main(tempdir):
     post_trans = Compose([Activations(sigmoid=True), AsDiscrete(threshold_values=True)])
     # create UNet, DiceLoss and Adam optimizer
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    model_path = "best_metric_model_segmentation2d_dict.pth"
+    model_params = {'dimensions': 2,
+                    'in_channels': 1,
+                    'out_channels': 1,
+                    'channels': (8, 32, 64, 128, 256),
+                    'strides': (2, 2, 2, 2),
+                    'num_res_units': 2}
+
     model = monai.networks.nets.UNet(
-        dimensions=2,
-        in_channels=1,
-        out_channels=1,
-        channels=(16, 32, 64, 128, 256),
-        strides=(2, 2, 2, 2),
-        num_res_units=2,
+        dimensions=model_params['dimensions'],
+        in_channels=model_params['in_channels'],
+        out_channels=model_params['out_channels'],
+        channels=model_params['channels'],
+        strides=model_params['strides'],
+        num_res_units=model_params['num_res_units'],
     ).to(device)
+    mlflow.pytorch.log_model(model, artifact_path="pytorch-model")
+    mlflow.log_params(model_params)
+
     loss_function = monai.losses.DiceLoss(sigmoid=True)
     optimizer = torch.optim.Adam(model.parameters(), 1e-3)
 
@@ -119,9 +132,11 @@ def main(tempdir):
     epoch_loss_values = list()
     metric_values = list()
     writer = SummaryWriter()
-    for epoch in range(10):
-        print("-" * 10)
-        print(f"epoch {epoch + 1}/{10}")
+    n_epoch = 5
+    mlflow.log_param('num_epochs', n_epoch)
+    for epoch in range(n_epoch):
+        print("-" * n_epoch)
+        print(f"epoch {epoch + 1}/{n_epoch}")
         model.train()
         epoch_loss = 0
         step = 0
@@ -137,6 +152,7 @@ def main(tempdir):
             epoch_len = len(train_ds) // train_loader.batch_size
             print(f"{step}/{epoch_len}, train_loss: {loss.item():.4f}")
             writer.add_scalar("train_loss", loss.item(), epoch_len * epoch + step)
+            mlflow.log_metric('epoch_loss', epoch_loss)
         epoch_loss /= step
         epoch_loss_values.append(epoch_loss)
         print(f"epoch {epoch + 1} average loss: {epoch_loss:.4f}")
@@ -159,11 +175,13 @@ def main(tempdir):
                     metric_count += len(value)
                     metric_sum += value.item() * len(value)
                 metric = metric_sum / metric_count
+                mlflow.log_metric('metric', metric)
                 metric_values.append(metric)
+
                 if metric > best_metric:
                     best_metric = metric
                     best_metric_epoch = epoch + 1
-                    torch.save(model.state_dict(), "best_metric_model_segmentation2d_dict.pth")
+                    torch.save(model.state_dict(), model_path)
                     print("saved new best metric model")
                 print(
                     "current epoch: {} current mean dice: {:.4f} best mean dice: {:.4f} at epoch {}".format(
@@ -177,9 +195,14 @@ def main(tempdir):
                 plot_2d_or_3d_image(val_outputs, epoch + 1, writer, index=0, tag="output")
 
     print(f"train completed, best_metric: {best_metric:.4f} at epoch: {best_metric_epoch}")
+    artifact_uri = mlflow.get_artifact_uri(artifact_path=model_path)
+    mlflow.log_artifact(model_path, artifact_path=artifact_uri)
     writer.close()
 
 
 if __name__ == "__main__":
-    with tempfile.TemporaryDirectory() as tempdir:
-        main(tempdir)
+    mlflow_server_uri = "http://localhost:5000"
+    mlflow.set_tracking_uri(uri=mlflow_server_uri)
+    with mlflow.start_run():
+        with tempfile.TemporaryDirectory() as tempdir:
+            main(tempdir)
