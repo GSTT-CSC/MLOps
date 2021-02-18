@@ -103,11 +103,12 @@ def main(tempdir):
     # create UNet, DiceLoss and Adam optimizer
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    model_path = "best_metric_model_segmentation2d_dict.pth"
+    fitted_model_path = "best_metric_model_segmentation2d_dict.pth"
+
     model_params = {'dimensions': 2,
                     'in_channels': 1,
                     'out_channels': 1,
-                    'channels': (8, 32, 64, 128, 256),
+                    'channels': (16, 32, 64, 128, 256),
                     'strides': (2, 2, 2, 2),
                     'num_res_units': 2}
 
@@ -119,7 +120,9 @@ def main(tempdir):
         strides=model_params['strides'],
         num_res_units=model_params['num_res_units'],
     ).to(device)
-    mlflow.pytorch.log_model(model, artifact_path="pytorch-model")
+
+    # log modeel parameters
+    mlflow.pytorch.log_model(model, 'models')
     mlflow.log_params(model_params)
 
     loss_function = monai.losses.DiceLoss(sigmoid=True)
@@ -132,7 +135,7 @@ def main(tempdir):
     epoch_loss_values = list()
     metric_values = list()
     writer = SummaryWriter()
-    n_epoch = 5
+    n_epoch = 10
     mlflow.log_param('num_epochs', n_epoch)
     for epoch in range(n_epoch):
         print("-" * n_epoch)
@@ -181,7 +184,7 @@ def main(tempdir):
                 if metric > best_metric:
                     best_metric = metric
                     best_metric_epoch = epoch + 1
-                    torch.save(model.state_dict(), model_path)
+                    torch.save(model.state_dict(), fitted_model_path)
                     print("saved new best metric model")
                 print(
                     "current epoch: {} current mean dice: {:.4f} best mean dice: {:.4f} at epoch {}".format(
@@ -195,9 +198,9 @@ def main(tempdir):
                 plot_2d_or_3d_image(val_outputs, epoch + 1, writer, index=0, tag="output")
 
     print(f"train completed, best_metric: {best_metric:.4f} at epoch: {best_metric_epoch}")
-    artifact_uri = mlflow.get_artifact_uri(artifact_path=model_path)
-    mlflow.log_artifact(model_path, artifact_path=artifact_uri)
+    mlflow.log_artifact(fitted_model_path, 'fitted_models')
     writer.close()
+    mlflow.end_run()
 
 
 if __name__ == "__main__":

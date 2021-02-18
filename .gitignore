@@ -1,8 +1,5 @@
 .idea
-/test_network_monai_2d_seg/.idea/
 /test_network_monai_2d_seg/net/runs/
-/test_network_monai_2d_seg/net/mlruns/
-/test_network_monai_2d_seg/net/.mlflow_artifact_store/
-/test_network_monai_2d_seg/mlruns/
 /.mlflow_artifact_store/
-/test_network_monai_2d_seg/net/best_metric_model_segmentation2d_dict.pth
+/best_metric_model_segmentation2d_dict.pth
+/runs/
