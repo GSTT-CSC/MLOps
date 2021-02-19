@@ -1,0 +1,3 @@
+docker-compose -f /opt/clearml/docker-compose.yml up -d
+
+# instructions at: https://allegro.ai/clearml/docs/docs/deploying_clearml/clearml_server_linux_mac.html
