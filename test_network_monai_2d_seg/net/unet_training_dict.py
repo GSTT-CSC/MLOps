@@ -39,19 +39,19 @@ from monai.transforms import (
 from monai.visualize import plot_2d_or_3d_image
 
 
-def main(tempdir):
+def main(datadir):
     monai.config.print_config()
     logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
-    # create a temporary directory and 40 random image, mask pairs
-    print(f"generating synthetic data to {tempdir} (this may take a while)")
-    for i in range(40):
-        im, seg = create_test_image_2d(128, 128, num_seg_classes=1)
-        Image.fromarray(im.astype("uint8")).save(os.path.join(tempdir, f"img{i:d}.png"))
-        Image.fromarray(seg.astype("uint8")).save(os.path.join(tempdir, f"seg{i:d}.png"))
+    # # create a temporary directory and 40 random image, mask pairs
+    # print(f"generating synthetic data to {tempdir} (this may take a while)")
+    # for i in range(40):
+    #     im, seg = create_test_image_2d(128, 128, num_seg_classes=1)
+    #     Image.fromarray(im.astype("uint8")).save(os.path.join(tempdir, f"img{i:d}.png"))
+    #     Image.fromarray(seg.astype("uint8")).save(os.path.join(tempdir, f"seg{i:d}.png"))
 
-    images = sorted(glob(os.path.join(tempdir, "img*.png")))
-    segs = sorted(glob(os.path.join(tempdir, "seg*.png")))
+    images = sorted(glob(os.path.join(datadir, "img*.png")))
+    segs = sorted(glob(os.path.join(datadir, "seg*.png")))
     train_files = [{"img": img, "seg": seg} for img, seg in zip(images[:20], segs[:20])]
     val_files = [{"img": img, "seg": seg} for img, seg in zip(images[-20:], segs[-20:])]
 
@@ -77,7 +77,7 @@ def main(tempdir):
         ]
     )
 
-    # define dataset, data loader
+    # define data, data loader
     check_ds = monai.data.Dataset(data=train_files, transform=train_transforms)
     # use batch_size=2 to load images and use RandCropByPosNegLabeld to generate 2 x 4 images for network training
     check_loader = DataLoader(check_ds, batch_size=2, num_workers=4, collate_fn=list_data_collate)
@@ -121,7 +121,7 @@ def main(tempdir):
         num_res_units=model_params['num_res_units'],
     ).to(device)
 
-    # log modeel parameters
+    # log model parameters
     mlflow.pytorch.log_model(model, 'models')
     mlflow.log_params(model_params)
 
@@ -206,6 +206,6 @@ def main(tempdir):
 if __name__ == "__main__":
     mlflow_server_uri = "http://localhost:5000"
     mlflow.set_tracking_uri(uri=mlflow_server_uri)
+    datadir = 'test_network_monai_2d_seg/data'
     with mlflow.start_run():
-        with tempfile.TemporaryDirectory() as tempdir:
-            main(tempdir)
+        main(datadir)

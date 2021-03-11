@@ -1,4 +1,4 @@
-#!bin/bash
+#!/bin/bash
 
 mlflow server \
     --backend-store-uri postgresql://root:root@localhost/mlflow_test \
