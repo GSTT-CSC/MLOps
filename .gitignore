@@ -3,3 +3,4 @@
 /.mlflow_artifact_store/
 /best_metric_model_segmentation2d_dict.pth
 /runs/
+/mlruns/

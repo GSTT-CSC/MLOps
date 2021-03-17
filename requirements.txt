@@ -6,3 +6,4 @@ mlflow
 torchvision
 psycopg2
 sqlalchemy
+dvc

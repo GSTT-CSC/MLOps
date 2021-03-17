@@ -15,6 +15,7 @@ import sys
 import tempfile
 import mlflow
 from glob import glob
+import dvc.api
 
 import torch
 from PIL import Image
@@ -204,8 +205,18 @@ def main(datadir):
 
 
 if __name__ == "__main__":
-    mlflow_server_uri = "http://localhost:5000"
-    mlflow.set_tracking_uri(uri=mlflow_server_uri)
     datadir = 'test_network_monai_2d_seg/data'
+
+    # remote_server_uri = 'postgresql://root:root@0.0.0.0:5000/mlflow_test'
+    # remote_server_uri = 'http://89.36.68.58:5000'
+    # mlflow.set_tracking_uri(remote_server_uri)
+    # MLFLOW_TRACKING_URI="http://89.36.68.58:5000"
+    # os.environ['MLFLOW_TRACKING_URI'] = 'postgresql://root:root@0.0.0.0:5000/mlflow_test'
+
+    # Get the current tracking uri
+    tracking_uri = mlflow.get_tracking_uri()
+    print("Current tracking uri: {}".format(tracking_uri))
+
+    # mlflow.set_experiment("/mlflow_projectes_test")
     with mlflow.start_run():
         main(datadir)
