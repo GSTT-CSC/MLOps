@@ -1,0 +1,6 @@
+.idea
+/test_network_monai_2d_seg/net/runs/
+/.mlflow_artifact_store/
+/best_metric_model_segmentation2d_dict.pth
+/runs/
+/mlruns/
