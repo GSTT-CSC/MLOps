@@ -7,3 +7,4 @@ torchvision
 psycopg2
 sqlalchemy
 dvc
+boto3
