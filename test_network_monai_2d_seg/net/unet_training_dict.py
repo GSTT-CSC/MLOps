@@ -136,7 +136,7 @@ def main(datadir):
     epoch_loss_values = list()
     metric_values = list()
     writer = SummaryWriter()
-    n_epoch = 5
+    n_epoch = 2
     mlflow.log_param('num_epochs', n_epoch)
     for epoch in range(n_epoch):
         print("-" * n_epoch)

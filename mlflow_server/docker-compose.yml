@@ -24,7 +24,7 @@ services:
     web:
         restart: always
         build: ./mlflow
-        image: mlflow_server
+        image: mlflow_app
         container_name: mlflow_server
         expose:
             - "5000"
@@ -44,10 +44,30 @@ services:
         container_name: mlflow_nginx
         ports:
             - "80:80"
+            - "8002:8002"
         networks:
             - frontend
         depends_on:
             - web
+
+    s3:
+        image: minio/minio:RELEASE.2021-03-17T02-33-02Z
+        volumes:
+          - ./data_minio:/data
+        networks:
+            - frontend
+            - backend
+        expose:
+          - "9002"
+        environment:
+            - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+            - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+        command: server /data --address ":9002"
+        healthcheck:
+          test: ["CMD", "curl", "-f", "http://localhost:9002/minio/health/live"]
+          interval: 30s
+          timeout: 20s
+          retries: 3
 
 networks:
     frontend:
