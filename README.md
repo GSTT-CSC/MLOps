@@ -130,7 +130,6 @@ Currently, we will focus primarily on the tracking and projects components.
 <!-- Bringing it all together: hyper-parameter tuning -->
 ## Bringing it all together: hyper-parameter tuning
 
------
 Seeing each of these components independatly is useful but the best way to learn how all these comoponets work together is with an example. Almost all AI models will benefit from the process of hyper parameter tuning, a process which is difficult when attempted without a robust MLOps service. This example demonstrates how using the experiment tracking described above facilitates this process.
 
 For a detailed tutorial describing the end-to-end process of AI development using this framework please see the following blog post.
@@ -155,7 +154,6 @@ See the [open issues](https://github.com/GSTT-CSC/MLOps/issues) for a list of pr
 <!-- CONTACT -->
 ## Contact
 
------
 Laurence Jackson (GSTT-CSC)
 
 Project Link: [https://github.com/GSTT-CSC/MLOps](https://github.com/GSTT-CSC/MLOps)
@@ -164,8 +162,6 @@ Project Link: [https://github.com/GSTT-CSC/MLOps](https://github.com/GSTT-CSC/ML
 
 <!-- ACKNOWLEDGEMENTS -->
 ## Acknowledgements
-
------
 
 * [README template by othneildrew](https://github.com/othneildrew/Best-README-Template)
 
