@@ -24,21 +24,21 @@ A continuous integration and deployment framework for healthcare AI projects
     <li>
       <a href="#about-the-project">About The Project</a>
       <ul>
-        <li><a href="#built-with open source components">Built With</a></li>
+        <li><a href="#open-source-components">Open source components</a></li>
       </ul>
     </li>
     <li>
-      <a href="#getting-started">Getting Started On Local Hardware</a>
+      <a href="#getting-started-on-local-hardware">Getting Started On Local Hardware</a>
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Overview</a></li>
-   <li><a href="#usage">Bringing it all together: hyper-parameter tuning</a></li>
-    <li><a href="#license">Roadmap</a></li>
-    <li><a href="#contact">Contributing</a></li>
-    <li><a href="#acknowledgements">Contact</a></li>
+    <li><a href="#overview">Overview</a></li>
+   <li><a href="#bringing-it-all-together-hyper-parameter-tuning">Bringing it all together: hyper-parameter tuning</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#contact">Contact</a></li>
    <li><a href="#acknowledgements">Acknowledgements</a></li>
   </ol>
 </details>
@@ -48,12 +48,11 @@ A continuous integration and deployment framework for healthcare AI projects
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
------
 This project aims to build an effective MLOps framework for the development of AI models in a healthcare setting. 
 
 If you want to get straight to it with an end to end example, see the [hyper-parameter tuning tutorial]().
 
-### Built with open source components
+### Open source components
 
 * [DVC](https://dvc.org/) Data version control
 * [MLflow](https://mlflow.org/) Open source platform to manage the ML lifecycle
@@ -65,8 +64,6 @@ It's not essential to have a complete understanding of all of these, but a high-
 
 <!-- GETTING STARTED  -->
 ## Getting Started On Local Hardware
-
------
 
 The production version of this project is intended to run on a dedicated remote machine on an isolated network. However, it is simple to set up a local copy to get an understanding of the framework.
 
@@ -99,8 +96,6 @@ docker-compose --help
 
 <!-- Usage -->
 ## Overview
-
------
 
 ### Components overview
 Opening a terminal and running ```docker ps``` lists the running containers, we should see something like this:
@@ -145,15 +140,11 @@ For a detailed tutorial describing the end-to-end process of AI development usin
 
 <!-- ROADMAP -->
 ## Roadmap
-
------
 See the [open issues](https://github.com/GSTT-CSC/MLOps/issues) for a list of proposed features (and known issues).
 
 
 <!-- CONTRIBUTING -->
 ## Contributing
-
------
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
 3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
