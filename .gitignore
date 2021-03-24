@@ -1,6 +1,9 @@
 .idea
 /test_network_monai_2d_seg/net/runs/
-/.mlflow_artifact_store/
+/mlflow_server/data_minio/
 /best_metric_model_segmentation2d_dict.pth
 /runs/
 /mlruns/
+/mlflow_server/.env
+/.env
+/config.cfg

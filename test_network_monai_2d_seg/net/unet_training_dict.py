@@ -136,7 +136,7 @@ def main(datadir):
     epoch_loss_values = list()
     metric_values = list()
     writer = SummaryWriter()
-    n_epoch = 10
+    n_epoch = 2
     mlflow.log_param('num_epochs', n_epoch)
     for epoch in range(n_epoch):
         print("-" * n_epoch)
@@ -206,13 +206,6 @@ def main(datadir):
 
 if __name__ == "__main__":
     datadir = 'test_network_monai_2d_seg/data'
-
-    # remote_server_uri = 'postgresql://root:root@0.0.0.0:5000/mlflow_test'
-    # remote_server_uri = 'http://89.36.68.58:5000'
-    # mlflow.set_tracking_uri(remote_server_uri)
-    # MLFLOW_TRACKING_URI="http://89.36.68.58:5000"
-    # os.environ['MLFLOW_TRACKING_URI'] = 'postgresql://root:root@0.0.0.0:5000/mlflow_test'
-
     # Get the current tracking uri
     tracking_uri = mlflow.get_tracking_uri()
     print("Current tracking uri: {}".format(tracking_uri))
