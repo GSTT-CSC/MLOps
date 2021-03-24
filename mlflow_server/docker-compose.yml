@@ -1,7 +1,3 @@
-# sources:
-#   https://towardsdatascience.com/deploy-mlflow-with-docker-compose-8059f16b6039
-#   https://medium.com/noodle-labs-the-future-of-ai/introduction-to-mlflow-for-mlops-part-3-database-tracking-minio-artifact-storage-and-registry-9fef196aaf42
-
 version: '3.3'
 
 services:
@@ -75,5 +71,7 @@ networks:
     backend:
         driver: bridge
 
-volumes:
-    dbdata:
+
+# Useful sources:
+#   https://towardsdatascience.com/deploy-mlflow-with-docker-compose-8059f16b6039
+#   https://medium.com/noodle-labs-the-future-of-ai/introduction-to-mlflow-for-mlops-part-3-database-tracking-minio-artifact-storage-and-registry-9fef196aaf42
