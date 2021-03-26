@@ -1,8 +1,10 @@
 <!-- PROJECT HEADING -->
 <br />
 <p align="center">
+<a href="https://github.com/github_username/repo_name">
+    <img src="https://raw.githubusercontent.com/GSTT-CSC/gstt-csc.github.io/csc-logo-update/assets/transparent-CSC-logo.png" alt="Logo" height="140">
+  </a>
 <h3 align="center">MLOps</h3>
-
 <p align="center">
 A continuous integration and deployment framework for healthcare AI projects
 <br />
@@ -130,7 +132,7 @@ Currently, we will focus primarily on the tracking and projects components.
 <!-- Bringing it all together: hyper-parameter tuning -->
 ## Bringing it all together: hyper-parameter tuning
 
-Seeing each of these components independatly is useful but the best way to learn how all these comoponets work together is with an example. Almost all AI models will benefit from the process of hyper parameter tuning, a process which is difficult when attempted without a robust MLOps service. This example demonstrates how using the experiment tracking described above facilitates this process.
+Seeing each of these components independently is useful, but the best way to learn how all these comoponets work together is with an example. Almost all AI models will benefit from the process of hyper parameter tuning, a process which is difficult when attempted without a robust MLOps service. This example demonstrates how using the experiment tracking described above facilitates this process.
 
 For a detailed tutorial describing the end-to-end process of AI development using this framework please see the following blog post.
 
