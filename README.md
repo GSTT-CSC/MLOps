@@ -2,7 +2,7 @@
 <br />
 <p align="center">
 <a href="https://github.com/github_username/repo_name">
-    <img src="https://raw.githubusercontent.com/GSTT-CSC/gstt-csc.github.io/csc-logo-update/assets/transparent-CSC-logo.png" alt="Logo" height="140">
+    <img src="https://raw.githubusercontent.com/GSTT-CSC/gstt-csc.github.io/csc-logo-update/assets/transparent-CSC-logo.png" alt="Logo" width="75%">
   </a>
 <h3 align="center">MLOps</h3>
 <p align="center">
