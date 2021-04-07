@@ -4,6 +4,4 @@
 /best_metric_model_segmentation2d_dict.pth
 /runs/
 /mlruns/
-/mlflow_server/.env
-/.env
 /config.cfg

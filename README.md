@@ -1,8 +1,10 @@
 <!-- PROJECT HEADING -->
 <br />
 <p align="center">
+<a href="https://github.com/github_username/repo_name">
+    <img src="https://raw.githubusercontent.com/GSTT-CSC/gstt-csc.github.io/csc-logo-update/assets/transparent-CSC-logo.png" alt="Logo" width="75%">
+  </a>
 <h3 align="center">MLOps</h3>
-
 <p align="center">
 A continuous integration and deployment framework for healthcare AI projects
 <br />
@@ -87,12 +89,19 @@ docker-compose --help
 1. Clone the repository
    ```sh
    git clone https://github.com/GSTT-CSC/MLOps.git
+   cd MLOps
    ```
+   
+The server can be configured by modifying the environment file found at ```/mlflow_server/.env```. The environment variable provided are given as an example, and should not be used for a production deployment.
+
 2. Navigate to the cloned code repository and start the server. Any docker images that are not present on your local system will be pulled from dockerhub (which might take a while).
     ```sh
    cd mlflow_server
    docker-compose up -d --build
    ```
+
+The server should now be up and running locally. By default, the mlflow user interface can be accessed at ```http:/localhost:80``` and minio can be accessed at ```https:/localhost:8002```.
+
 
 <!-- Usage -->
 ## Overview
@@ -130,7 +139,7 @@ Currently, we will focus primarily on the tracking and projects components.
 <!-- Bringing it all together: hyper-parameter tuning -->
 ## Bringing it all together: hyper-parameter tuning
 
-Seeing each of these components independatly is useful but the best way to learn how all these comoponets work together is with an example. Almost all AI models will benefit from the process of hyper parameter tuning, a process which is difficult when attempted without a robust MLOps service. This example demonstrates how using the experiment tracking described above facilitates this process.
+Seeing each of these components independently is useful, but the best way to learn how all these comoponets work together is with an example. Almost all AI models will benefit from the process of hyper parameter tuning, a process which is difficult when attempted without a robust MLOps service. This example demonstrates how using the experiment tracking described above facilitates this process.
 
 For a detailed tutorial describing the end-to-end process of AI development using this framework please see the following blog post.
 
