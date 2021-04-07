@@ -89,6 +89,7 @@ docker-compose --help
 1. Clone the repository
    ```sh
    git clone https://github.com/GSTT-CSC/MLOps.git
+   cd MLOps
    ```
    
 The server can be configured by modifying the environment file found at ```/mlflow_server/.env```. The environment variable provided are given as an example, and should not be used for a production deployment.
