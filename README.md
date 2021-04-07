@@ -90,11 +90,17 @@ docker-compose --help
    ```sh
    git clone https://github.com/GSTT-CSC/MLOps.git
    ```
+   
+The server can be configured by modifying the environment file found at ```/mlflow_server/.env```. The environment variable provided are given as an example, and should not be used for a production deployment.
+
 2. Navigate to the cloned code repository and start the server. Any docker images that are not present on your local system will be pulled from dockerhub (which might take a while).
     ```sh
    cd mlflow_server
    docker-compose up -d --build
    ```
+
+The server should now be up and running locally. By default, the mlflow user interface can be accessed at ```http:/localhost:80``` and minio can be accessed at ```https:/localhost:8002```.
+
 
 <!-- Usage -->
 ## Overview
