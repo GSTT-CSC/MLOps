@@ -1,8 +1,0 @@
-name: test_network_monai_2d_seg
-
-docker_env:
-  image:  mlflow-docker-test
-
-entry_points:
-  main:
-    command: "python test_network_monai_2d_seg/net/unet_training_dict.py"
