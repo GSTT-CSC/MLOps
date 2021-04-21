@@ -64,11 +64,16 @@ class Experiment:
         password = self.config['user']['AWS_SECRET_ACCESS_KEY']
         client = Minio(uri_formatted, user, password, secure=False)
         # if mlflow bucket does not exist, create it
-        if 'mlflow' not in (o.name for o in client.list_buckets()):
+        if 'mlflow' not in (bucket.name for bucket in client.list_buckets()):
+            print('Creating S3 bucket ''mlflow''')
             client.make_bucket("mlflow")
 
-    def run(self):
+    def run(self, **kwargs):
         try:
-            mlflow.run('.', docker_args={'network': 'host', 'rm': ''}, use_conda=False, experiment_id=self.experiment_id)
+            mlflow.run('.',
+                       experiment_id=self.experiment_id,
+                       use_conda=False,
+                       **kwargs)
+
         except BuildError:
-            print('Have you built your project dockerfile? e.g. docker build -t project-tag -f Dockerfile .')
+            raise BuildError('Have you built your project dockerfile? e.g. docker build -t project-tag -f Dockerfile .')
