@@ -1,8 +1,10 @@
 import mlflow
 import os
 import configparser
+import docker
 from docker.errors import BuildError
 from minio import Minio
+import paramiko
 
 
 class Experiment:
@@ -68,12 +70,25 @@ class Experiment:
             print('Creating S3 bucket ''mlflow''')
             client.make_bucket("mlflow")
 
-    def run(self, **kwargs):
-        try:
-            mlflow.run('.',
-                       experiment_id=self.experiment_id,
-                       use_conda=False,
-                       **kwargs)
+    def build_experiment_image(self, path: str = './'):
+        client = docker.from_env()
+        client.images.build(path=path, tag=self.experiment_name, rm=True)
 
-        except BuildError:
-            raise BuildError('Have you built your project dockerfile? e.g. docker build -t project-tag -f Dockerfile .')
+    def run(self, remote: str = None, **kwargs):
+        for attempt in range(1):
+            try:
+                if remote is not None:
+                    # send instruction to run on remote location
+                    pass
+                else:
+                    mlflow.run('.',
+                               experiment_id=self.experiment_id,
+                               use_conda=False,
+                               **kwargs)
+            except BuildError:
+                print('Experiment image not found -- attempting build')
+                self.build_experiment_image()
+            else:
+                break
+        else:
+            raise Exception('Run failed -- max retries reached')
