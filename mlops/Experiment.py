@@ -70,12 +70,13 @@ class Experiment:
             print('Creating S3 bucket ''mlflow''')
             client.make_bucket("mlflow")
 
-    def build_experiment_image(self, path: str = './'):
+    def build_experiment_image(self, path: str = '.'):
         client = docker.from_env()
-        client.images.build(path=path, tag=self.experiment_name, rm=True)
+        client.images.build(path=path, tag=self.experiment_name)
 
     def run(self, remote: str = None, **kwargs):
-        for attempt in range(1):
+        num_retries = 2
+        for attempt in range(num_retries):
             try:
                 if remote is not None:
                     # send instruction to run on remote location
@@ -85,10 +86,10 @@ class Experiment:
                                experiment_id=self.experiment_id,
                                use_conda=False,
                                **kwargs)
-            except BuildError:
-                print('Experiment image not found -- attempting build')
-                self.build_experiment_image()
-            else:
-                break
-        else:
-            raise Exception('Run failed -- max retries reached')
+            except BuildError as error:
+                if attempt < (num_retries-1):
+                    print("BuildError -- attempting to build experiment image ...")
+                    self.build_experiment_image()
+                else:
+                    raise error
+
