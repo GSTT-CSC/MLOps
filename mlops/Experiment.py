@@ -72,14 +72,14 @@ class Experiment:
 
     def build_experiment_image(self, path: str = '.'):
         client = docker.from_env()
-        client.images.build(path=path, tag=self.experiment_name)
+        client.images.build(path=path, tag=self.experiment_name, dockerfile='Dockerfile')
 
     def run(self, remote: str = None, **kwargs):
         num_retries = 2
         for attempt in range(num_retries):
             try:
                 if remote is not None:
-                    # send instruction to run on remote location
+                    # send instruction over SSH to run on remote location
                     pass
                 else:
                     mlflow.run('.',
@@ -90,6 +90,8 @@ class Experiment:
                 if attempt < (num_retries-1):
                     print("BuildError -- attempting to build experiment image ...")
                     self.build_experiment_image()
+                    print("Retrying ... ")
                 else:
+                    print('Max retries reached!')
                     raise error
 
