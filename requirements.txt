@@ -2,7 +2,7 @@ torch~=1.8.0
 monai~=0.4.0
 pillow~=8.1.0
 tensorboard
-mlflow~=1.14.1
+mlflow
 torchvision
 psycopg2
 sqlalchemy
