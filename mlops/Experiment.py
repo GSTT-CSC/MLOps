@@ -15,7 +15,9 @@ class Experiment:
         self.artifact_path = None
         self.remote_server_uri = None
         self.config_path = config_path
+        self.buildargs = {}
         self.config_setup()
+
 
         self.experiment_name = experiment_name
         self.experiment_id = self.init_experiment()
@@ -33,6 +35,9 @@ class Experiment:
         os.environ['MLFLOW_S3_ENDPOINT_URL'] = self.config['server']['MLFLOW_S3_ENDPOINT_URL']
         os.environ['AWS_ACCESS_KEY_ID'] = self.config['user']['AWS_ACCESS_KEY_ID']
         os.environ['AWS_SECRET_ACCESS_KEY'] = self.config['user']['AWS_SECRET_ACCESS_KEY']
+
+        self.buildargs['HTTP_PROXY'] = os.getenv['HTTP_PROXY']
+        self.buildargs['HTTPS_PROXY'] = os.getenv['HTTPS_PROXY']
 
     def read_config(self):
         self.config = configparser.ConfigParser()
@@ -72,7 +77,7 @@ class Experiment:
 
     def build_experiment_image(self, path: str = '.'):
         client = docker.from_env()
-        client.images.build(path=path, tag=self.experiment_name)
+        client.images.build(path=path, tag=self.experiment_name, buildargs=self.buildargs)
 
     def run(self, remote: str = None, **kwargs):
         num_retries = 1
