@@ -4,7 +4,7 @@ import configparser
 import docker
 from docker.errors import BuildError
 from minio import Minio
-import paramiko
+# import paramiko
 
 
 class Experiment:
@@ -76,11 +76,13 @@ class Experiment:
             client.make_bucket("mlflow")
 
     def build_experiment_image(self, path: str = '.'):
+        print('Building experiment image ...')
         client = docker.from_env()
         client.images.build(path=path, tag=self.experiment_name, buildargs=self.buildargs)
 
     def run(self, remote: str = None, **kwargs):
         num_retries = 1
+        print('Starting experiment ...')
         for attempt in range(num_retries):
             try:
                 if remote is not None:
