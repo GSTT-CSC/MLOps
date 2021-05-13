@@ -36,8 +36,8 @@ class Experiment:
         os.environ['AWS_ACCESS_KEY_ID'] = self.config['user']['AWS_ACCESS_KEY_ID']
         os.environ['AWS_SECRET_ACCESS_KEY'] = self.config['user']['AWS_SECRET_ACCESS_KEY']
 
-        self.buildargs['HTTP_PROXY'] = os.getenv['HTTP_PROXY']
-        self.buildargs['HTTPS_PROXY'] = os.getenv['HTTPS_PROXY']
+        self.buildargs['HTTP_PROXY'] = os.getenv('HTTP_PROXY')
+        self.buildargs['HTTPS_PROXY'] = os.getenv('HTTPS_PROXY')
 
     def read_config(self):
         self.config = configparser.ConfigParser()
