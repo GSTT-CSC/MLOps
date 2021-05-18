@@ -4,12 +4,13 @@ import configparser
 import docker
 from docker.errors import BuildError
 from minio import Minio
+from mlops.ProjectFile import ProjectFile
 # import paramiko
 
 
 class Experiment:
 
-    def __init__(self, experiment_name, config_path='config.cfg', verbose=True):
+    def __init__(self, config_path='config.cfg', verbose=True):
 
         self.config = None
         self.artifact_path = None
@@ -17,9 +18,9 @@ class Experiment:
         self.config_path = config_path
         self.buildargs = {}
         self.config_setup()
+        self.build_project_file()
 
-
-        self.experiment_name = experiment_name
+        self.experiment_name = self.config['project']['NAME']
         self.experiment_id = self.init_experiment()
         if verbose:
             self.print_experiment_info()
@@ -80,6 +81,12 @@ class Experiment:
         client = docker.from_env()
         client.images.build(path=path, tag=self.experiment_name, buildargs=self.buildargs)
 
+    def build_project_file(self):
+        print('Building project file')
+        projectfile = ProjectFile(self.config)
+        projectfile.generate_yaml()
+
+
     def run(self, remote: str = None, **kwargs):
         num_retries = 1
         print('Starting experiment ...')
@@ -100,4 +107,3 @@ class Experiment:
                     self.build_experiment_image()
                 else:
                     raise error
-
