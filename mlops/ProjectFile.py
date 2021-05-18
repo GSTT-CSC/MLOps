@@ -10,9 +10,9 @@ class ProjectFile:
     def __init__(self, config, projectfile_name='MLProject'):
         self.config = config
         self.projectfile_name = projectfile_name
-        self.project_dict = {'name': config['project']['NAME'],
+        self.project_dict = {'name': config['project']['NAME'].lower(),
                              'docker_env': {'volumes': [config['project']['VOLUME_MOUNT']],
-                                            'image': config['project']['NAME']}}
+                                            'image': config['project']['NAME'].lower()}}
 
         self._parse_entry_points()
 
