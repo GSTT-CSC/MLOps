@@ -20,7 +20,7 @@ class Experiment:
         self.config_setup()
         self.build_project_file()
 
-        self.experiment_name = self.config['project']['NAME']
+        self.experiment_name = self.config['project']['NAME'].lower()
         self.experiment_id = self.init_experiment()
         if verbose:
             self.print_experiment_info()
@@ -86,10 +86,21 @@ class Experiment:
         projectfile = ProjectFile(self.config)
         projectfile.generate_yaml()
 
-
     def run(self, remote: str = None, **kwargs):
         num_retries = 1
         print('Starting experiment ...')
+
+        docker_args_default = {'network': "host",
+                               'gpus': 'all',
+                               'ipc': 'host',
+                               'rm': '',
+                               'runtime': 'nvidia'}
+
+        # udpdate docker_args_default with values passed by project
+        if 'docker_args' in kwargs:
+            docker_args_default.update(kwargs['docker_args'])
+            kwargs['docker_args'] = docker_args_default
+
         for attempt in range(num_retries):
             try:
                 if remote is not None:
@@ -101,8 +112,9 @@ class Experiment:
                                experiment_id=self.experiment_id,
                                use_conda=False,
                                **kwargs)
+
             except BuildError as error:
-                if attempt <= (num_retries-1):
+                if attempt <= (num_retries):
                     print("BuildError -- attempting to build experiment image ...")
                     self.build_experiment_image()
                 else:

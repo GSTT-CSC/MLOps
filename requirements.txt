@@ -1,7 +1,4 @@
 mlflow
-torchvision
-# psycopg2
-# sqlalchemy
 dvc~=2.0.5
 boto3
 docker~=4.4.4
