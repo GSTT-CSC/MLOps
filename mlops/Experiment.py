@@ -10,15 +10,15 @@ from mlops.ProjectFile import ProjectFile
 
 class Experiment:
 
-    def __init__(self, config_path='config.cfg', verbose=True):
+    def __init__(self, config_path='config.cfg', use_localhost=False, verbose=True):
 
         self.config = None
         self.artifact_path = None
         self.remote_server_uri = None
         self.config_path = config_path
-        self.buildargs = {}
         self.config_setup()
         self.build_project_file()
+        self.use_localhost = use_localhost
 
         self.experiment_name = self.config['project']['NAME'].lower()
         self.experiment_id = self.init_experiment()
@@ -32,13 +32,15 @@ class Experiment:
         self.remote_server_uri = self.config['server']['REMOTE_SERVER_URI']
 
         # OS ENV CONFIG
-        os.environ['MLFLOW_TRACKING_URI'] = self.remote_server_uri
-        os.environ['MLFLOW_S3_ENDPOINT_URL'] = self.config['server']['MLFLOW_S3_ENDPOINT_URL']
+        if self.use_localhost:
+            os.environ['MLFLOW_TRACKING_URI'] = self.config['server']['LOCAL_REMOTE_SERVER_URI']
+            os.environ['MLFLOW_S3_ENDPOINT_URL'] = self.config['server']['LOCAL_MLFLOW_S3_ENDPOINT_URL']
+        else:
+            os.environ['MLFLOW_TRACKING_URI'] = self.config['server']['REMOTE_SERVER_URI']
+            os.environ['MLFLOW_S3_ENDPOINT_URL'] = self.config['server']['MLFLOW_S3_ENDPOINT_URL']
+
         os.environ['AWS_ACCESS_KEY_ID'] = self.config['user']['AWS_ACCESS_KEY_ID']
         os.environ['AWS_SECRET_ACCESS_KEY'] = self.config['user']['AWS_SECRET_ACCESS_KEY']
-
-        self.buildargs['HTTP_PROXY'] = os.getenv('HTTP_PROXY')
-        self.buildargs['HTTPS_PROXY'] = os.getenv('HTTPS_PROXY')
 
     def read_config(self):
         self.config = configparser.ConfigParser()
@@ -78,8 +80,12 @@ class Experiment:
 
     def build_experiment_image(self, path: str = '.'):
         print('Building experiment image ...')
+        buildargs = {}
+        buildargs['HTTP_PROXY'] = os.getenv('HTTP_PROXY')
+        buildargs['HTTPS_PROXY'] = os.getenv('HTTPS_PROXY')
+
         client = docker.from_env()
-        client.images.build(path=path, tag=self.experiment_name, buildargs=self.buildargs)
+        client.images.build(path=path, tag=self.experiment_name, buildargs=buildargs)
 
     def build_project_file(self):
         print('Building project file')
@@ -96,7 +102,7 @@ class Experiment:
                                'rm': '',
                                'runtime': 'nvidia'}
 
-        # udpdate docker_args_default with values passed by project
+        # update docker_args_default with values passed by project
         if 'docker_args' in kwargs:
             docker_args_default.update(kwargs['docker_args'])
             kwargs['docker_args'] = docker_args_default
