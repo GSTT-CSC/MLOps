@@ -1,10 +1,6 @@
-torch
-monai
-pillow
-tensorboard
 mlflow
-torchvision
-psycopg2
-sqlalchemy
-dvc
+dvc~=2.0.5
 boto3
+docker~=4.4.4
+minio~=7.0.3
+paramiko

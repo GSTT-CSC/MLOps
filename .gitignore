@@ -5,3 +5,4 @@
 /runs/
 /mlruns/
 /config.cfg
+/mlflow_server/dbdata/

@@ -11,7 +11,7 @@ A continuous integration and deployment framework for healthcare AI projects
 <a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a>
 <br />
 <br />
-<a href="https://github.com/GSTT-CSC/MLOps">View Demo</a>
+<a href="https://github.com/GSTT-CSC/MLOps">View repo</a>
 ·
 <a href="https://github.com/GSTT-CSC/MLOps/issues">Report Bug</a>
 ·
