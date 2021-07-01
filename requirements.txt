@@ -4,3 +4,4 @@ boto3
 docker~=4.4.4
 minio~=7.0.3
 paramiko
+rdm
