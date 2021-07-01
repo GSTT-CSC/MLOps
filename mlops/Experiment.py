@@ -15,10 +15,10 @@ class Experiment:
         self.config = None
         self.artifact_path = None
         self.remote_server_uri = None
+        self.use_localhost = use_localhost
         self.config_path = config_path
         self.config_setup()
         self.build_project_file()
-        self.use_localhost = use_localhost
 
         self.experiment_name = self.config['project']['NAME'].lower()
         self.experiment_id = self.init_experiment()
@@ -69,7 +69,11 @@ class Experiment:
         print("Lifecycle_stage: {}".format(experiment.lifecycle_stage))
 
     def configure_minio(self):
-        uri_formatted = self.config['server']['MLFLOW_S3_ENDPOINT_URL'].replace("http://", "")
+        if self.use_localhost:
+            uri_formatted = self.config['server']['LOCAL_MLFLOW_S3_ENDPOINT_URL'].replace("http://", "")
+        else:
+            uri_formatted = self.config['server']['MLFLOW_S3_ENDPOINT_URL'].replace("http://", "")
+
         user = self.config['user']['AWS_ACCESS_KEY_ID']
         password = self.config['user']['AWS_SECRET_ACCESS_KEY']
         client = Minio(uri_formatted, user, password, secure=False)
@@ -81,8 +85,8 @@ class Experiment:
     def build_experiment_image(self, path: str = '.'):
         print('Building experiment image ...')
         buildargs = {}
-        buildargs['HTTP_PROXY'] = os.getenv('HTTP_PROXY')
-        buildargs['HTTPS_PROXY'] = os.getenv('HTTPS_PROXY')
+        # buildargs['HTTP_PROXY'] = os.getenv('HTTP_PROXY')
+        # buildargs['HTTPS_PROXY'] = os.getenv('HTTPS_PROXY')
 
         client = docker.from_env()
         client.images.build(path=path, tag=self.experiment_name, buildargs=buildargs)
@@ -97,10 +101,11 @@ class Experiment:
         print('Starting experiment ...')
 
         docker_args_default = {'network': "host",
-                               'gpus': 'all',
                                'ipc': 'host',
-                               'rm': '',
-                               'runtime': 'nvidia'}
+                               'rm': ''}
+
+        if not self.use_localhost:
+            docker_args_default.update({'gpus': 'all'})
 
         # update docker_args_default with values passed by project
         if 'docker_args' in kwargs:
@@ -120,7 +125,7 @@ class Experiment:
                                **kwargs)
 
             except BuildError as error:
-                if attempt <= (num_retries):
+                if attempt <= num_retries:
                     print("BuildError -- attempting to build experiment image ...")
                     self.build_experiment_image()
                 else:
