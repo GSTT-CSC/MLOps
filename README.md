@@ -94,7 +94,7 @@ docker-compose --help
    
 2. The server should be configured by modifying the environment file found at ```/mlflow_server/.env```. The environment variable shown are given as an example, and should not be used for a production deployment.
 
-They are compulsory to be set otherwise the server will crash.
+Setting these variables is a requirement, the server will fail to start if they are undefined.
 
 **Please do not use shown values. Consider Writing you own usernames and passwords.**
 
