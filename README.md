@@ -11,7 +11,7 @@ A continuous integration and deployment framework for healthcare AI projects
 <a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a>
 <br />
 <br />
-<a href="https://github.com/GSTT-CSC/MLOps">View Demo</a>
+<a href="https://github.com/GSTT-CSC/MLOps">View repo</a>
 ·
 <a href="https://github.com/GSTT-CSC/MLOps/issues">Report Bug</a>
 ·
@@ -100,14 +100,11 @@ The server can be configured by modifying the environment file found at ```/mlfl
    docker-compose up -d --build
    ```
 
-The server should now be up and running locally. By default, the mlflow user interface can be accessed at ```http:/localhost:80``` and minio can be accessed at ```https:/localhost:8002```.
+Upon a successful build the server should now be up and running locally, and should show similar output to the screenshot below. By default, the mlflow user interface can be accessed at ```http:/localhost:80``` and minio can be accessed at ```https:/localhost:8002```.
 
+<img src="https://i.gyazo.com/6edbe20ed712fce43aa5425b1b2f7263.png" alt="Logo" width="75%">
 
-<!-- Usage -->
-## Overview
-
-### Components overview
-Opening a terminal and running ```docker ps``` lists the running containers, we should see something like this:
+To double check if the server is up and running successfully running ```docker ps``` in the terminal lists the running containers, and we should see something like this:
 ```angular2html
 CONTAINER ID   IMAGE                                      COMMAND                  CREATED             STATUS                       PORTS                                        NAMES
 3d51a7580b6f   mlflow_nginx                               "nginx -g 'daemon of…"   About an hour ago   Up About an hour             0.0.0.0:80->80/tcp, 0.0.0.0:8002->8002/tcp   mlflow_nginx
@@ -115,6 +112,11 @@ CONTAINER ID   IMAGE                                      COMMAND               
 a397b4149c5f   minio/minio:RELEASE.2021-03-17T02-33-02Z   "/usr/bin/docker-ent…"   About an hour ago   Up About an hour (healthy)   9000/tcp, 9002/tcp                           mlflow_server_s3_1
 65374369fe4d   mysql/mysql-server:5.7.28                  "/entrypoint.sh mysq…"   About an hour ago   Up About an hour (healthy)   3306/tcp, 33060/tcp                          mlflow_db
 ```
+
+<!-- Usage -->
+## Overview
+
+### Components overview
 When we ran ```docker-compose up``` we started 4 networked containers, each of which serves a purpose within the MLOps framework.
 1. **NGINX**: The nginx container acts as a reverse proxy to control network traffic.
 2. **MLflow**: The MLflow container hosts our MLflow server instance. This server is responsible for tracking and logging the MLOps events sent to it.
