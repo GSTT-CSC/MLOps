@@ -16,9 +16,10 @@ class Experiment:
         self.artifact_path = None
         self.remote_server_uri = None
         self.config_path = config_path
+        self.use_localhost = use_localhost
         self.config_setup()
         self.build_project_file()
-        self.use_localhost = use_localhost
+
 
         self.experiment_name = self.config['project']['NAME'].lower()
         self.experiment_id = self.init_experiment()
