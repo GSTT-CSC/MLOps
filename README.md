@@ -92,9 +92,31 @@ docker-compose --help
    cd MLOps
    ```
    
-The server can be configured by modifying the environment file found at ```/mlflow_server/.env```. The environment variable provided are given as an example, and should not be used for a production deployment.
+2. The server should be configured by modifying the environment file found at ```/mlflow_server/.env```. The environment variable shown are given as an example, and should not be used for a production deployment.
 
-2. Navigate to the cloned code repository and start the server. Any docker images that are not present on your local system will be pulled from dockerhub (which might take a while).
+Setting these variables is a requirement, the server will fail to start if they are undefined.
+
+**Please do not use shown values. Consider Writing you own usernames and passwords.**
+
+```
+# Example env file - fill all required values before using
+MYSQL_DATABASE=mlflow_db
+MYSQL_USER=anyUsername
+MYSQL_PASSWORD=strongpassword1
+MYSQL_ROOT_PASSWORD=strongpassword1root?
+
+void_MLFLOW_S3_ENDPOINT_URL=http://127.0.0.1:9002
+MLFLOW_S3_ENDPOINT_URL=http://s3:9002
+AWS_ACCESS_KEY_ID=customAccessKeyId
+AWS_SECRET_ACCESS_KEY=yourSecretAccessKey
+MINIO_ROOT_USER=minioUsername
+MINIO_ROOT_PASSWORD=minioPassword
+
+MLFLOW_S3_IGNORE_TLS=true
+
+```
+
+3. Navigate to the cloned code repository and start the server. Any docker images that are not present on your local system will be pulled from dockerhub (which might take a while).
     ```sh
    cd mlflow_server
    docker-compose up -d --build
