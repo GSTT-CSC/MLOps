@@ -3,4 +3,4 @@ dvc~=2.0.5
 boto3
 docker~=4.4.4
 minio~=7.0.3
-paramiko
+pytest~= 6.2
