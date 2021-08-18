@@ -17,8 +17,9 @@ A continuous integration and deployment framework for healthcare AI projects
 ·
 <a href="https://github.com/GSTT-CSC/MLOps/issues">Request Feature</a>
 </p>
-
-![build](https://github.com/GSTT-CSC/MLOps/actions/workflows/python-app.yml/badge.svg)
+<p align="center">
+  <img src="https://github.com/GSTT-CSC/MLOps/actions/workflows/python-app.yml/badge.svg">
+</p>
 
 <!-- TABLE OF CONTENTS -->
 <details open="open">
