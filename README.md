@@ -2,9 +2,9 @@
 <br />
 <p align="center">
 <a href="https://github.com/github_username/repo_name">
-    <img src="https://raw.githubusercontent.com/GSTT-CSC/gstt-csc.github.io/csc-logo-update/assets/transparent-CSC-logo.png" alt="Logo" width="75%">
+    <img src="https://raw.githubusercontent.com/GSTT-CSC/gstt-csc.github.io/add-asset-laurence/assets/transparent-CSC-logo-cropped.png" alt="Logo" width="50%">
   </a>
-<h3 align="center">MLOps</h3>
+<h1 align="center">MLOps</h1>
 <p align="center">
 A continuous integration and deployment framework for healthcare AI projects
 <br />
