@@ -24,7 +24,7 @@ def view():
             for directories in dirnames:
                 totalDir += 1
             for f in filenames:
-                if f.endswith("_Project.yaml")==False: 
+                if f.endswith("_Project.yaml")==False and f.startswith(".")==False: 
                     totalFiles += 1
                     fp = os.path.join(dirpath, f)
                     date_mod.append(datetime.fromtimestamp(os.path.getmtime(fp)).strftime('%Y-%m-%d %H:%M:%S'))
@@ -64,6 +64,7 @@ def view():
         'Number of folders',
         'Number of files'
         ])
+    print("Summarizing data from these projects:\n")
     for file in yaml_files:
         print(file)
         with open(file) as file:

@@ -2,10 +2,10 @@ import yaml
 import os
 import os.path, time
 import re
+from sys import exit
 from datetime import datetime, date
 
 cur_dir = os.getcwd()
-
 
 
 def get_size(start_path = cur_dir):
@@ -17,7 +17,7 @@ def get_size(start_path = cur_dir):
         for directories in dirnames:
             totalDir += 1
         for f in filenames:
-            if f.endswith("_Project.yaml")==False: 
+            if f.endswith("_Project.yaml")==False and f.startswith(".")==False:
                 totalFiles += 1
                 fp = os.path.join(dirpath, f)
                 date_mod.append(datetime.fromtimestamp(os.path.getmtime(fp)).strftime('%Y-%m-%d %H:%M:%S'))
@@ -28,34 +28,46 @@ def get_size(start_path = cur_dir):
     return total_size, totalFiles, totalDir, max(date_mod) 
 
 def init():
+    #check if project file already exists
+    for dirpath, dirnames, filenames in os.walk(cur_dir):
+        for f in filenames:
+            if f.endswith("_Project.yaml"):
+                yaml_path = os.path.join(dirpath, f)
+                while True:
+                    answer = input("The following project file already exists:\n" + yaml_path + "\nDo you want to delete this file and create a new one? (y/n)")
+                    if answer == "y":
+                        os.remove(yaml_path)
+                        break
+                    elif answer == "n":
+                        exit()
     size, files, dir, date_mod = get_size()
     # Ask for project UID:
     correct = 'n'
     while correct != 'y':
-        Project_UID = input("Please Enter Project UID:")
-        correct = input("You entered: " + Project_UID + "\n Is this correct (y/n):")
+        Project_UID = input("Please Enter Project UID: ")
+        correct = input("You entered: " + Project_UID + "\n Is this correct (y/n): ")
     # Ask for project name:
     correct2 = 'n'
     while correct2 != 'y':
         Project_name = input("Please Enter Project Name:")
-        correct2 = input("You entered: " + Project_name + "\n Is this correct (y/n):")
+        correct2 = input("You entered: " + Project_name + "\n Is this correct (y/n): ")
      # Ask for project start date:
     correct3 = 'n'
     while correct3 != 'y':
-        Project_startdate = input("Please Enter Project Start Date (yyyy-mm-dd):")
+        Project_startdate = input("Please Enter Project Start Date (yyyy-mm-dd): ")
         try:
             year, month, day = map(int, Project_startdate.split('-'))
             Project_date1 = date(year, month, day)
-            correct3 = input("You entered: " + str(Project_date1) + "\n Is this correct (y/n):")
+            correct3 = input("You entered: " + str(Project_date1) + "\n Is this correct (y/n): ")
         except: 
             print("Your entry is not in correct format (yyyy-mm-dd): "+ Project_startdate + "\nPlease Try again\n")
     dict_file = [
     {'Project UID' : Project_UID},
     {'Project name' : Project_name}, 
     {'Project start date' : str(Project_date1)}, 
-    {'Pathologies' : ["Replace this text"]},
-    {'Anomalies' : ["Replace this text"]},
-    {'Experiments' : ["Replace this text"]},
+    {'Pathologies' : "Replace this text"},
+    {'Anomalies' : "Replace this text"},
+    {'Experiments' : "Replace this text"},
     {'Last updated' : date_mod},
     {'Project Size (Mb)' : size/1000000},
     {'Number of folders' : dir},
