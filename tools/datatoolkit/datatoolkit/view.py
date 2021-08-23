@@ -71,9 +71,9 @@ def view():
         data1 = doc[0].get("Project UID")
         data2 = doc[1].get("Project name")
         data3 = doc[2].get("Project start date")
-        data4 = doc[3].get("Pathologies")
-        data5 = doc[4].get("Anomalies")
-        data6 = doc[5].get("Experiments")
+        data4 = doc[3].get("Pathologies")[0:17]+'...'
+        data5 = doc[4].get("Anomalies")[0:17]+'...'
+        data6 = doc[5].get("Experiments")[0:17]+'...'
         data7 = doc[6].get("Last updated")
         data8 = doc[7].get("Project Size (Mb)")
         data9 = doc[8].get("Number of folders")

@@ -1,17 +1,16 @@
-## Datatoolkit
+<!-- tools -->
+# Current tools: 
 
-Desinged for use with MLOps projects. Generates a yaml file of the project containing information such as size (Mb), number of folders, number of files.
+<!-- datatoolkit -->
+## datatoolkit  
 
-## Setting up 
+See README file in the datatoolkit folder on how to install and uninstall
 
-1. cd tools
-2. cd datatoolkit
-3. python setup.py install
+To run: 
+datatoolkit init - generates a yaml file (limited to one file per project)
 
-## Quick Start
+datatoolkit vew - to update and view a table of yaml files
 
-1. datatoolkit init (creates a yaml file for the projects)
-2. datatoolkit view (prints table to see a summary of the yaml files for all the projects)
+Developed by Igor Malashchuk
 
-
-
+<!-- future tool -->

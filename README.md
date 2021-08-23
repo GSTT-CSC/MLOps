@@ -144,7 +144,12 @@ Seeing each of these components independently is useful, but the best way to lea
 For a detailed tutorial describing the end-to-end process of AI development using this framework please see the following blog post.
 
 #### [Hyper-parameter tuning tutorial](https://gstt-csc.github.io/) 
+<!-- tools -->
+## Tools
+Additional tools designed to be used with MLOps are located in the tools folder. 
 
+Current tools:
+datatoolkit
 
 <!-- ROADMAP -->
 ## Roadmap
