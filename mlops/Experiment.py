@@ -84,7 +84,7 @@ class Experiment:
         # buildargs['HTTPS_PROXY'] = os.getenv('HTTPS_PROXY')
 
         client = docker.from_env()
-        with open(os.path.join(path, 'Dockerfile')) as fileobj:
+        with open(os.path.join(path, 'Dockerfile'), 'rb') as fileobj:
             client.images.build(fileobj=fileobj,
                                 tag=self.experiment_name,
                                 buildargs=buildargs,
