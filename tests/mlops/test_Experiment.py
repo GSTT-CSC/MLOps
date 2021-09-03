@@ -5,7 +5,7 @@ import pytest
 class TestExperiment:
 
     def setup(self):
-        self.experiment = Experiment('tests/config/config.cfg')
+        self.experiment = Experiment('tests/config/test_config.cfg')
 
     @pytest.mark.skip(reason="placeholder for test")
     def test_config_setup(self):

@@ -5,7 +5,6 @@ import docker
 from docker.errors import BuildError
 from minio import Minio
 from mlops.ProjectFile import ProjectFile
-# import paramiko
 
 
 class Experiment:
@@ -19,7 +18,6 @@ class Experiment:
         self.use_localhost = use_localhost
         self.config_setup()
         self.build_project_file()
-
 
         self.experiment_name = self.config['project']['NAME'].lower()
         self.experiment_id = self.init_experiment()
@@ -82,11 +80,16 @@ class Experiment:
     def build_experiment_image(self, path: str = '.'):
         print('Building experiment image ...')
         buildargs = {}
-        buildargs['HTTP_PROXY'] = os.getenv('HTTP_PROXY')
-        buildargs['HTTPS_PROXY'] = os.getenv('HTTPS_PROXY')
+        # buildargs['HTTP_PROXY'] = os.getenv('HTTP_PROXY')
+        # buildargs['HTTPS_PROXY'] = os.getenv('HTTPS_PROXY')
 
         client = docker.from_env()
-        client.images.build(path=path, tag=self.experiment_name, buildargs=buildargs)
+        with open(os.path.join(path, 'Dockerfile')) as fileobj:
+            client.images.build(fileobj=fileobj,
+                                tag=self.experiment_name,
+                                buildargs=buildargs,
+                                rm=True,
+                                use_config_proxy=True)
 
     def build_project_file(self):
         print('Building project file')
@@ -100,7 +103,6 @@ class Experiment:
         docker_args_default = {'network': "host",
                                'gpus': 'all',
                                'ipc': 'host',
-                               'rm': '',
                                'runtime': 'nvidia'}
 
         # update docker_args_default with values passed by project
