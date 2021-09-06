@@ -6,3 +6,4 @@
 /mlruns/
 /config.cfg
 /mlflow_server/dbdata/
+/mlflow_server/.env

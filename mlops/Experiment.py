@@ -68,7 +68,10 @@ class Experiment:
         print("Lifecycle_stage: {}".format(experiment.lifecycle_stage))
 
     def configure_minio(self):
-        uri_formatted = self.config['server']['MLFLOW_S3_ENDPOINT_URL'].replace("http://", "")
+        if self.use_localhost:
+            uri_formatted = self.config['server']['LOCAL_MLFLOW_S3_ENDPOINT_URL'].replace("http://", "")
+        else:
+            uri_formatted = self.config['server']['MLFLOW_S3_ENDPOINT_URL'].replace("http://", "")
         user = self.config['user']['AWS_ACCESS_KEY_ID']
         password = self.config['user']['AWS_SECRET_ACCESS_KEY']
         client = Minio(uri_formatted, user, password, secure=False)
@@ -84,12 +87,11 @@ class Experiment:
         # buildargs['HTTPS_PROXY'] = os.getenv('HTTPS_PROXY')
 
         client = docker.from_env()
-        with open(os.path.join(path, 'Dockerfile'), 'rb') as fileobj:
-            client.images.build(fileobj=fileobj,
-                                tag=self.experiment_name,
-                                buildargs=buildargs,
-                                rm=True,
-                                use_config_proxy=True)
+        client.images.build(path=path,
+                            tag=self.experiment_name,
+                            buildargs=buildargs,
+                            rm=True,
+                            use_config_proxy=True)
 
     def build_project_file(self):
         print('Building project file')
@@ -103,7 +105,8 @@ class Experiment:
         docker_args_default = {'network': "host",
                                'gpus': 'all',
                                'ipc': 'host',
-                               'runtime': 'nvidia'}
+                               }
+                               # 'runtime': 'nvidia'
 
         # update docker_args_default with values passed by project
         if 'docker_args' in kwargs:
