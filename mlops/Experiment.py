@@ -103,10 +103,14 @@ class Experiment:
         print('Starting experiment ...')
 
         docker_args_default = {'network': "host",
-                               'gpus': 'all',
+                               # 'gpus': 'all',
                                'ipc': 'host',
                                }
                                # 'runtime': 'nvidia'
+
+        if not self.use_localhost:
+            print('Setting GPUs = all')
+            docker_args_default.update({'gpus': 'all'})
 
         # update docker_args_default with values passed by project
         if 'docker_args' in kwargs:
