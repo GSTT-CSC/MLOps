@@ -83,15 +83,14 @@ class Experiment:
     def build_experiment_image(self, path: str = '.'):
         print('Building experiment image ...')
         buildargs = {}
-        # buildargs['HTTP_PROXY'] = os.getenv('HTTP_PROXY')
-        # buildargs['HTTPS_PROXY'] = os.getenv('HTTPS_PROXY')
+        buildargs['HTTP_PROXY'] = os.getenv('HTTP_PROXY')
+        buildargs['HTTPS_PROXY'] = os.getenv('HTTPS_PROXY')
 
         client = docker.from_env()
         client.images.build(path=path,
                             tag=self.experiment_name,
                             buildargs=buildargs,
-                            rm=True,
-                            use_config_proxy=True)
+                            rm=True)
 
     def build_project_file(self):
         print('Building project file')
