@@ -106,8 +106,10 @@ class Experiment:
                                }
 
         if not self.use_localhost:
-            print('Setting GPUs = all')
-            docker_args_default.update({'gpus': 'all', 'runtime': 'nvidia'})
+            gpu_params = {'gpus': 'all',
+                          'runtime': 'nvidia'}
+            print('Adding docker args: {0}'.format(gpu_params))
+            docker_args_default.update(gpu_params)
 
         # update docker_args_default with values passed by project
         if 'docker_args' in kwargs:
