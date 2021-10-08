@@ -18,7 +18,7 @@ jobs:
         python-version: 3.6
     - name: start MLOps server
       run: |
-        docker compose up -d --build mlflow_server/docker-compose.yml
+        docker compose up -d --build mlflow_server/
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
