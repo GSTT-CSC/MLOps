@@ -17,11 +17,14 @@ class Experiment:
         self.config_path = config_path
         self.use_localhost = use_localhost
         self.config_setup()
+        self.env_setup()
         self.build_project_file()
+        self.verbose = verbose
 
         self.experiment_name = self.config['project']['NAME'].lower()
         self.experiment_id = self.init_experiment()
-        if verbose:
+
+        if self.verbose:
             self.print_experiment_info()
 
     def config_setup(self):
@@ -30,7 +33,7 @@ class Experiment:
         self.artifact_path = self.config['server']['ARTIFACT_PATH']
         self.remote_server_uri = self.config['server']['REMOTE_SERVER_URI']
 
-        # OS ENV CONFIG
+    def env_setup(self):
         if self.use_localhost:
             os.environ['MLFLOW_TRACKING_URI'] = self.config['server']['LOCAL_REMOTE_SERVER_URI']
             os.environ['MLFLOW_S3_ENDPOINT_URL'] = self.config['server']['LOCAL_MLFLOW_S3_ENDPOINT_URL']
@@ -69,12 +72,14 @@ class Experiment:
 
     def configure_minio(self):
         if self.use_localhost:
-            uri_formatted = self.config['server']['LOCAL_MLFLOW_S3_ENDPOINT_URL'].replace("http://", "")
+            self.uri_formatted = self.config['server']['LOCAL_MLFLOW_S3_ENDPOINT_URL'].replace("http://", "")
         else:
-            uri_formatted = self.config['server']['MLFLOW_S3_ENDPOINT_URL'].replace("http://", "")
-        user = self.config['user']['AWS_ACCESS_KEY_ID']
-        password = self.config['user']['AWS_SECRET_ACCESS_KEY']
-        client = Minio(uri_formatted, user, password, secure=False)
+            self.uri_formatted = self.config['server']['MLFLOW_S3_ENDPOINT_URL'].replace("http://", "")
+
+        self.minio_cred = {'user': self.config['user']['AWS_ACCESS_KEY_ID'],
+                   'password': self.config['user']['AWS_SECRET_ACCESS_KEY']}
+
+        client = Minio(self.uri_formatted, self.minio_cred['user'], self.minio_cred['password'], secure=False)
         # if mlflow bucket does not exist, create it
         if 'mlflow' not in (bucket.name for bucket in client.list_buckets()):
             print('Creating S3 bucket ''mlflow''')
@@ -82,14 +87,16 @@ class Experiment:
 
     def build_experiment_image(self, path: str = '.'):
         print('Building experiment image ...')
-        buildargs = {}
-        buildargs['HTTP_PROXY'] = os.getenv('HTTP_PROXY')
-        buildargs['HTTPS_PROXY'] = os.getenv('HTTPS_PROXY')
+        # Collect proxy settings
+        build_args = {}
+        if os.getenv('HTTP_PROXY') is not None or os.getenv('HTTPS_PROXY') is not None:
+            build_args = {'HTTP_PROXY': os.getenv('HTTP_PROXY'),
+                         'HTTPS_PROXY': os.getenv('HTTPS_PROXY')}
 
         client = docker.from_env()
         client.images.build(path=path,
                             tag=self.experiment_name,
-                            buildargs=buildargs,
+                            buildargs=build_args,
                             rm=True)
 
     def build_project_file(self):
