@@ -1,6 +1,6 @@
 mlflow
-dvc~=2.0.5
+# dvc~=2.0.5
 boto3
 docker
-minio~=7.0.3
-pytest~= 6.2
+minio>=7.0.3
+pytest>= 6.2
