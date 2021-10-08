@@ -18,7 +18,7 @@ jobs:
         python-version: 3.8
     - name: set system variables
       run: |
-        set -o allexport; source tests/config/test_env; set +o allexport
+        set -o allexport; source tests/data/test_env; set +o allexport
     - name: Install python dependencies
       run: |
         python -m pip install --upgrade pip
