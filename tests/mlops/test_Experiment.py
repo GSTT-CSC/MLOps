@@ -4,6 +4,7 @@ import configparser
 from minio import Minio
 import os
 
+
 class TestExperiment:
 
     def setup(self):
@@ -40,7 +41,7 @@ class TestExperiment:
         assert captured.out == 'Building project file\nLogging to existing experiment: test_project *** ID: 1\nName: test_project\nExperiment_id: 1\nArtifact Location: s3://mlflow\nTags: {}\nLifecycle_stage: active\nName: test_project\nExperiment_id: 5\nArtifact Location: s3://mlflow\nTags: {}\nLifecycle_stage: active\n'
 
     def test_configure_minio(self):
-        # check mlflow bucket is craeted
+        # check mlflow bucket is created
         self.experiment.configure_minio()
         client = Minio(self.experiment.uri_formatted, self.experiment.minio_cred['user'], self.experiment.minio_cred['password'], secure=False)
         assert 'mlflow' in (bucket.name for bucket in client.list_buckets())
