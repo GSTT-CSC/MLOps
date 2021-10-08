@@ -1,6 +1,6 @@
 from mlops.Experiment import Experiment
 import pytest
-
+import configparser
 
 class TestExperiment:
 
@@ -13,7 +13,10 @@ class TestExperiment:
 
     @pytest.mark.skip(reason="placeholder for test")
     def test_read_config(self):
-        pass
+        self.config = configparser.ConfigParser()
+        self.config.read(self.config_path)
+        assert self.config
+
 
     @pytest.mark.skip(reason="placeholder for test")
     def test_init_experiment(self):

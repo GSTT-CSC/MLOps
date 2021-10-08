@@ -5,13 +5,17 @@ import yaml
 import datetime
 
 
-class ProjectFile:
+class ProjectFile():
 
-    def __init__(self, config, projectfile_name='MLProject'):
+    def __init__(self, config, projectfile_name='MLProject', use_localhost=False):
         self.config = config
         self.projectfile_name = projectfile_name
+        if use_localhost:
+            volume_path = config['project']['LOCAL_VOLUME_MOUNT']
+        else:
+            volume_path = config['project']['VOLUME_MOUNT']
         self.project_dict = {'name': config['project']['NAME'].lower(),
-                             'docker_env': {'volumes': [config['project']['VOLUME_MOUNT']],
+                             'docker_env': {'volumes': [volume_path],
                                             'image': config['project']['NAME'].lower()}}
 
         self._parse_entry_points()

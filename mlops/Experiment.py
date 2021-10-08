@@ -94,7 +94,7 @@ class Experiment:
 
     def build_project_file(self):
         print('Building project file')
-        projectfile = ProjectFile(self.config)
+        projectfile = ProjectFile(self.config, use_localhost=self.use_localhost)
         projectfile.generate_yaml()
 
     def run(self, remote: str = None, **kwargs):
