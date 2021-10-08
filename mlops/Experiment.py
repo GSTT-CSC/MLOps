@@ -13,7 +13,6 @@ class Experiment:
 
         self.config = None
         self.artifact_path = None
-        self.remote_server_uri = None
         self.config_path = config_path
         self.use_localhost = use_localhost
         self.config_setup()
@@ -31,7 +30,6 @@ class Experiment:
 
         self.read_config()
         self.artifact_path = self.config['server']['ARTIFACT_PATH']
-        self.remote_server_uri = self.config['server']['REMOTE_SERVER_URI']
 
     def env_setup(self):
         if self.use_localhost:
