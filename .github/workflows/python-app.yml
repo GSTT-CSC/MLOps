@@ -18,7 +18,8 @@ jobs:
         python-version: 3.8
     - name: set system variables
       run: |
-        set -o allexport; source tests/data/test_env; set +o allexport
+#        set -o allexport; source tests/data/test_env.sh; set +o allexport
+        . ./tests/data/test_env.sh
     - name: Install python dependencies
       run: |
         python -m pip install --upgrade pip
@@ -35,9 +36,6 @@ jobs:
         echo ${MYSQL_PASSWORD}
         echo ${MYSQL_ROOT_PASSWORD}
         echo test
-        MYSQL_DATABASE=mlflow
-        echo ${MYSQL_DATABASE}
-
       #    - name: Lint with flake8
 #      run: |
 #         stop the build if there are Python syntax errors or undefined names
