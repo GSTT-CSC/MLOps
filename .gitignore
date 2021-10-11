@@ -8,3 +8,5 @@
 /mlflow_server/dbdata/
 /mlflow_server/.env
 /MLProject
+/pytest-coverage.txt
+/.coverage
