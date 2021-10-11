@@ -25,10 +25,6 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: 3.8
-#    - name: set system variables
-#      uses: falti/dotenv-action@v0.2.7
-#      with:
-#        path: tests/data/test_env
     - name: Install python dependencies
       run: |
         python -m pip install --upgrade pip
@@ -37,14 +33,9 @@ jobs:
     - name: start MLOps server
       run: |
         docker compose -f mlflow_server/docker-compose.yml up -d --build
-    - name: check running containers and debug
-      run: |
-        docker ps
-        echo ${MYSQL_DATABASE}
-        echo ${MYSQL_USER}
-        echo ${MYSQL_PASSWORD}
-        echo ${MYSQL_ROOT_PASSWORD}
-        echo test
+#    - name: check running containers and debug
+#      run: |
+#        docker ps
       #    - name: Lint with flake8
 #      run: |
 #         stop the build if there are Python syntax errors or undefined names
@@ -57,4 +48,4 @@ jobs:
         pytest tests/
     - name: Stop containers
       if: always()
-      run: docker-compose -f "docker-compose.yml" down
+      run: docker-compose -f mlflow_server/docker-compose.yml down
