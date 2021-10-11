@@ -39,8 +39,8 @@ class Experiment:
             os.environ['MLFLOW_TRACKING_URI'] = self.config['server']['REMOTE_SERVER_URI']
             os.environ['MLFLOW_S3_ENDPOINT_URL'] = self.config['server']['MLFLOW_S3_ENDPOINT_URL']
 
-        os.environ['AWS_ACCESS_KEY_ID'] = self.config['user']['AWS_ACCESS_KEY_ID']
-        os.environ['AWS_SECRET_ACCESS_KEY'] = self.config['user']['AWS_SECRET_ACCESS_KEY']
+        # os.environ['AWS_ACCESS_KEY_ID'] = self.config['user']['AWS_ACCESS_KEY_ID']
+        # os.environ['AWS_SECRET_ACCESS_KEY'] = self.config['user']['AWS_SECRET_ACCESS_KEY']
 
     def read_config(self):
         self.config = configparser.ConfigParser()
@@ -74,8 +74,8 @@ class Experiment:
         else:
             self.uri_formatted = self.config['server']['MLFLOW_S3_ENDPOINT_URL'].replace("http://", "")
 
-        self.minio_cred = {'user': self.config['user']['AWS_ACCESS_KEY_ID'],
-                   'password': self.config['user']['AWS_SECRET_ACCESS_KEY']}
+        self.minio_cred = {'user': os.getenv('AWS_ACCESS_KEY_ID'),
+                           'password': os.getenv('AWS_SECRET_ACCESS_KEY')}
 
         client = Minio(self.uri_formatted, self.minio_cred['user'], self.minio_cred['password'], secure=False)
         # if mlflow bucket does not exist, create it
@@ -84,12 +84,12 @@ class Experiment:
             client.make_bucket("mlflow")
 
     def build_experiment_image(self, path: str = '.'):
-        print('Building experiment image ...')
+        print('Building experiment image ...')\
         # Collect proxy settings
         build_args = {}
         if os.getenv('HTTP_PROXY') is not None or os.getenv('HTTPS_PROXY') is not None:
             build_args = {'HTTP_PROXY': os.getenv('HTTP_PROXY'),
-                         'HTTPS_PROXY': os.getenv('HTTPS_PROXY')}
+                          'HTTPS_PROXY': os.getenv('HTTPS_PROXY')}
 
         client = docker.from_env()
         client.images.build(path=path,
