@@ -84,7 +84,8 @@ class Experiment:
             client.make_bucket("mlflow")
 
     def build_experiment_image(self, path: str = '.'):
-        print('Building experiment image ...')\
+        print('Building experiment image ...')
+
         # Collect proxy settings
         build_args = {}
         if os.getenv('HTTP_PROXY') is not None or os.getenv('HTTPS_PROXY') is not None:
