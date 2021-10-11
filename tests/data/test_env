@@ -4,8 +4,8 @@ MYSQL_USER=mlflow
 MYSQL_PASSWORD=strongpassword1
 MYSQL_ROOT_PASSWORD=strongpassword1root?
 
-MLFLOW_S3_ENDPOINT_URL=http://s3:9002
 AWS_ACCESS_KEY_ID=minioadmin
 AWS_SECRET_ACCESS_KEY=minioadmin
+
 MINIO_ROOT_USER=minioadmin
 MINIO_ROOT_PASSWORD=minioadmin
