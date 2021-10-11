@@ -7,7 +7,7 @@
 /config.cfg
 /mlflow_server/dbdata/
 /mlflow_server/.env
-/MLProject
+/tests/data/MLProject
 /pytest-coverage.txt
 /.coverage
 /.env

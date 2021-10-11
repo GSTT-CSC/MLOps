@@ -95,13 +95,14 @@ class Experiment:
                             tag=self.experiment_name,
                             buildargs=build_args,
                             rm=True)
+        print('Built: ' + self.experiment_name + ':latest')
 
-    def build_project_file(self):
+    def build_project_file(self, path: str = '.'):
         print('Building project file')
-        projectfile = ProjectFile(self.config, use_localhost=self.use_localhost)
+        projectfile = ProjectFile(self.config, path=path, use_localhost=self.use_localhost)
         projectfile.generate_yaml()
 
-    def run(self, remote: str = None, **kwargs):
+    def run(self, path: str = '.', remote: str = None, **kwargs):
         print('Starting experiment ...')
 
         docker_args_default = {'network': "host",
@@ -127,7 +128,7 @@ class Experiment:
             print('No existing image found')
             self.build_project_file()
 
-        mlflow.run('.',
+        mlflow.run(path,
                    experiment_id=self.experiment_id,
                    use_conda=False,
                    **kwargs)
