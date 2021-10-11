@@ -34,7 +34,11 @@ jobs:
         echo ${MYSQL_USER}
         echo ${MYSQL_PASSWORD}
         echo ${MYSQL_ROOT_PASSWORD}
-#    - name: Lint with flake8
+        echo test
+        MYSQL_DATABASE=mlflow
+        echo ${MYSQL_DATABASE}
+
+      #    - name: Lint with flake8
 #      run: |
 #         stop the build if there are Python syntax errors or undefined names
 #         SKIPPING FOR NOW
