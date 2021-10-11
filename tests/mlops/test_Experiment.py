@@ -3,6 +3,7 @@ import pytest
 import configparser
 from minio import Minio
 import os
+import docker
 
 
 class TestExperiment:
@@ -55,9 +56,13 @@ class TestExperiment:
                        secure=False)
         assert 'mlflow' in (bucket.name for bucket in client.list_buckets())
 
-    @pytest.mark.skip(reason="placeholder for test")
     def test_build_experiment_image(self):
-        self.experiment.build_experiment_image()
+        client = docker.from_env()
+        images_1 = [img['RepoTags'][0] for img in client.api.images()]
+        assert self.experiment.experiment_name + ':latest' not in images_1
+        self.experiment.build_experiment_image(path='tests/data/')
+        images_2 = [img['RepoTags'][0] for img in client.api.images()]
+        assert self.experiment.experiment_name + ':latest' in images_2
 
     @pytest.mark.skip(reason="placeholder for test")
     def test_build_project_file(self):

@@ -52,7 +52,7 @@ jobs:
 
     - name: Test with pytest
       run: |
-        coverage run -m --source=mlops pytest --cache-clear --cov=mlops --continue-on-collection-errors tests/ 2>&1 | tee pytest-coverage.txt
+        coverage run -m --source=mlops pytest tests/ --cache-clear --cov=mlops --continue-on-collection-errors 2>&1 | tee pytest-coverage.txt
 
     - name: Comment coverage
       uses: coroo/pytest-coverage-commentator@v1.0.2

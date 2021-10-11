@@ -102,7 +102,6 @@ class Experiment:
         projectfile.generate_yaml()
 
     def run(self, remote: str = None, **kwargs):
-        num_retries = 1
         print('Starting experiment ...')
 
         docker_args_default = {'network': "host",
@@ -120,21 +119,15 @@ class Experiment:
             docker_args_default.update(kwargs['docker_args'])
             kwargs['docker_args'] = docker_args_default
 
-        for attempt in range(num_retries):
-            try:
-                if remote is not None:
-                    # send instruction over SSH to run on remote location
-                    # todo
-                    pass
-                else:
-                    mlflow.run('.',
-                               experiment_id=self.experiment_id,
-                               use_conda=False,
-                               **kwargs)
+        # check image exists and build if not
+        print('checking for existing image')
+        client = docker.from_env()
+        images = [img['RepoTags'][0] for img in client.api.images()]
+        if self.experiment_name + ':latest' not in images:
+            print('No existing image found')
+            self.build_project_file()
 
-            except BuildError as error:
-                if attempt <= (num_retries):
-                    print("BuildError -- attempting to build experiment image ...")
-                    self.build_experiment_image()
-                else:
-                    raise error
+        mlflow.run('.',
+                   experiment_id=self.experiment_id,
+                   use_conda=False,
+                   **kwargs)
