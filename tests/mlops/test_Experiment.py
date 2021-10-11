@@ -42,7 +42,6 @@ class TestExperiment:
                                'test_project\nExperiment_id: 1\nArtifact Location: s3://mlflow\nTags: {}\n' \
                                'Lifecycle_stage: active\nName: test_project\nExperiment_id: 5\n' \
                                'Artifact Location: s3://mlflow\nTags: {}\nLifecycle_stage: active\n'
-
     def test_configure_minio(self):
         # check mlflow bucket is created
         self.experiment.configure_minio()
