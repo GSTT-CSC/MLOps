@@ -1,0 +1,10 @@
+export MYSQL_DATABASE=mlflow_db
+export MYSQL_USER=mlflow
+export MYSQL_PASSWORD=strongpassword1
+export MYSQL_ROOT_PASSWORD=strongpassword1root?
+
+export AWS_ACCESS_KEY_ID=minioadmin
+export AWS_SECRET_ACCESS_KEY=minioadmin
+
+export MINIO_ROOT_USER=minioadmin
+export MINIO_ROOT_PASSWORD=minioadmin
