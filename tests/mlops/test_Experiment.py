@@ -32,10 +32,10 @@ class TestExperiment:
 
     def test_init_experiment(self):
         self.experiment.init_experiment()
-        assert self.experiment.experiment_id == 1
+        assert self.experiment.experiment_id == '1'
         self.experiment.experiment_name = 'test_project_init_experiment'
         self.experiment.init_experiment()
-        assert self.experiment.experiment_id == 2
+        assert self.experiment.experiment_id == '2'
 
     def test_print_experiment_info(self, capsys):
         # Check correct information is printed to console
