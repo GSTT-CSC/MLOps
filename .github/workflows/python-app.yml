@@ -9,6 +9,15 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    env:
+      MYSQL_DATABASE: mlflow_db
+      MYSQL_USER: mlflow
+      MYSQL_PASSWORD: strongpassword1
+      MYSQL_ROOT_PASSWORD: strongpassword1root?
+      AWS_ACCESS_KEY_ID: minioadmin
+      AWS_SECRET_ACCESS_KEY: minioadmin
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
 
     steps:
     - uses: actions/checkout@v2
@@ -17,8 +26,9 @@ jobs:
       with:
         python-version: 3.8
     - name: set system variables
-      run: |
-        . ./tests/data/test_env.sh
+      uses: falti/dotenv-action@v0.2.7
+      with:
+        path: tests/data/test_env
     - name: Install python dependencies
       run: |
         python -m pip install --upgrade pip
