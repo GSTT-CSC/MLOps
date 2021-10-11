@@ -13,15 +13,16 @@ class Experiment:
 
         self.config = None
         self.artifact_path = None
+        self.experiment_name = None
+        self.experiment_id = None
         self.config_path = config_path
         self.use_localhost = use_localhost
+        self.verbose = verbose
+
         self.config_setup()
         self.env_setup()
         self.build_project_file()
-        self.verbose = verbose
-
-        self.experiment_name = self.config['project']['NAME'].lower()
-        self.experiment_id = self.init_experiment()
+        self.init_experiment()
 
         if self.verbose:
             self.print_experiment_info()
@@ -30,6 +31,7 @@ class Experiment:
 
         self.read_config()
         self.artifact_path = self.config['server']['ARTIFACT_PATH']
+        self.experiment_name = self.config['project']['NAME'].lower()
 
     def env_setup(self):
         if self.use_localhost:
@@ -39,15 +41,11 @@ class Experiment:
             os.environ['MLFLOW_TRACKING_URI'] = self.config['server']['REMOTE_SERVER_URI']
             os.environ['MLFLOW_S3_ENDPOINT_URL'] = self.config['server']['MLFLOW_S3_ENDPOINT_URL']
 
-        # os.environ['AWS_ACCESS_KEY_ID'] = self.config['user']['AWS_ACCESS_KEY_ID']
-        # os.environ['AWS_SECRET_ACCESS_KEY'] = self.config['user']['AWS_SECRET_ACCESS_KEY']
-
     def read_config(self):
         self.config = configparser.ConfigParser()
         self.config.read(self.config_path)
 
     def init_experiment(self):
-
         experiment = mlflow.get_experiment_by_name(self.experiment_name)
         self.configure_minio()
 
@@ -58,7 +56,7 @@ class Experiment:
             exp_id = experiment.experiment_id
             print('Logging to existing experiment: {0} *** ID: {1}'.format(self.experiment_name, exp_id))
 
-        return exp_id
+        self.experiment_id = exp_id
 
     def print_experiment_info(self):
         experiment = mlflow.get_experiment(self.experiment_id)
@@ -74,8 +72,8 @@ class Experiment:
         else:
             self.uri_formatted = self.config['server']['MLFLOW_S3_ENDPOINT_URL'].replace("http://", "")
 
-        self.minio_cred = {'user': os.getenv('AWS_ACCESS_KEY_ID'),
-                           'password': os.getenv('AWS_SECRET_ACCESS_KEY')}
+        self.minio_cred = {'user': os.getenv('MINIO_ROOT_USER'),
+                           'password': os.getenv('MINIO_ROOT_PASSWORD')}
 
         client = Minio(self.uri_formatted, self.minio_cred['user'], self.minio_cred['password'], secure=False)
         # if mlflow bucket does not exist, create it

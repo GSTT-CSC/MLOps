@@ -10,18 +10,19 @@ class TestExperiment:
     def setup(self):
         # currently only testing localhost code
         use_localhost = True
+        os.environ['MINIO_ROOT_USER'] = 'minioadmin'
+        os.environ['MINIO_ROOT_PASSWORD'] = 'minioadmin'
         self.experiment = Experiment('tests/data/test_config.cfg', use_localhost=use_localhost)
 
-    @pytest.mark.skip(reason="placeholder for test")
     def test_config_setup(self):
-        pass
+        self.experiment.config_setup()
+        assert self.experiment.experiment_name == 'test_project'
+        assert self.experiment.artifact_path == 's3://mlflow'
 
     def test_env_setup(self):
         self.experiment.env_setup()
         assert os.getenv('MLFLOW_TRACKING_URI') == self.experiment.config['server']['LOCAL_REMOTE_SERVER_URI']
         assert os.getenv('MLFLOW_S3_ENDPOINT_URL') == self.experiment.config['server']['LOCAL_MLFLOW_S3_ENDPOINT_URL']
-        assert os.getenv('AWS_ACCESS_KEY_ID') == self.experiment.config['user']['AWS_ACCESS_KEY_ID']
-        assert os.getenv('AWS_SECRET_ACCESS_KEY') == self.experiment.config['user']['AWS_SECRET_ACCESS_KEY']
 
     def test_read_config(self):
         # Create config file and assert identical
@@ -29,19 +30,22 @@ class TestExperiment:
         self.test_config.read(self.experiment.config_path)
         assert self.experiment.config == self.test_config
 
-    @pytest.mark.skip(reason="placeholder for test")
     def test_init_experiment(self):
-        pass
+        self.experiment.init_experiment()
+        assert self.experiment.experiment_id == 1
+        self.experiment.experiment_name = 'test_project_init_experiment'
+        self.experiment.init_experiment()
+        assert self.experiment.experiment_id == 2
 
-    @pytest.mark.skip(reason="placeholder for test")
     def test_print_experiment_info(self, capsys):
         # Check correct information is printed to console
         self.experiment.print_experiment_info()  # Call function.
         captured = capsys.readouterr()
         assert captured.out == 'Building project file\nLogging to existing experiment: test_project *** ID: 1\nName: ' \
                                'test_project\nExperiment_id: 1\nArtifact Location: s3://mlflow\nTags: {}\n' \
-                               'Lifecycle_stage: active\nName: test_project\nExperiment_id: 5\n' \
+                               'Lifecycle_stage: active\nName: test_project\nExperiment_id: 1\n' \
                                'Artifact Location: s3://mlflow\nTags: {}\nLifecycle_stage: active\n'
+
     def test_configure_minio(self):
         # check mlflow bucket is created
         self.experiment.configure_minio()

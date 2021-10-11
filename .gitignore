@@ -10,3 +10,4 @@
 /MLProject
 /pytest-coverage.txt
 /.coverage
+/.env
