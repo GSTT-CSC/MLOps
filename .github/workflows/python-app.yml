@@ -67,7 +67,7 @@ jobs:
         auth: ${{ secrets.PYTEST_COVERAGE_COMMENT }}
         gistID: ba102d5f3e592fcd50451c2eff8a803d
         filename: pytest-coverage-comment__main.json
-        label: Coverage Report
+        label: Test coverage
         message: ${{ steps.coverageComment.outputs.coverage }}
         color: ${{ steps.coverageComment.outputs.color }}
         namedLogo: python
