@@ -125,7 +125,7 @@ class Experiment:
         images = [img['RepoTags'][0] for img in client.api.images()]
         if self.experiment_name + ':latest' not in images:
             print('No existing image found')
-            self.build_project_file()
+            self.build_experiment_image()
 
         mlflow.run(path,
                    experiment_id=self.experiment_id,
