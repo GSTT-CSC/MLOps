@@ -19,6 +19,7 @@ A continuous integration and deployment framework for healthcare AI projects
 </p>
 <p align="center">
   <img src="https://github.com/GSTT-CSC/MLOps/actions/workflows/python-app.yml/badge.svg">
+  <![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/laurencejackson/ba102d5f3e592fcd50451c2eff8a803d/raw/test.json)">
 </p>
 
 <!-- TABLE OF CONTENTS -->

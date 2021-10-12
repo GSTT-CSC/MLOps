@@ -60,6 +60,17 @@ jobs:
         pytest-coverage-path: ./pytest-coverage.txt
         junitxml-path: ./pytest.xml
 
+    - name: Create the coverage Badge
+      uses: schneegans/dynamic-badges-action@v1.0.0
+      with:
+        auth: ${{ secrets.PYTEST_COVERAGE_COMMENT }}
+        gistID: ba102d5f3e592fcd50451c2eff8a803d
+        filename: pytest-coverage-comment__main.json
+        label: Coverage Report
+        message: ${{ steps.coverageComment.outputs.coverage }}
+        color: ${{ steps.coverageComment.outputs.color }}
+        namedLogo: python
+
     - name: Stop containers
       if: always()
       run: docker-compose -f mlflow_server/docker-compose.yml down
