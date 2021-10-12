@@ -1,5 +1,4 @@
 from mlops.Experiment import Experiment
-import pytest
 import configparser
 from minio import Minio
 import os

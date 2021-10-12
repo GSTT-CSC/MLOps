@@ -1,5 +1,6 @@
-def test():
+# Mock entry point
 
+def test():
     # initialise network and datamodule
     print('test entry point')
 

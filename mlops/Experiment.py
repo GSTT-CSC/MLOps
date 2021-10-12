@@ -2,7 +2,6 @@ import mlflow
 import os
 import configparser
 import docker
-from docker.errors import BuildError
 from minio import Minio
 from mlops.ProjectFile import ProjectFile
 
