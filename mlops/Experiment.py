@@ -6,7 +6,10 @@ from docker.errors import BuildError
 from minio import Minio
 from mlops.ProjectFile import ProjectFile
 # import paramiko
+import logging
 
+logging.basicConfig(format='%(asctime)s %(levelname)s %(name)s %(message)s')
+logger = logging.getLogger('mlops.Experiment')
 
 class Experiment:
 
@@ -54,20 +57,20 @@ class Experiment:
 
         if experiment is None:
             exp_id = mlflow.create_experiment(self.experiment_name, artifact_location=self.artifact_path)
-            print('Creating experiment: name: {0} *** ID: {1}'.format(self.experiment_name, exp_id))
+            logger.info('Creating experiment: name: {0} *** ID: {1}'.format(self.experiment_name, exp_id))
         else:
             exp_id = experiment.experiment_id
-            print('Logging to existing experiment: {0} *** ID: {1}'.format(self.experiment_name, exp_id))
+            logger.info('Logging to existing experiment: {0} *** ID: {1}'.format(self.experiment_name, exp_id))
 
         return exp_id
 
     def print_experiment_info(self):
         experiment = mlflow.get_experiment(self.experiment_id)
-        print("Name: {}".format(experiment.name))
-        print("Experiment_id: {}".format(experiment.experiment_id))
-        print("Artifact Location: {}".format(experiment.artifact_location))
-        print("Tags: {}".format(experiment.tags))
-        print("Lifecycle_stage: {}".format(experiment.lifecycle_stage))
+        logger.info("Name: {}".format(experiment.name))
+        logger.info("Experiment_id: {}".format(experiment.experiment_id))
+        logger.info("Artifact Location: {}".format(experiment.artifact_location))
+        logger.info("Tags: {}".format(experiment.tags))
+        logger.info("Lifecycle_stage: {}".format(experiment.lifecycle_stage))
 
     def configure_minio(self):
         uri_formatted = self.config['server']['MLFLOW_S3_ENDPOINT_URL'].replace("http://", "")
@@ -76,11 +79,11 @@ class Experiment:
         client = Minio(uri_formatted, user, password, secure=False)
         # if mlflow bucket does not exist, create it
         if 'mlflow' not in (bucket.name for bucket in client.list_buckets()):
-            print('Creating S3 bucket ''mlflow''')
+            logger.info('Creating S3 bucket ''mlflow''')
             client.make_bucket("mlflow")
 
     def build_experiment_image(self, path: str = '.'):
-        print('Building experiment image ...')
+        logger.info('Building experiment image ...')
         buildargs = {}
         buildargs['HTTP_PROXY'] = os.getenv('HTTP_PROXY')
         buildargs['HTTPS_PROXY'] = os.getenv('HTTPS_PROXY')
@@ -89,13 +92,13 @@ class Experiment:
         client.images.build(path=path, tag=self.experiment_name, buildargs=buildargs)
 
     def build_project_file(self):
-        print('Building project file')
+        logger.info('Building project file')
         projectfile = ProjectFile(self.config)
         projectfile.generate_yaml()
 
     def run(self, remote: str = None, **kwargs):
         num_retries = 1
-        print('Starting experiment ...')
+        logger.info('Starting experiment ...')
 
         docker_args_default = {'network': "host",
                                'gpus': 'all',
@@ -122,7 +125,7 @@ class Experiment:
 
             except BuildError as error:
                 if attempt <= (num_retries):
-                    print("BuildError -- attempting to build experiment image ...")
+                    logger.info("BuildError -- attempting to build experiment image ...")
                     self.build_experiment_image()
                 else:
                     raise error

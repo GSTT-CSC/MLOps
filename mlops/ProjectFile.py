@@ -3,7 +3,10 @@ ProjectFile
 """
 import yaml
 import datetime
+import logging
 
+logging.basicConfig(format='%(asctime)s %(levelname)s %(name)s %(message)s')
+logger = logging.getLogger('mlops.ProjectFile')
 
 class ProjectFile:
 
