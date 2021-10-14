@@ -1,0 +1,77 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Tests
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    env:
+      MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+      MYSQL_USER:  ${{ secrets.MYSQL_USER }}
+      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+      MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+      MINIO_ROOT_USER: ${{ secrets.MINIO_ROOT_USER }}
+      MINIO_ROOT_PASSWORD: ${{ secrets.MINIO_ROOT_PASSWORD }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Install python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 pytest pytest-cov .
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    - name: start MLOps server
+      run: |
+        docker compose -f mlflow_server/docker-compose.yml up -d --build
+
+    - name: Setup flake8 annotations
+      uses: rbialon/flake8-annotations@v1
+
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+    - name: Test with pytest
+      run: |
+        coverage run -m --source=mlops pytest --junitxml=pytest.xml --cov-report=term-missing:skip-covered --cov=mlops tests/ | tee pytest-coverage.txt
+
+    - name: Pytest coverage comment
+      id: coverageComment
+      uses: MishaKav/pytest-coverage-comment@main
+      with:
+        pytest-coverage-path: ./pytest-coverage.txt
+        junitxml-path: ./pytest.xml
+
+    - name: Create coverage Badge
+      uses: schneegans/dynamic-badges-action@v1.0.0
+      with:
+        auth: ${{ secrets.PYTEST_COVERAGE_COMMENT }}
+        gistID: ba102d5f3e592fcd50451c2eff8a803d
+        filename: mlops_pytest-coverage-comment.json
+        label: Test coverage
+        message: ${{ steps.coverageComment.outputs.coverage }}
+        color: ${{ steps.coverageComment.outputs.color }}
+        namedLogo: python
+
+    - name: Stop containers
+      if: always()
+      run: docker-compose -f mlflow_server/docker-compose.yml down

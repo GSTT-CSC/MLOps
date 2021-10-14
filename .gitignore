@@ -6,3 +6,11 @@
 /mlruns/
 /config.cfg
 /mlflow_server/dbdata/
+/mlflow_server/.env
+/tests/data/MLProject
+/pytest-coverage.txt
+/.coverage
+/.env
+*.pyc
+pytest.xml
+MLProject
