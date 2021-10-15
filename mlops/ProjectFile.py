@@ -5,7 +5,10 @@ import yaml
 import datetime
 import os
 
+import logging
 
+logging.basicConfig(format='%(asctime)s %(levelname)s %(name)s %(message)s')
+logger = logging.getLogger('mlops.ProjectFile')
 class ProjectFile():
 
     def __init__(self, config, path='.', projectfile_name='MLProject', use_localhost=False):

@@ -5,7 +5,10 @@ import docker
 from minio import Minio
 from mlops.ProjectFile import ProjectFile
 
+import logging
 
+logging.basicConfig(format='%(asctime)s %(levelname)s %(name)s %(message)s')
+logger = logging.getLogger('mlops.Experiment')
 class Experiment:
 
     def __init__(self, config_path='config.cfg', use_localhost=False, verbose=True):
@@ -50,20 +53,20 @@ class Experiment:
 
         if experiment is None:
             exp_id = mlflow.create_experiment(self.experiment_name, artifact_location=self.artifact_path)
-            print('Creating experiment: name: {0} *** ID: {1}'.format(self.experiment_name, exp_id))
+            logger.info('Creating experiment: name: {0} *** ID: {1}'.format(self.experiment_name, exp_id))
         else:
             exp_id = experiment.experiment_id
-            print('Logging to existing experiment: {0} *** ID: {1}'.format(self.experiment_name, exp_id))
+            logger.info('Logging to existing experiment: {0} *** ID: {1}'.format(self.experiment_name, exp_id))
 
         self.experiment_id = exp_id
 
     def print_experiment_info(self):
         experiment = mlflow.get_experiment(self.experiment_id)
-        print("Name: {}".format(experiment.name))
-        print("Experiment_id: {}".format(experiment.experiment_id))
-        print("Artifact Location: {}".format(experiment.artifact_location))
-        print("Tags: {}".format(experiment.tags))
-        print("Lifecycle_stage: {}".format(experiment.lifecycle_stage))
+        logger.info("Name: {}".format(experiment.name))
+        logger.info("Experiment_id: {}".format(experiment.experiment_id))
+        logger.info("Artifact Location: {}".format(experiment.artifact_location))
+        logger.info("Tags: {}".format(experiment.tags))
+        logger.info("Lifecycle_stage: {}".format(experiment.lifecycle_stage))
 
     def configure_minio(self):
         if self.use_localhost:
@@ -77,11 +80,11 @@ class Experiment:
         client = Minio(self.uri_formatted, self.minio_cred['user'], self.minio_cred['password'], secure=False)
         # if mlflow bucket does not exist, create it
         if 'mlflow' not in (bucket.name for bucket in client.list_buckets()):
-            print('Creating S3 bucket ''mlflow''')
+            logger.info('Creating S3 bucket ''mlflow''')
             client.make_bucket("mlflow")
 
     def build_experiment_image(self, path: str = '.'):
-        print('Building experiment image ...')
+        logger.info('Building experiment image ...')
 
         # Collect proxy settings
         build_args = {}
@@ -94,15 +97,15 @@ class Experiment:
                             tag=self.experiment_name,
                             buildargs=build_args,
                             rm=True)
-        print('Built: ' + self.experiment_name + ':latest')
+        logger.info('Built: ' + self.experiment_name + ':latest')
 
     def build_project_file(self, path: str = '.'):
-        print('Building project file')
+        logger.info('Building project file')
         projectfile = ProjectFile(self.config, path=path, use_localhost=self.use_localhost)
         projectfile.generate_yaml()
 
     def run(self, path: str = '.', remote: str = None, **kwargs):
-        print('Starting experiment ...')
+        logger.info('Starting experiment ...')
 
         docker_args_default = {'network': "host",
                                'ipc': 'host',
@@ -112,7 +115,7 @@ class Experiment:
         if not self.use_localhost:
             gpu_params = {'gpus': 'all',
                           'runtime': 'nvidia'}
-            print('Adding docker args: {0}'.format(gpu_params))
+            logger.info('Adding docker args: {0}'.format(gpu_params))
             docker_args_default.update(gpu_params)
 
         # update docker_args_default with values passed by project
@@ -121,11 +124,11 @@ class Experiment:
             kwargs['docker_args'] = docker_args_default
 
         # check image exists and build if not
-        print('checking for existing image')
+        logger.info('checking for existing image')
         client = docker.from_env()
         images = [img['RepoTags'][0] for img in client.api.images()]
         if self.experiment_name + ':latest' not in images:
-            print('No existing image found')
+            logger.info('No existing image found')
             self.build_experiment_image()
 
         mlflow.run(path,
