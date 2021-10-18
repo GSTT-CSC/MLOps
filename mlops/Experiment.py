@@ -70,9 +70,9 @@ class Experiment:
         print("Lifecycle_stage: {}".format(experiment.lifecycle_stage))
 
     def configure_minio(self):
-        uri_formatted = self.config['server']['MLFLOW_S3_ENDPOINT_URL'].replace("http://", "")
-        user = self.config['user']['AWS_ACCESS_KEY_ID']
-        password = self.config['user']['AWS_SECRET_ACCESS_KEY']
+        uri_formatted = os.environ['MLFLOW_S3_ENDPOINT_URL'].replace("http://", "")
+        user = os.environ['AWS_ACCESS_KEY_ID']
+        password = os.environ['AWS_SECRET_ACCESS_KEY']
         client = Minio(uri_formatted, user, password, secure=False)
         # if mlflow bucket does not exist, create it
         if 'mlflow' not in (bucket.name for bucket in client.list_buckets()):
