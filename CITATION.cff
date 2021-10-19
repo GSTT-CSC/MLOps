@@ -1,0 +1,17 @@
+# YAML 1.2
+---
+authors: 
+  -
+    family-names: Jackson
+    given-names: Laurence
+    orcid: "https://orcid.org/0000-0002-5904-8012"
+  -
+    family-names: 
+    given-names: "GSTT Clinical Scientific Computing"
+cff-version: "1.1.0"
+date-released: 2021-09-17
+message: "If you use MLOps in your work, please cite it using these metadata."
+repository-code: "https://github.com/GSTT-CSC/MLOps"
+title: MLOps
+version: "0.2.0"
+...
