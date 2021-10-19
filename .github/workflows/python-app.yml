@@ -4,9 +4,6 @@
 name: Tests
 
 on:
-  push:
-    branches:
-      - '*'
   pull_request:
     branches:
       - '*'
@@ -52,8 +49,9 @@ jobs:
 
     - name: Test with pytest
       run: |
-         pytest --junitxml=pytest.xml --cov-report=term-missing:skip-covered --cov=mlops tests/ | tee pytest-coverage.txt
-#        coverage run -m --source=mlops pytest --junitxml=pytest.xml --cov-report=term-missing:skip-covered --cov=mlops tests/ | tee pytest-coverage.txt
+         set -o pipefail
+         pytest --junitxml=pytest.xml --cov-report=term-missing:skip-covered --cov=mlops tests/ | tee pytest-coverage.txt ; echo $?
+
     - name: Pytest coverage comment
       id: coverageComment
       uses: MishaKav/pytest-coverage-comment@main
