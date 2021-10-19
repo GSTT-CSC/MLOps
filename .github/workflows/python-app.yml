@@ -14,9 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MYSQL_DATABASE: mlflow
-#      MYSQL_USER: user
-#      MYSQL_PASSWORD: password123
-#      MYSQL_ROOT_PASSWORD: passWORD123
       MYSQL_USER: ${{ secrets.MYSQL_USER }}
       MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
       MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}

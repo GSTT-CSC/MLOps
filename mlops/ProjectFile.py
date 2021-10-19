@@ -9,7 +9,7 @@ from mlops.utils.logger import logger
 
 class ProjectFile:
 
-    def __init__(self, config, path='.', projectfile_name='MLProject', use_localhost=False):
+    def __init__(self, config, path='.', projectfile_name='MLproject', use_localhost=False):
         self.config = config
         self.projectfile_name = projectfile_name
         self.project_path = os.path.join(path, projectfile_name)
