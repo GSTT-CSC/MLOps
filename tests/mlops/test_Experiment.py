@@ -37,14 +37,11 @@ class TestExperiment:
         self.experiment.init_experiment()
         assert self.experiment.experiment_id == '2'
 
-    def test_print_experiment_info(self, capsys):
+    def test_print_experiment_info(self, caplog):
         # Check correct information is printed to console
         self.experiment.print_experiment_info()  # Call function.
-        captured = capsys.readouterr()
-        assert captured.out == 'Building project file\nLogging to existing experiment: test_project *** ID: 1\nName: ' \
-                               'test_project\nExperiment_id: 1\nArtifact Location: s3://mlflow\nTags: {}\n' \
-                               'Lifecycle_stage: active\nName: test_project\nExperiment_id: 1\n' \
-                               'Artifact Location: s3://mlflow\nTags: {}\nLifecycle_stage: active\n'
+        assert 'Name: test_project' in caplog.text
+        assert 'Artifact Location: s3://mlflow' in caplog.text
 
     def test_configure_minio(self):
         # check mlflow bucket is created
@@ -56,17 +53,10 @@ class TestExperiment:
         assert 'mlflow' in (bucket.name for bucket in client.list_buckets())
 
     def test_build_project_file(self):
-        if os.path.exists('MLProject'):
-            os.remove('MLProject')
+        if os.path.exists('MLproject'):
+            os.remove('MLproject')
         self.experiment.build_project_file()
-        assert os.path.exists('MLProject')
-
-    def test_run(self, capsys):
-        os.getcwd()
-        self.experiment.build_project_file(path='tests/data/')
-        self.experiment.run(path='tests/data/')
-        captured = capsys.readouterr()
-        assert 'succeeded' in captured.err
+        assert os.path.exists('MLproject')
 
     def test_build_experiment_image(self):
         client = docker.from_env()
@@ -75,3 +65,10 @@ class TestExperiment:
         self.experiment.build_experiment_image(path='tests/data/')
         images_2 = [img['RepoTags'][0] for img in client.api.images()]
         assert self.experiment.experiment_name + ':latest' in images_2
+
+    def test_run(self, capsys):
+        os.getcwd()
+        self.experiment.build_project_file(path='tests/data/')
+        self.experiment.run(path='tests/data/')
+        captured = capsys.readouterr()
+        assert 'succeeded' in captured.err
