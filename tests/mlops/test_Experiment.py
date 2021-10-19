@@ -3,7 +3,6 @@ import configparser
 from minio import Minio
 import os
 import docker
-from mlops.utils.logger import logger
 
 
 class TestExperiment:
@@ -30,6 +29,7 @@ class TestExperiment:
         self.test_config = configparser.ConfigParser()
         self.test_config.read(self.experiment.config_path)
         assert self.experiment.config == self.test_config
+        assert False  # intentionally fail test
 
     def test_init_experiment(self):
         self.experiment.init_experiment()
