@@ -17,8 +17,8 @@ jobs:
       MYSQL_USER: user
       MYSQL_PASSWORD: password123
       MYSQL_ROOT_PASSWORD: passWORD123
-      MINIO_ROOT_USER: minio_user
-      MINIO_ROOT_PASSWORD: MINIO_user_123!
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
 #      MYSQL_DATABASE: mlflow
 #      MYSQL_USER: ${{ secrets.MYSQL_USER }}
 #      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
