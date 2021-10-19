@@ -58,13 +58,6 @@ class TestExperiment:
         self.experiment.build_project_file()
         assert os.path.exists('MLproject')
 
-    def test_run(self, capsys):
-        os.getcwd()
-        self.experiment.build_project_file(path='tests/data/')
-        self.experiment.run(path='tests/data/')
-        captured = capsys.readouterr()
-        assert 'succeeded' in captured.err
-
     def test_build_experiment_image(self):
         client = docker.from_env()
         images_1 = [img['RepoTags'][0] for img in client.api.images()]
@@ -72,3 +65,10 @@ class TestExperiment:
         self.experiment.build_experiment_image(path='tests/data/')
         images_2 = [img['RepoTags'][0] for img in client.api.images()]
         assert self.experiment.experiment_name + ':latest' in images_2
+
+    def test_run(self, capsys):
+        os.getcwd()
+        self.experiment.build_project_file(path='tests/data/')
+        self.experiment.run(path='tests/data/')
+        captured = capsys.readouterr()
+        assert 'succeeded' in captured.err
