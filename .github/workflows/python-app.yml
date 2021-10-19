@@ -13,12 +13,18 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
-      MYSQL_USER: ${{ secrets.MYSQL_USER }}
-      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-      MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-      MINIO_ROOT_USER: ${{ secrets.MINIO_ROOT_USER }}
-      MINIO_ROOT_PASSWORD: ${{ secrets.MINIO_ROOT_PASSWORD }}
+      MYSQL_DATABASE: mlflow
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password123
+      MYSQL_ROOT_PASSWORD: passWORD123
+      MINIO_ROOT_USER: minio_user
+      MINIO_ROOT_PASSWORD: MINIO_user_123!
+#      MYSQL_DATABASE: mlflow
+#      MYSQL_USER: ${{ secrets.MYSQL_USER }}
+#      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+#      MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+#      MINIO_ROOT_USER: ${{ secrets.MINIO_ROOT_USER }}
+#      MINIO_ROOT_PASSWORD: ${{ secrets.MINIO_ROOT_PASSWORD }}
 
     steps:
     - uses: actions/checkout@v2
