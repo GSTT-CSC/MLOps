@@ -53,10 +53,10 @@ class TestExperiment:
         assert 'mlflow' in (bucket.name for bucket in client.list_buckets())
 
     def test_build_project_file(self):
-        if os.path.exists('MLProject'):
-            os.remove('MLProject')
+        if os.path.exists('MLproject'):
+            os.remove('MLproject')
         self.experiment.build_project_file()
-        assert os.path.exists('MLProject')
+        assert os.path.exists('MLproject')
 
     def test_run(self, capsys):
         os.getcwd()
