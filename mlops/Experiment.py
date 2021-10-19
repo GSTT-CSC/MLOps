@@ -4,11 +4,9 @@ import configparser
 import docker
 from minio import Minio
 from mlops.ProjectFile import ProjectFile
+from mlops.utils.logger import logger
 
-import logging
 
-logging.basicConfig(format='%(asctime)s %(levelname)s %(name)s %(message)s')
-logger = logging.getLogger('mlops.Experiment')
 class Experiment:
 
     def __init__(self, config_path='config.cfg', use_localhost=False, verbose=True):
@@ -30,7 +28,7 @@ class Experiment:
             self.print_experiment_info()
 
     def config_setup(self):
-
+        logger.info('reading config file: {0}'.format(self.config_path))
         self.read_config()
         self.artifact_path = self.config['server']['ARTIFACT_PATH']
         self.experiment_name = self.config['project']['NAME'].lower()

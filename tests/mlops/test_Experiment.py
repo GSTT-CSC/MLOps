@@ -3,6 +3,7 @@ import configparser
 from minio import Minio
 import os
 import docker
+from mlops.utils.logger import logger
 
 
 class TestExperiment:
@@ -37,14 +38,11 @@ class TestExperiment:
         self.experiment.init_experiment()
         assert self.experiment.experiment_id == '2'
 
-    def test_print_experiment_info(self, capsys):
+    def test_print_experiment_info(self, caplog):
         # Check correct information is printed to console
         self.experiment.print_experiment_info()  # Call function.
-        captured = capsys.readouterr()
-        assert captured.out == 'Building project file\nLogging to existing experiment: test_project *** ID: 1\nName: ' \
-                               'test_project\nExperiment_id: 1\nArtifact Location: s3://mlflow\nTags: {}\n' \
-                               'Lifecycle_stage: active\nName: test_project\nExperiment_id: 1\n' \
-                               'Artifact Location: s3://mlflow\nTags: {}\nLifecycle_stage: active\n'
+        assert 'Name: test_project' in caplog.text
+        assert 'Artifact Location: s3://mlflow' in caplog.text
 
     def test_configure_minio(self):
         # check mlflow bucket is created
