@@ -32,6 +32,7 @@ A continuous integration and deployment framework for healthcare AI projects
         <li><a href="#open-source-components">Open source components</a></li>
       </ul>
     </li>
+    <li><a href="#contributing">Contributing</a></li>
     <li>
       <a href="#getting-started-on-local-hardware">Getting Started On Local Hardware</a>
       <ul>
@@ -41,7 +42,6 @@ A continuous integration and deployment framework for healthcare AI projects
     </li>
     <li><a href="#overview">Overview</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
     <li><a href="#contact">Contact</a></li>
    <li><a href="#acknowledgements">Acknowledgements</a></li>
   </ol>
@@ -63,6 +63,18 @@ This project aims to build an effective MLOps framework for the development of A
 * [NGINX](https://www.nginx.com/) Reverse proxy server
 
 It's not essential to have a complete understanding of all of these, but a high-level understanding of [MLflow](https://mlflow.org/) and [DVC](https://dvc.org/) in particular will be useful!
+
+<!-- CONTRIBUTING -->
+## Contributing
+1. Fork or clone the Project
+2. Since all code changes are staged on the `develop` branch before releases you will need to checkout this branch first (`git checkout -b develop`)
+3. Create your Feature Branch off of `develop` (`git checkout -b feature/AmazingFeature`)
+4. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+5. Push to the remote (`git push origin feature/AmazingFeature`)
+6. Open a Pull Request and specifiy that you want to merge your feature branch into the `develop` branch
+
+### Testing
+When contributing, you are _strongly_ encouraged to write tests for any functions or classes you add. Please uses pytest and add your tests to an appropriate location in the  `tests` directory, which also contains some examples to get you started.
 
 <!-- GETTING STARTED  -->
 ## Getting Started On Local Hardware
@@ -155,19 +167,6 @@ Currently, we will focus primarily on the tracking and projects components.
 <!-- ROADMAP -->
 ## Roadmap
 See the [open issues](https://github.com/GSTT-CSC/MLOps/issues) for a list of proposed features (and known issues).
-
-
-<!-- CONTRIBUTING -->
-## Contributing
-1. Fork or clone the Project
-2. Since all code changes are staged on the `develop` branch before releases you will need to checkout this branch first (`git checkout -b develop`)
-3. Create your Feature Branch off of `develop` (`git checkout -b feature/AmazingFeature`)
-4. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-5. Push to the remote (`git push origin feature/AmazingFeature`)
-6. Open a Pull Request and specifiy that you want to merge your feature branch into the `develop` branch
-
-### Testing
-When contributing, you are _strongly_ encouraged to write tests for any functions or classes you add. Please uses pytest and add your tests to an appropriate location in the  `tests` directory, which also contains some examples to get you started.
 
 <!-- CONTACT -->
 ## Contact
