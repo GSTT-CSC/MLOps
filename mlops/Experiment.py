@@ -87,12 +87,12 @@ class Experiment:
 
         # Collect proxy settings
         build_args = {}
-        if os.getenv('HTTP_PROXY') is not None or os.getenv('HTTPS_PROXY') is not None:
+        if os.getenv('http_proxy') is not None or os.getenv('https_proxy') is not None:
             build_args = {'http_proxy': os.getenv('http_proxy'),
                           'https_proxy': os.getenv('https_proxy')}
 
         client = docker.from_env()
-        print('Running docker build with: {0}'.format({'path': path,
+        logger.info('Running docker build with: {0}'.format({'path': path,
                                                               'tag': self.experiment_name,
                                                               'buildargs': build_args,
                                                               'rm': 'True'}))
