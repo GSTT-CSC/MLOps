@@ -164,6 +164,13 @@ Currently, we will focus primarily on the tracking and projects components.
 
 * MLflow uses projects to encapsulate AI tools in a reusable and reproducible way, based primarily on conventions. It also enables us to chain together project workflows meaning we are able to automate a great deal of the model development process.
 
+<!-- tools -->
+## Tools
+Additional tools designed to be used with MLOps are located in the tools folder. 
+
+Current tools:
+datatoolkit
+
 <!-- ROADMAP -->
 ## Roadmap
 See the [open issues](https://github.com/GSTT-CSC/MLOps/issues) for a list of proposed features (and known issues).
