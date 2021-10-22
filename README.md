@@ -159,12 +159,15 @@ See the [open issues](https://github.com/GSTT-CSC/MLOps/issues) for a list of pr
 
 <!-- CONTRIBUTING -->
 ## Contributing
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+1. Fork or clone the Project
+2. Since all code changes are staged on the `develop` branch before releases you will need to checkout this branch first (`git checkout -b develop`)
+3. Create your Feature Branch off of `develop` (`git checkout -b feature/AmazingFeature`)
+4. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+5. Push to the remote (`git push origin feature/AmazingFeature`)
+6. Open a Pull Request and specifiy that you want to merge your feature branch into the `develop` branch
 
+### Testing
+When contributing, you are _strongly_ encouraged to write tests for any functions or classes you add. Please uses pytest and add your tests to an appropriate location in the  `tests` directory, which also contains some examples to get you started.
 
 <!-- CONTACT -->
 ## Contact
