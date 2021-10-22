@@ -46,6 +46,7 @@ class Experiment:
         self.config.read(self.config_path)
 
     def init_experiment(self):
+        # logger.info('Creating experiment: name: {0} *** ID: {1}'.format(self.experiment_name, exp_id))
         experiment = mlflow.get_experiment_by_name(self.experiment_name)
         self.configure_minio()
 
@@ -86,11 +87,16 @@ class Experiment:
 
         # Collect proxy settings
         build_args = {}
-        if os.getenv('HTTP_PROXY') is not None or os.getenv('HTTPS_PROXY') is not None:
-            build_args = {'HTTP_PROXY': os.getenv('HTTP_PROXY'),
-                          'HTTPS_PROXY': os.getenv('HTTPS_PROXY')}
+        if os.getenv('http_proxy') is not None or os.getenv('https_proxy') is not None:
+            build_args = {'http_proxy': os.getenv('http_proxy'),
+                          'https_proxy': os.getenv('https_proxy')}
 
         client = docker.from_env()
+        logger.info('Running docker build with: {0}'.format({'path': path,
+                                                              'tag': self.experiment_name,
+                                                              'buildargs': build_args,
+                                                              'rm': 'True'}))
+
         client.images.build(path=path,
                             tag=self.experiment_name,
                             buildargs=build_args,
