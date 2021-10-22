@@ -2,9 +2,9 @@
 <br />
 <p align="center">
 <a href="https://github.com/github_username/repo_name">
-    <img src="https://raw.githubusercontent.com/GSTT-CSC/gstt-csc.github.io/csc-logo-update/assets/transparent-CSC-logo.png" alt="Logo" width="75%">
+    <img src="https://raw.githubusercontent.com/GSTT-CSC/gstt-csc.github.io/main/assets/transparent-CSC-logo-cropped.png" alt="Logo" width="50%">
   </a>
-<h3 align="center">MLOps</h3>
+<h1 align="center">MLOps</h1>
 <p align="center">
 A continuous integration and deployment framework for healthcare AI projects
 <br />
@@ -17,7 +17,10 @@ A continuous integration and deployment framework for healthcare AI projects
 ·
 <a href="https://github.com/GSTT-CSC/MLOps/issues">Request Feature</a>
 </p>
-
+<p align="center">
+  <img src="https://github.com/GSTT-CSC/MLOps/actions/workflows/python-app.yml/badge.svg">
+  <img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/laurencejackson/ba102d5f3e592fcd50451c2eff8a803d/raw/19cbafdaad049423cf20c725944c52a3ed3764e7/mlops_pytest-coverage-comment.json">
+</p>
 
 <!-- TABLE OF CONTENTS -->
 <details open="open">
@@ -29,6 +32,7 @@ A continuous integration and deployment framework for healthcare AI projects
         <li><a href="#open-source-components">Open source components</a></li>
       </ul>
     </li>
+    <li><a href="#contributing">Contributing</a></li>
     <li>
       <a href="#getting-started-on-local-hardware">Getting Started On Local Hardware</a>
       <ul>
@@ -37,9 +41,7 @@ A continuous integration and deployment framework for healthcare AI projects
       </ul>
     </li>
     <li><a href="#overview">Overview</a></li>
-   <li><a href="#bringing-it-all-together-hyper-parameter-tuning">Bringing it all together: hyper-parameter tuning</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
     <li><a href="#contact">Contact</a></li>
    <li><a href="#acknowledgements">Acknowledgements</a></li>
   </ol>
@@ -52,8 +54,6 @@ A continuous integration and deployment framework for healthcare AI projects
 
 This project aims to build an effective MLOps framework for the development of AI models in a healthcare setting. 
 
-If you want to get straight to it with an end to end example, see the [hyper-parameter tuning tutorial]().
-
 ### Open source components
 
 * [DVC](https://dvc.org/) Data version control
@@ -63,6 +63,18 @@ If you want to get straight to it with an end to end example, see the [hyper-par
 * [NGINX](https://www.nginx.com/) Reverse proxy server
 
 It's not essential to have a complete understanding of all of these, but a high-level understanding of [MLflow](https://mlflow.org/) and [DVC](https://dvc.org/) in particular will be useful!
+
+<!-- CONTRIBUTING -->
+## Contributing
+1. Fork or clone the Project
+2. Since all code changes are staged on the `develop` branch before releases you will need to checkout this branch first (`git checkout -b develop`)
+3. Create your Feature Branch off of `develop` (`git checkout -b feature/AmazingFeature`)
+4. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+5. Push to the remote (`git push origin feature/AmazingFeature`)
+6. Open a Pull Request and specifiy that you want to merge your feature branch into the `develop` branch
+
+### Testing
+When contributing, you are _strongly_ encouraged to write tests for any functions or classes you add. Please uses pytest and add your tests to an appropriate location in the  `tests` directory, which also contains some examples to get you started.
 
 <!-- GETTING STARTED  -->
 ## Getting Started On Local Hardware
@@ -104,16 +116,8 @@ MYSQL_DATABASE=mlflow_db
 MYSQL_USER=anyUsername
 MYSQL_PASSWORD=strongpassword1
 MYSQL_ROOT_PASSWORD=strongpassword1root?
-
-void_MLFLOW_S3_ENDPOINT_URL=http://127.0.0.1:9002
-MLFLOW_S3_ENDPOINT_URL=http://s3:9002
-AWS_ACCESS_KEY_ID=customAccessKeyId
-AWS_SECRET_ACCESS_KEY=yourSecretAccessKey
 MINIO_ROOT_USER=minioUsername
 MINIO_ROOT_PASSWORD=minioPassword
-
-MLFLOW_S3_IGNORE_TLS=true
-
 ```
 
 3. Navigate to the cloned code repository and start the server. Any docker images that are not present on your local system will be pulled from dockerhub (which might take a while).
@@ -122,7 +126,7 @@ MLFLOW_S3_IGNORE_TLS=true
    docker-compose up -d --build
    ```
 
-Upon a successful build the server should now be up and running locally, and should show similar output to the screenshot below. By default, the mlflow user interface can be accessed at ```http:/localhost:80``` and minio can be accessed at ```https:/localhost:8002```.
+Upon a successful build the server should now be up and running locally, and should show similar output to the screenshot below. By default, the mlflow user interface can be accessed at ```http:/localhost:85``` and minio can be accessed at ```https:/localhost:8002```.
 
 <img src="https://i.gyazo.com/6edbe20ed712fce43aa5425b1b2f7263.png" alt="Logo" width="75%">
 
@@ -160,14 +164,6 @@ Currently, we will focus primarily on the tracking and projects components.
 
 * MLflow uses projects to encapsulate AI tools in a reusable and reproducible way, based primarily on conventions. It also enables us to chain together project workflows meaning we are able to automate a great deal of the model development process.
 
-<!-- Bringing it all together: hyper-parameter tuning -->
-## Bringing it all together: hyper-parameter tuning
-
-Seeing each of these components independently is useful, but the best way to learn how all these comoponets work together is with an example. Almost all AI models will benefit from the process of hyper parameter tuning, a process which is difficult when attempted without a robust MLOps service. This example demonstrates how using the experiment tracking described above facilitates this process.
-
-For a detailed tutorial describing the end-to-end process of AI development using this framework please see the following blog post.
-
-#### [Hyper-parameter tuning tutorial](https://gstt-csc.github.io/) 
 <!-- tools -->
 ## Tools
 Additional tools designed to be used with MLOps are located in the tools folder. 
@@ -178,16 +174,6 @@ datatoolkit
 <!-- ROADMAP -->
 ## Roadmap
 See the [open issues](https://github.com/GSTT-CSC/MLOps/issues) for a list of proposed features (and known issues).
-
-
-<!-- CONTRIBUTING -->
-## Contributing
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
 
 <!-- CONTACT -->
 ## Contact
