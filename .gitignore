@@ -15,3 +15,6 @@
 pytest.xml
 MLProject
 *.log
+/build/
+/dist/
+/mlops.egg-info/
