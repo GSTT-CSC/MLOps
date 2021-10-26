@@ -19,6 +19,7 @@ class Experiment:
         self.use_localhost = use_localhost
         self.verbose = verbose
 
+        self.check_env()
         self.config_setup()
         self.env_setup()
         self.build_project_file()
@@ -26,6 +27,14 @@ class Experiment:
 
         if self.verbose:
             self.print_experiment_info()
+
+    def check_env(self):
+        required_env_variables = ['MINIO_ROOT_USER',
+                                  'MINIO_ROOT_PASSWORD']
+
+        for var in required_env_variables:
+            if os.getenv(var) is None:
+                raise Exception('{0} is a required environment variable: set with "export {0}=<value>"'.format(var))
 
     def config_setup(self):
         logger.info('reading config file: {0}'.format(self.config_path))
@@ -80,11 +89,6 @@ class Experiment:
         # todo: replace this with either a machine level IAM role or ~/.aws/credentials profile
         os.environ['AWS_ACCESS_KEY_ID'] = os.getenv('MINIO_ROOT_USER')
         os.environ['AWS_SECRET_ACCESS_KEY'] = os.getenv('MINIO_ROOT_PASSWORD')
-
-        for key in self.minio_cred.keys():
-            if self.minio_cred[key] is None:
-                logger.Error("Warning MINIO credential '{0}' is None".format(key))
-                raise Exception('MINIO credentials unavailable - set MINIO_ROOT_USER and MINIO_ROOT_PASSWORD')
 
         client = Minio(self.uri_formatted, self.minio_cred['user'], self.minio_cred['password'], secure=False)
         # if mlflow bucket does not exist, create it
