@@ -19,7 +19,7 @@ class Experiment:
         self.use_localhost = use_localhost
         self.verbose = verbose
 
-        self.check_env()
+        self.check_environment_variables()
         self.config_setup()
         self.env_setup()
         self.build_project_file()
@@ -28,7 +28,8 @@ class Experiment:
         if self.verbose:
             self.print_experiment_info()
 
-    def check_env(self):
+    @staticmethod
+    def check_environment_variables(self):
         required_env_variables = ['MINIO_ROOT_USER',
                                   'MINIO_ROOT_PASSWORD']
 
