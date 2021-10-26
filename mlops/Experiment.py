@@ -76,6 +76,10 @@ class Experiment:
         self.minio_cred = {'user': os.getenv('MINIO_ROOT_USER'),
                            'password': os.getenv('MINIO_ROOT_PASSWORD')}
 
+        for key in self.minio_cred.keys():
+            if self.minio_cred[key] is None:
+                logger.info("Warning MINIO credential '{0}' is None".format(key))
+
         client = Minio(self.uri_formatted, self.minio_cred['user'], self.minio_cred['password'], secure=False)
         # if mlflow bucket does not exist, create it
         if 'mlflow' not in (bucket.name for bucket in client.list_buckets()):

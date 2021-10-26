@@ -18,3 +18,5 @@ MLProject
 /build/
 /dist/
 /mlops.egg-info/
+mlflow_server/.coverage
+mlflow_server/pytest-coverage.txt
