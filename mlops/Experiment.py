@@ -34,6 +34,7 @@ class Experiment:
         self.experiment_name = self.config['project']['NAME'].lower()
 
     def env_setup(self):
+
         if self.use_localhost:
             os.environ['MLFLOW_TRACKING_URI'] = self.config['server']['LOCAL_REMOTE_SERVER_URI']
             os.environ['MLFLOW_S3_ENDPOINT_URL'] = self.config['server']['LOCAL_MLFLOW_S3_ENDPOINT_URL']
@@ -76,9 +77,14 @@ class Experiment:
         self.minio_cred = {'user': os.getenv('MINIO_ROOT_USER'),
                            'password': os.getenv('MINIO_ROOT_PASSWORD')}
 
+        # todo: replace this with either a machine level IAM role or ~/.aws/credentials profile
+        os.environ['AWS_ACCESS_KEY_ID'] = os.getenv('MINIO_ROOT_USER')
+        os.environ['AWS_SECRET_ACCESS_KEY'] = os.getenv('MINIO_ROOT_PASSWORD')
+
         for key in self.minio_cred.keys():
             if self.minio_cred[key] is None:
-                logger.info("Warning MINIO credential '{0}' is None".format(key))
+                logger.Error("Warning MINIO credential '{0}' is None".format(key))
+                raise Exception('MINIO credentials unavailable - set MINIO_ROOT_USER and MINIO_ROOT_PASSWORD')
 
         client = Minio(self.uri_formatted, self.minio_cred['user'], self.minio_cred['password'], secure=False)
         # if mlflow bucket does not exist, create it
