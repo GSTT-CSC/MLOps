@@ -29,7 +29,7 @@ class Experiment:
             self.print_experiment_info()
 
     @staticmethod
-    def check_environment_variables(self):
+    def check_environment_variables():
         required_env_variables = ['MINIO_ROOT_USER',
                                   'MINIO_ROOT_PASSWORD']
 
