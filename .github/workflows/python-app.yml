@@ -37,6 +37,7 @@ jobs:
     - name: start MLOps server
       run: |
         docker compose -f mlflow_server/docker-compose.yml up -d --build
+        sleep 20  # wait while services spin up
         docker ps
 
     - name: Setup flake8 annotations
