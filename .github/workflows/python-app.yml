@@ -19,6 +19,7 @@ jobs:
       MYSQL_ROOT_PASSWORD: sfdghj43256!!
       MINIO_ROOT_USER: fdash
       MINIO_ROOT_PASSWORD: rstjDFH345!
+      MLFLOW_S3_ENDPOINT_URL: http://s3:9002
 
     steps:
     - uses: actions/checkout@v2
