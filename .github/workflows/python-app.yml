@@ -14,11 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MYSQL_DATABASE: mlflow
-      MYSQL_USER: ${{ secrets.MYSQL_USER }}
-      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-      MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-      MINIO_ROOT_USER: ${{ secrets.MINIO_ROOT_USER }}
-      MINIO_ROOT_PASSWORD: ${{ secrets.MINIO_ROOT_PASSWORD }}
+      MYSQL_USER: msdndfvk
+      MYSQL_PASSWORD: adfg3245
+      MYSQL_ROOT_PASSWORD: sfdghj43256!!
+      MINIO_ROOT_USER: fdash
+      MINIO_ROOT_PASSWORD: rstjDFH345!
+      MLFLOW_S3_IGNORE_TLS: true
 
     steps:
     - uses: actions/checkout@v2

@@ -28,7 +28,7 @@ services:
             - frontend
             - backend
         environment:
-            - MLFLOW_S3_ENDPOINT_URL=${MLFLOW_S3_ENDPOINT_URL}
+            - MLFLOW_S3_ENDPOINT_URL=http://s3:9002
             - AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER}
             - AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD}
         command: mlflow server --backend-store-uri mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db:3306/${MYSQL_DATABASE} --default-artifact-root 's3://mlflow' --host 0.0.0.0
