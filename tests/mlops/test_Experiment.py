@@ -10,8 +10,6 @@ class TestExperiment:
     def setup(self):
         # currently only testing localhost code
         use_localhost = True
-        os.environ['MINIO_ROOT_USER'] = 'minioadmin'
-        os.environ['MINIO_ROOT_PASSWORD'] = 'minioadmin'
         self.experiment = Experiment('tests/data/test_config.cfg', use_localhost=use_localhost)
 
     def test_config_setup(self):
