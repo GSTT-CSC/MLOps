@@ -37,6 +37,14 @@ jobs:
     - name: start MLOps server
       run: |
         docker compose -f mlflow_server/docker-compose.yml up -d --build
+
+    - name: Sleep for 30 seconds
+      uses: jakejarvis/wait-action@master
+      with:
+        time: '30s'
+
+    - name: check mlflow server status
+      run: |
         docker ps
 
     - name: Setup flake8 annotations
