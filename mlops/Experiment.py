@@ -145,8 +145,8 @@ class Experiment:
         # check image exists and build if not
         logger.info('checking for existing image')
         client = docker.from_env()
-        images = [img['RepoTags'][0] for img in client.api.images()]
-        if self.experiment_name + ':latest' not in images:
+        images = [str(img['RepoTags']) for img in client.api.images()]
+        if any([(self.experiment_name + ':latest') in item for item in images]):
             logger.info('No existing image found')
             self.build_experiment_image(path=path)
 
