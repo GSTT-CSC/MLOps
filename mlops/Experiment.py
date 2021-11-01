@@ -143,12 +143,15 @@ class Experiment:
             kwargs['docker_args'] = docker_args_default
 
         # check image exists and build if not
-        logger.info('checking for existing image')
+        logger.info('Checking for existing image')
         client = docker.from_env()
         images = [str(img['RepoTags']) for img in client.api.images()]
-        if any([(self.experiment_name + ':latest') in item for item in images]):
+        if all([(self.experiment_name + ':latest') not in item for item in images]):
             logger.info('No existing image found')
             self.build_experiment_image(path=path)
+        else:
+            logger.info('Found existing project image')
+
 
         mlflow.run(path,
                    experiment_id=self.experiment_id,
