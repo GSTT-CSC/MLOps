@@ -27,7 +27,6 @@ services:
         container_name: mlflow_s3
         expose:
             - "9002"
-            - "9001"
         command: server /data --address ':9002'
         networks:
             - frontend
@@ -42,10 +41,10 @@ services:
         restart: always
         image: mysql/mysql-server:5.7.28
         container_name: mlflow_db
-        networks:
-            - backend
         expose:
             - "3306"
+        networks:
+            - backend
         environment:
             - MYSQL_DATABASE=${MYSQL_DATABASE}
             - MYSQL_USER=${MYSQL_USER}
@@ -68,7 +67,7 @@ services:
             - MLFLOW_S3_ENDPOINT_URL=http://minio:9002
             - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
             - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-        command: mlflow server --backend-store-uri mysql+pymysql://${MYSQL_USER}:${MYSQL_ROOT_PASSWORD}@db:3306/${MYSQL_DATABASE} --default-artifact-root mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db:3306/${MYSQL_DATABASE} --host 0.0.0.0
+        command: mlflow server --backend-store-uri mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db:3306/${MYSQL_DATABASE} --default-artifact-root 's3://mlflow' --host 0.0.0.0
 
 
 networks:
