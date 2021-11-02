@@ -13,7 +13,7 @@ services:
             - MINIO_ROOT_USER=${AWS_ACCESS_KEY_ID}
             - MINIO_ROOT_PASSWORD=${AWS_SECRET_ACCESS_KEY}
         volumes:
-            - minio_data:/data
+            - ./minio_data:/data
 
     mc:
         image: minio/mc:RELEASE.2021-10-07T04-19-58Z
@@ -42,7 +42,7 @@ services:
             - MYSQL_PASSWORD=${MYSQL_PASSWORD}
             - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
         volumes:
-            - dbdata:/var/lib/mysql
+            - ./dbdata:/var/lib/mysql
 
     web:
         restart: always
