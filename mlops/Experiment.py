@@ -152,6 +152,8 @@ class Experiment:
         else:
             logger.info('Found existing project image')
 
+        artifact_uri = mlflow.get_artifact_uri()
+        print("Artifact uri: {}".format(artifact_uri))
 
         mlflow.run(path,
                    experiment_id=self.experiment_id,
