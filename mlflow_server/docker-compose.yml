@@ -31,22 +31,6 @@ services:
         volumes:
             - minio_data:/data
 
-#    db:
-#        restart: always
-#        image: mysql/mysql-server:5.7.28
-#        container_name: mlflow_db
-#        expose:
-#            - "3306"
-#        networks:
-#            - backend
-#        environment:
-#            - MYSQL_DATABASE=${MYSQL_DATABASE}
-#            - MYSQL_USER=${MYSQL_USER}
-#            - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-#            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-#        volumes:
-#            - ./data/dbdata:/var/lib/mysql
-
     db:
         image: postgres:13.1
         networks:
@@ -78,10 +62,7 @@ services:
             - MLFLOW_S3_ENDPOINT_URL=http://minio:9002
             - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
             - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-            - MINIO_ROOT_USER=${AWS_ACCESS_KEY_ID}
-            - MINIO_ROOT_PASSWORD=${AWS_SECRET_ACCESS_KEY}
-#        command: mlflow server --backend-store-uri mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db:3306/${MYSQL_DATABASE} --default-artifact-root 's3://mlflow' --host 0.0.0.0
-        command: mlflow server --backend-store-uri postgresql+psycopg2://mlflow:password@db:5432/mlflowdb --default-artifact-root 's3://mlflow' --host 0.0.0.0
+        command: mlflow server --backend-store-uri postgresql+psycopg2://mlflow:password@db:5432/mlflowdb --default-artifact-root 's3://mlflow/' --host 0.0.0.0
 
 volumes:
     dbdata_pg:
