@@ -64,7 +64,7 @@ services:
         expose:
             - "5432"
         volumes:
-            - dbdata_pg/dbdata:/var/lib/postgresql/data
+            - dbdata_pg:/var/lib/postgresql/data
 
     web:
         restart: always
