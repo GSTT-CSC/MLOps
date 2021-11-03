@@ -61,7 +61,7 @@ services:
         expose:
             - "5000"
         environment:
-            - MLFLOW_S3_ENDPOINT_URL=http://minio:9002
+            - MLFLOW_S3_ENDPOINT_URL=http://nginx:8002
             - MINIO_ROOT_USER=${AWS_ACCESS_KEY_ID}
             - MINIO_ROOT_PASSWORD=${AWS_SECRET_ACCESS_KEY}
             - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
