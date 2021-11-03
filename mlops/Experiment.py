@@ -67,6 +67,8 @@ class Experiment:
             exp_id = experiment.experiment_id
             logger.info('Logging to existing experiment: {0} *** ID: {1}'.format(self.experiment_name, exp_id))
 
+        logger.info('Setting trakcing URI to: {0} '.format(os.environ['MLFLOW_TRACKING_URI']))
+        mlflow.set_tracking_uri(os.environ['MLFLOW_TRACKING_URI'])
         logger.info('Setting experiment to: {0} '.format(self.experiment_name))
         mlflow.set_experiment(self.experiment_name)
         self.configure_minio()
