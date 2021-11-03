@@ -20,10 +20,7 @@ mlflow.set_experiment(experiment_name)
 with mlflow.start_run() as run:
     mlflow.log_metric("test", 0)
 
-
-with mlflow.start_run() as run:
     artifact_uri = mlflow.get_artifact_uri()
     print("Artifact uri: {}".format(artifact_uri))
-    mlflow.log_artifact("/home/hnadmin/MLOps/mlflow_server/test_mlflow.py")
 
-mlflow.end_run()
+    mlflow.log_artifact("/home/hnadmin/MLOps/mlflow_server/test_mlflow.py")
