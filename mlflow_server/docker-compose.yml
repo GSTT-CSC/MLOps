@@ -28,6 +28,8 @@ services:
         environment:
             - MINIO_ROOT_USER=${AWS_ACCESS_KEY_ID}
             - MINIO_ROOT_PASSWORD=${AWS_SECRET_ACCESS_KEY}
+            - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+            - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
         volumes:
             - minio_data:/data
 
@@ -60,8 +62,11 @@ services:
             - "5000"
         environment:
             - MLFLOW_S3_ENDPOINT_URL=http://minio:9002
+            - MINIO_ROOT_USER=${AWS_ACCESS_KEY_ID}
+            - MINIO_ROOT_PASSWORD=${AWS_SECRET_ACCESS_KEY}
             - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-            - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+            - MLFLOW_S3_ENDPOINT_URL=${MLFLOW_S3_ENDPOINT_URL}
+            - MLFLOW_S3_IGNORE_TLS=${MLFLOW_S3_IGNORE_TLS}
         command: mlflow server --backend-store-uri postgresql+psycopg2://mlflow:password@db:5432/mlflowdb --default-artifact-root 's3://mlflow/' --host 0.0.0.0
 
 volumes:
