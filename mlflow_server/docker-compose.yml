@@ -61,7 +61,7 @@ services:
         expose:
             - "5000"
         environment:
-            - MLFLOW_S3_ENDPOINT_URL=http://nginx:8002
+            - MLFLOW_S3_ENDPOINT_URL=http://minio:9002
             - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
             - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
             - MLFLOW_S3_IGNORE_TLS=${MLFLOW_S3_IGNORE_TLS}
