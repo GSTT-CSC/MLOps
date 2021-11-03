@@ -35,23 +35,34 @@ services:
             - MINIO_ROOT_USER=${AWS_ACCESS_KEY_ID}
             - MINIO_ROOT_PASSWORD=${AWS_SECRET_ACCESS_KEY}
         volumes:
-            - ./data/minio_data:/data
+            - minio_data:/data
 
+#    db:
+#        restart: always
+#        image: mysql/mysql-server:5.7.28
+#        container_name: mlflow_db
+#        expose:
+#            - "3306"
+#        networks:
+#            - backend
+#        environment:
+#            - MYSQL_DATABASE=${MYSQL_DATABASE}
+#            - MYSQL_USER=${MYSQL_USER}
+#            - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+#            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+#        volumes:
+#            - ./data/dbdata:/var/lib/mysql
     db:
-        restart: always
-        image: mysql/mysql-server:5.7.28
-        container_name: mlflow_db
-        expose:
-            - "3306"
-        networks:
-            - backend
+        image: postgres:13.1
         environment:
-            - MYSQL_DATABASE=${MYSQL_DATABASE}
-            - MYSQL_USER=${MYSQL_USER}
-            - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+            POSTGRES_DB: mlflowdb
+            POSTGRES_USER: mlflow
+            POSTGRES_PASSWORD: password
+        restart: always
+        expose:
+            - "5432"
         volumes:
-            - ./data/dbdata:/var/lib/mysql
+            - dbdata_pg/dbdata:/var/lib/postgresql/data
 
     web:
         restart: always
@@ -72,8 +83,12 @@ services:
             - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
             - MINIO_ROOT_USER=${AWS_ACCESS_KEY_ID}
             - MINIO_ROOT_PASSWORD=${AWS_SECRET_ACCESS_KEY}
-        command: mlflow server --backend-store-uri mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db:3306/${MYSQL_DATABASE} --default-artifact-root 's3://mlflow' --host 0.0.0.0
+#        command: mlflow server --backend-store-uri mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db:3306/${MYSQL_DATABASE} --default-artifact-root 's3://mlflow' --host 0.0.0.0
+        command: mlflow server --backend-store-uri postgresql+psycopg2://mlflow:password@mlflow-db:5432/mlflowdb --default-artifact-root 's3://mlflow' --host 0.0.0.0
 
+volumes:
+    dbdata_pg:
+    minio_data:
 
 networks:
     frontend:
