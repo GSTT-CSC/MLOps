@@ -3,7 +3,7 @@ import os
 
 experiment_name = 'test experiment'
 artifact_path = 'http://0.0.0.0:8002'
-mlflow.set_tracking_uri('http://localhost:85')
+mlflow.set_tracking_uri('s3://test')
 
 experiment = mlflow.get_experiment_by_name(experiment_name)
 if experiment is None:
