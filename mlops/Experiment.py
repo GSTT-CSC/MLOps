@@ -59,7 +59,6 @@ class Experiment:
     def init_experiment(self):
         # logger.info('Creating experiment: name: {0} *** ID: {1}'.format(self.experiment_name, exp_id))
         experiment = mlflow.get_experiment_by_name(self.experiment_name)
-        self.configure_minio()
 
         if experiment is None:
             exp_id = mlflow.create_experiment(self.experiment_name, artifact_location=self.artifact_path)
@@ -68,6 +67,8 @@ class Experiment:
             exp_id = experiment.experiment_id
             logger.info('Logging to existing experiment: {0} *** ID: {1}'.format(self.experiment_name, exp_id))
 
+        mlflow.set_experiment(self.experiment_name)
+        self.configure_minio()
         self.experiment_id = exp_id
 
     def print_experiment_info(self):
