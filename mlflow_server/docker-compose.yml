@@ -11,7 +11,6 @@ services:
             - "8002:8002"
         networks:
             - frontend
-            - backend
         depends_on:
             - web
 
@@ -21,7 +20,7 @@ services:
         container_name: mlflow_s3
         expose:
             - "9002"
-        command: server /data --address ':9002'
+        command: server /data --address 'minio:9002'
         networks:
             - frontend
             - backend
