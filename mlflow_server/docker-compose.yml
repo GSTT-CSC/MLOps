@@ -81,10 +81,7 @@ services:
             - MINIO_ROOT_USER=${AWS_ACCESS_KEY_ID}
             - MINIO_ROOT_PASSWORD=${AWS_SECRET_ACCESS_KEY}
 #        command: mlflow server --backend-store-uri mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db:3306/${MYSQL_DATABASE} --default-artifact-root 's3://mlflow' --host 0.0.0.0
-#        command: mlflow server --backend-store-uri postgresql+psycopg2://mlflow:password@db:5432/mlflowdb --default-artifact-root 's3://mlflow' --host 0.0.0.0
-        command: mlflow server --backend-store-uri /mflow_local --default-artifact-root 's3://mlflow' --host 0.0.0.0
-        volumes:
-            -  ./mflow_local:/mflow_local
+        command: mlflow server --backend-store-uri postgresql+psycopg2://mlflow:password@db:5432/mlflowdb --default-artifact-root 's3://mlflow' --host 0.0.0.0
 
 volumes:
     dbdata_pg:
