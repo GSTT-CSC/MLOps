@@ -19,14 +19,16 @@ services:
         image: minio/minio:RELEASE.2021-03-17T02-33-02Z
         container_name: mlflow_s3
         expose:
-            - "9002"
-        command: server /data --address 'minio:9002'
+            - "9000"
+        command: server /data
         networks:
             - frontend
             - backend
         environment:
             - MINIO_ROOT_USER=${AWS_ACCESS_KEY_ID}
             - MINIO_ROOT_PASSWORD=${AWS_SECRET_ACCESS_KEY}
+            - MINIO_ACCESS_KEY=${AWS_ACCESS_KEY_ID}
+            - MINIO_SECRET_KEY=${AWS_SECRET_ACCESS_KEY}
             - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
             - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
         volumes:
@@ -60,7 +62,7 @@ services:
         expose:
             - "5000"
         environment:
-            - MLFLOW_S3_ENDPOINT_URL=http://minio:9002
+            - MLFLOW_S3_ENDPOINT_URL=http://minio:9000
             - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
             - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
             - MLFLOW_S3_IGNORE_TLS=${MLFLOW_S3_IGNORE_TLS}
