@@ -1,19 +1,19 @@
 version: '3.3'
 
 services:
-#    nginx:
-#        restart: always
-#        build: ./nginx
-#        image: mlflow_nginx
-#        container_name: mlflow_nginx
-#        ports:
-#            - "85:85"
-#            - "8002:8002"
-#        networks:
-#            - frontend
-#            - backend
-#        depends_on:
-#            - web
+    nginx:
+        restart: always
+        build: ./nginx
+        image: mlflow_nginx
+        container_name: mlflow_nginx
+        ports:
+            - "85:85"
+            - "8002:8002"
+        networks:
+            - frontend
+            - backend
+        depends_on:
+            - web
 
     minio:
         restart: always
