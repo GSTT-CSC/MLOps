@@ -3,6 +3,7 @@ import configparser
 from minio import Minio
 import os
 import docker
+import pytest
 
 
 class TestExperiment:
@@ -10,9 +11,15 @@ class TestExperiment:
     def setup(self):
         # currently only testing localhost code
         use_localhost = True
-        os.environ['MINIO_ROOT_USER'] = 'minioadmin'
-        os.environ['MINIO_ROOT_PASSWORD'] = 'minioadmin'
         self.experiment = Experiment('tests/data/test_config.cfg', use_localhost=use_localhost)
+
+    def test_check_environment_variables(self):
+        test_var = os.environ['AWS_ACCESS_KEY_ID']
+        del os.environ['AWS_ACCESS_KEY_ID']
+        with pytest.raises(Exception) as e:
+            self.experiment.check_environment_variables()
+        # reset env var
+        os.environ['AWS_ACCESS_KEY_ID'] = test_var
 
     def test_config_setup(self):
         self.experiment.config_setup()

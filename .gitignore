@@ -6,7 +6,7 @@
 /mlruns/
 /config.cfg
 /mlflow_server/dbdata/
-/mlflow_server/.env
+/mlflow_server/.example_env
 /tests/data/MLProject
 /pytest-coverage.txt
 /.coverage
@@ -18,3 +18,8 @@ MLProject
 /build/
 /dist/
 /mlops.egg-info/
+mlflow_server/.coverage
+mlflow_server/pytest-coverage.txt
+/mlops/bin/
+/mlops/include/
+/mlops/lib/
