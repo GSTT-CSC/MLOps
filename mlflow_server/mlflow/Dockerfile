@@ -4,10 +4,6 @@ ENV VIRTUAL_ENV=/opt/venv
 RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
-# Install dependencies:
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-
 # Installing packages
 RUN apt-get update && apt-get -y install libpq-dev gcc
 RUN pip install mlflow[extras]==1.20.2 psycopg2 psycopg2-binary sqlalchemy pymysql boto3
