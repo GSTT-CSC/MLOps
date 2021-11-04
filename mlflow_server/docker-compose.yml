@@ -67,6 +67,7 @@ services:
             - no_proxy=minio,db
         command: mlflow server --backend-store-uri postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB} --default-artifact-root s3://mlflow/ --host 0.0.0.0
 
+# use these docker volumes for testings and development - use bind mounts in production
 volumes:
     dbdata_pg:
     minio_data:
