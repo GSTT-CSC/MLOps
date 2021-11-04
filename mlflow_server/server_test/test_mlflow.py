@@ -1,7 +1,15 @@
+"""
+This script can be used to test the mlflow server has been properly configured. After setting up the server using
+
+docker-compose up -d --build
+
+Running thi script will log a simple experiment to the artifact storage and the tracking server. Check that these are
+available by accessing the UI's for minio (:8002) and mlflow (:85)
+"""
+
 import mlflow
 import os
 import pathlib
-
 
 experiment_name = 'test experiment'
 artifact_path = 's3://mlflow/test'
