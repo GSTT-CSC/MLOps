@@ -3,7 +3,13 @@ This script can be used to test the mlflow server has been properly configured. 
 
 docker-compose up -d --build
 
-Running thi script will log a simple experiment to the artifact storage and the tracking server. Check that these are
+log onto the minio server or use the API to create a bucket called 'mlflow' and set the environment varialbes:
+
+export MLFLOW_TRACKING_URI
+
+python test_mlflow.py
+
+Running this script will log a simple experiment to the artifact storage and the tracking server. Check that these are
 available by accessing the UI's for minio (:8002) and mlflow (:85)
 """
 
@@ -23,9 +29,7 @@ else:
     exp_id = experiment.experiment_id
     print('Logging to existing experiment: {0} *** ID: {1}'.format(experiment_name, exp_id))
 
-mlflow.set_tracking_uri(os.environ['MLFLOW_TRACKING_URI'])
 mlflow.set_experiment(experiment_name)
-
 
 with mlflow.start_run() as run:
     mlflow.log_metric("test", 0)
