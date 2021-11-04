@@ -13,10 +13,9 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      MYSQL_DATABASE: mlflow
-      MYSQL_USER: msdndfvk
-      MYSQL_PASSWORD: adfg3245
-      MYSQL_ROOT_PASSWORD: sfdghj43256!!
+      POSTGRES_DB: mlflow
+      POSTGRES_USER: msdndfvk
+      POSTGRES_PASSWORD: adfg3245
       MINIO_ROOT_USER: fdash
       MINIO_ROOT_PASSWORD: rstjDFH345!
       MLFLOW_S3_IGNORE_TLS: true
