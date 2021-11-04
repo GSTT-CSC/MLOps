@@ -20,6 +20,7 @@ jobs:
       MINIO_ROOT_USER: fdash
       MINIO_ROOT_PASSWORD: rstjDFH345!
       MLFLOW_S3_ENDPOINT_URL: http://s3:9002
+      MLFLOW_S3_IGNORE_TLS: true
 
     steps:
     - uses: actions/checkout@v2
@@ -37,6 +38,14 @@ jobs:
     - name: start MLOps server
       run: |
         docker compose -f mlflow_server/docker-compose.yml up -d --build
+
+    - name: Sleep for 30 seconds
+      uses: jakejarvis/wait-action@master
+      with:
+        time: '30s'
+
+    - name: check mlflow server status
+      run: |
         docker ps
 
     - name: Setup flake8 annotations

@@ -19,6 +19,7 @@ class Experiment:
         self.use_localhost = use_localhost
         self.verbose = verbose
 
+        self.check_environment_variables()
         self.config_setup()
         self.env_setup()
         self.build_project_file()
@@ -27,6 +28,15 @@ class Experiment:
         if self.verbose:
             self.print_experiment_info()
 
+    @staticmethod
+    def check_environment_variables():
+        required_env_variables = ['MINIO_ROOT_USER',
+                                  'MINIO_ROOT_PASSWORD']
+
+        for var in required_env_variables:
+            if os.getenv(var) is None:
+                raise Exception('{0} is a required environment variable: set with "export {0}=<value>"'.format(var))
+
     def config_setup(self):
         logger.info('reading config file: {0}'.format(self.config_path))
         self.read_config()
@@ -34,6 +44,7 @@ class Experiment:
         self.experiment_name = self.config['project']['NAME'].lower()
 
     def env_setup(self):
+
         if self.use_localhost:
             os.environ['MLFLOW_TRACKING_URI'] = self.config['server']['LOCAL_REMOTE_SERVER_URI']
             os.environ['MLFLOW_S3_ENDPOINT_URL'] = self.config['server']['LOCAL_MLFLOW_S3_ENDPOINT_URL']
@@ -75,6 +86,10 @@ class Experiment:
 
         self.minio_cred = {'user': os.getenv('MINIO_ROOT_USER'),
                            'password': os.getenv('MINIO_ROOT_PASSWORD')}
+
+        # todo: replace this with either a machine level IAM role or ~/.aws/credentials profile
+        os.environ['AWS_ACCESS_KEY_ID'] = os.getenv('MINIO_ROOT_USER')
+        os.environ['AWS_SECRET_ACCESS_KEY'] = os.getenv('MINIO_ROOT_PASSWORD')
 
         client = Minio(self.uri_formatted, self.minio_cred['user'], self.minio_cred['password'], secure=False)
         # if mlflow bucket does not exist, create it
@@ -130,8 +145,8 @@ class Experiment:
         # check image exists and build if not
         logger.info('checking for existing image')
         client = docker.from_env()
-        images = [img['RepoTags'][0] for img in client.api.images()]
-        if self.experiment_name + ':latest' not in images:
+        images = [str(img['RepoTags']) for img in client.api.images()]
+        if any([(self.experiment_name + ':latest') in item for item in images]):
             logger.info('No existing image found')
             self.build_experiment_image(path=path)
 
