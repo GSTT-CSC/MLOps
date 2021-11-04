@@ -14,12 +14,12 @@ class TestExperiment:
         self.experiment = Experiment('tests/data/test_config.cfg', use_localhost=use_localhost)
 
     def test_check_environment_variables(self):
-        test_var = os.environ['MINIO_ROOT_PASSWORD']
-        del os.environ['MINIO_ROOT_PASSWORD']
+        test_var = os.environ['AWS_ACCESS_KEY_ID']
+        del os.environ['AWS_ACCESS_KEY_ID']
         with pytest.raises(Exception) as e:
             self.experiment.check_environment_variables()
         # reset env var
-        os.environ['MINIO_ROOT_PASSWORD'] = test_var
+        os.environ['AWS_ACCESS_KEY_ID'] = test_var
 
     def test_config_setup(self):
         self.experiment.config_setup()
