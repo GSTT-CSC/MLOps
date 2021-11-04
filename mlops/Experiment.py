@@ -30,8 +30,8 @@ class Experiment:
 
     @staticmethod
     def check_environment_variables():
-        required_env_variables = ['MINIO_ROOT_USER',
-                                  'MINIO_ROOT_PASSWORD']
+        required_env_variables = ['AWS_ACCESS_KEY_ID',
+                                  'AWS_SECRET_ACCESS_KEY']
 
         for var in required_env_variables:
             if os.getenv(var) is None:
@@ -88,12 +88,12 @@ class Experiment:
         else:
             self.uri_formatted = self.config['server']['MLFLOW_S3_ENDPOINT_URL'].replace("http://", "")
 
-        self.minio_cred = {'user': os.getenv('MINIO_ROOT_USER'),
-                           'password': os.getenv('MINIO_ROOT_PASSWORD')}
+        self.minio_cred = {'user': os.getenv('AWS_ACCESS_KEY_ID'),
+                           'password': os.getenv('AWS_SECRET_ACCESS_KEY')}
 
         # todo: replace this with either a machine level IAM role or ~/.aws/credentials profile
-        os.environ['AWS_ACCESS_KEY_ID'] = os.getenv('MINIO_ROOT_USER')
-        os.environ['AWS_SECRET_ACCESS_KEY'] = os.getenv('MINIO_ROOT_PASSWORD')
+        os.environ['MINIO_ROOT_USER'] = os.getenv('AWS_ACCESS_KEY_ID')
+        os.environ['MINIO_ROOT_PASSWORD'] = os.getenv('AWS_SECRET_ACCESS_KEY')
 
         client = Minio(self.uri_formatted, self.minio_cred['user'], self.minio_cred['password'], secure=False)
         # if mlflow bucket does not exist, create it

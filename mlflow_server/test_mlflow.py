@@ -1,5 +1,7 @@
 import mlflow
 import os
+import pathlib
+
 
 experiment_name = 'test experiment'
 artifact_path = 's3://mlflow/test'
@@ -23,4 +25,4 @@ with mlflow.start_run() as run:
     artifact_uri = mlflow.get_artifact_uri()
     print("Artifact uri: {}".format(artifact_uri))
 
-    mlflow.log_artifact("/home/hnadmin/MLOps/mlflow_server/test_mlflow.py")
+    mlflow.log_artifact(os.path.join(pathlib.Path(__file__).parent.absolute(), 'test_mlflow.py'))
