@@ -37,9 +37,9 @@ services:
         networks:
             - backend
         environment:
-            POSTGRES_DB: mlflowdb
-            POSTGRES_USER: mlflow
-            POSTGRES_PASSWORD: password
+            POSTGRES_DB: ${POSTGRES_DB}
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
         restart: always
         expose:
             - "5432"

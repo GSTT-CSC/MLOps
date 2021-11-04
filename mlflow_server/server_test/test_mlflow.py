@@ -3,9 +3,12 @@ This script can be used to test the mlflow server has been properly configured. 
 
 docker-compose up -d --build
 
-log onto the minio server or use the API to create a bucket called 'mlflow' and set the environment varialbes:
+log onto the minio server or use the API to create a bucket called 'mlflow' and set the AWS credentials and s3 endpoint
+ (e.g.):
 
-export MLFLOW_TRACKING_URI
+export MLFLOW_S3_ENDPOINT_URL=http://0.0.0.0:8002
+export AWS_ACCESS_KEY_ID=minioadmin
+export AWS_SECRET_ACCESS_KEY=minioadmin
 
 python test_mlflow.py
 
