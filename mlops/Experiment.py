@@ -30,8 +30,8 @@ class Experiment:
 
     @staticmethod
     def check_environment_variables():
-        required_env_variables = ['MINIO_ROOT_USER',
-                                  'MINIO_ROOT_PASSWORD']
+        required_env_variables = ['AWS_ACCESS_KEY_ID',
+                                  'AWS_SECRET_ACCESS_KEY']
 
         for var in required_env_variables:
             if os.getenv(var) is None:
@@ -59,7 +59,6 @@ class Experiment:
     def init_experiment(self):
         # logger.info('Creating experiment: name: {0} *** ID: {1}'.format(self.experiment_name, exp_id))
         experiment = mlflow.get_experiment_by_name(self.experiment_name)
-        self.configure_minio()
 
         if experiment is None:
             exp_id = mlflow.create_experiment(self.experiment_name, artifact_location=self.artifact_path)
@@ -68,6 +67,11 @@ class Experiment:
             exp_id = experiment.experiment_id
             logger.info('Logging to existing experiment: {0} *** ID: {1}'.format(self.experiment_name, exp_id))
 
+        logger.info('Setting tracking URI to: {0} '.format(os.environ['MLFLOW_TRACKING_URI']))
+        mlflow.set_tracking_uri(os.environ['MLFLOW_TRACKING_URI'])
+        logger.info('Setting experiment to: {0} '.format(self.experiment_name))
+        mlflow.set_experiment(self.experiment_name)
+        self.configure_minio()
         self.experiment_id = exp_id
 
     def print_experiment_info(self):
@@ -84,12 +88,12 @@ class Experiment:
         else:
             self.uri_formatted = self.config['server']['MLFLOW_S3_ENDPOINT_URL'].replace("http://", "")
 
-        self.minio_cred = {'user': os.getenv('MINIO_ROOT_USER'),
-                           'password': os.getenv('MINIO_ROOT_PASSWORD')}
+        self.minio_cred = {'user': os.getenv('AWS_ACCESS_KEY_ID'),
+                           'password': os.getenv('AWS_SECRET_ACCESS_KEY')}
 
         # todo: replace this with either a machine level IAM role or ~/.aws/credentials profile
-        os.environ['AWS_ACCESS_KEY_ID'] = os.getenv('MINIO_ROOT_USER')
-        os.environ['AWS_SECRET_ACCESS_KEY'] = os.getenv('MINIO_ROOT_PASSWORD')
+        os.environ['MINIO_ROOT_USER'] = os.getenv('AWS_ACCESS_KEY_ID')
+        os.environ['MINIO_ROOT_PASSWORD'] = os.getenv('AWS_SECRET_ACCESS_KEY')
 
         client = Minio(self.uri_formatted, self.minio_cred['user'], self.minio_cred['password'], secure=False)
         # if mlflow bucket does not exist, create it
@@ -143,12 +147,17 @@ class Experiment:
             kwargs['docker_args'] = docker_args_default
 
         # check image exists and build if not
-        logger.info('checking for existing image')
+        logger.info('Checking for existing image')
         client = docker.from_env()
         images = [str(img['RepoTags']) for img in client.api.images()]
-        if any([(self.experiment_name + ':latest') in item for item in images]):
+        if all([(self.experiment_name + ':latest') not in item for item in images]):
             logger.info('No existing image found')
             self.build_experiment_image(path=path)
+        else:
+            logger.info('Found existing project image')
+
+        artifact_uri = mlflow.get_artifact_uri()
+        print("Artifact uri: {}".format(artifact_uri))
 
         mlflow.run(path,
                    experiment_id=self.experiment_id,
