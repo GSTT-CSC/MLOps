@@ -4,12 +4,10 @@
 name: Tests
 
 on:
-  pull_request:
-    branches:
-      - '*'
   push:
     branches:
       - "develop"
+      - "master"
 
 jobs:
   build:
@@ -64,14 +62,8 @@ jobs:
          set -o pipefail
          pytest --junitxml=pytest.xml --cov-report=term-missing:skip-covered --cov=mlops tests/ | tee pytest-coverage.txt ; echo $?
 
-    - name: Pytest coverage comment
-      id: coverageComment
-      uses: MishaKav/pytest-coverage-comment@main
-      with:
-        pytest-coverage-path: ./pytest-coverage.txt
-        junitxml-path: ./pytest.xml
-
-    - name: Create coverage Badge
+    - name: Update coverage Badge
+      if: github.ref == 'refs/heads/master'  # only on master
       uses: schneegans/dynamic-badges-action@v1.0.0
       with:
         auth: ${{ secrets.PYTEST_COVERAGE_COMMENT }}
