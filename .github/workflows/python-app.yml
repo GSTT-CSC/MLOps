@@ -7,19 +7,20 @@ on:
   pull_request:
     branches:
       - '*'
+  push:
+    branches:
+      - "develop"
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
     env:
-      MYSQL_DATABASE: mlflow
-      MYSQL_USER: msdndfvk
-      MYSQL_PASSWORD: adfg3245
-      MYSQL_ROOT_PASSWORD: sfdghj43256!!
-      MINIO_ROOT_USER: fdash
-      MINIO_ROOT_PASSWORD: rstjDFH345!
-      MLFLOW_S3_ENDPOINT_URL: http://s3:9002
+      POSTGRES_DB: mlflow
+      POSTGRES_USER: msdndfvk
+      POSTGRES_PASSWORD: adfg3245
+      AWS_ACCESS_KEY_ID: fdash
+      AWS_SECRET_ACCESS_KEY: rstjDFH345!
       MLFLOW_S3_IGNORE_TLS: true
 
     steps:
@@ -39,7 +40,7 @@ jobs:
       run: |
         docker compose -f mlflow_server/docker-compose.yml up -d --build
 
-    - name: Sleep for 30 seconds
+    - name: Sleep for 30 seconds to allow MLOps server to start
       uses: jakejarvis/wait-action@master
       with:
         time: '30s'
