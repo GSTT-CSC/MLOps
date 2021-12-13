@@ -33,13 +33,12 @@ class Experiment:
     def check_dirty(self):
         logger.debug('Comparing to remote git repository')
         repo = Repo('.')
-
         head = repo.head.ref
         tracking = head.tracking_branch()
         local_commits_ahead_iter = head.commit.iter_items(repo, f'{tracking.path}..{head.path}')
         commits_ahead = sum(1 for _ in local_commits_ahead_iter)
 
-        if repo.is_dirty() or commits_ahead > 0:
+        if repo.is_dirty():
             raise Exception('Repository is dirty. Please commit your changes before running the experiment')
         if commits_ahead > 0:
             raise Exception('Local repository ahead of remote. Please push changes before running the experiment')
