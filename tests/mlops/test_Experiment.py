@@ -13,6 +13,12 @@ class TestExperiment:
         use_localhost = True
         self.experiment = Experiment('tests/data/test_config.cfg', use_localhost=use_localhost)
 
+    def test_check_dirty(self):
+        """
+        Test that the local and remote experiments are the same
+        """
+        assert not self.experiment.check_dirty()
+
     def test_check_environment_variables(self):
         test_var = os.environ['AWS_ACCESS_KEY_ID']
         del os.environ['AWS_ACCESS_KEY_ID']

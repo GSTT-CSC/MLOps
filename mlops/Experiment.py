@@ -5,6 +5,7 @@ import docker
 from minio import Minio
 from mlops.ProjectFile import ProjectFile
 from mlops.utils.logger import logger
+from git import Repo
 
 
 class Experiment:
@@ -19,6 +20,7 @@ class Experiment:
         self.use_localhost = use_localhost
         self.verbose = verbose
 
+        self.check_dirty()
         self.check_environment_variables()
         self.config_setup()
         self.env_setup()
@@ -27,6 +29,25 @@ class Experiment:
 
         if self.verbose:
             self.print_experiment_info()
+
+    def check_dirty(self):
+        logger.debug('Comparing to remote git repository')
+        repo = Repo('.')
+
+        head = repo.head.ref
+        tracking = head.tracking_branch()
+        local_commits_ahead_iter = head.commit.iter_items(repo, f'{tracking.path}..{head.path}')
+        commits_ahead = sum(1 for _ in local_commits_ahead_iter)
+
+        if repo.is_dirty() or commits_ahead > 0:
+            raise Exception('Repository is dirty. Please commit your changes before running the experiment')
+        if commits_ahead > 0:
+            raise Exception('Local repository ahead of remote. Please push changes before running the experiment')
+
+        if not repo.is_dirty() and commits_ahead == 0:
+            return False
+        else:
+            raise Exception('Please synchronise local and remote code versions before running the experiment')
 
     @staticmethod
     def check_environment_variables():
