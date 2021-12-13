@@ -10,7 +10,7 @@ from git import Repo
 
 class Experiment:
 
-    def __init__(self, config_path='config.cfg', use_localhost=False, verbose=True):
+    def __init__(self, config_path='config.cfg', project_path='.', use_localhost=False, verbose=True):
 
         self.config = None
         self.artifact_path = None
@@ -18,6 +18,7 @@ class Experiment:
         self.experiment_id = None
         self.config_path = config_path
         self.use_localhost = use_localhost
+        self.project_path = project_path
         self.verbose = verbose
 
         self.check_dirty()
@@ -32,7 +33,7 @@ class Experiment:
 
     def check_dirty(self):
         logger.debug('Comparing to remote git repository')
-        repo = Repo('.')
+        repo = Repo(self.project_path)
         head = repo.head.ref
         tracking = head.tracking_branch()
         local_commits_ahead_iter = head.commit.iter_items(repo, f'{tracking.path}..{head.path}')
@@ -131,12 +132,12 @@ class Experiment:
                           'https_proxy': os.getenv('https_proxy')}
 
         client = docker.from_env()
-        logger.info('Running docker build with: {0}'.format({'path': path,
+        logger.info('Running docker build with: {0}'.format({'path': self.project_path,
                                                               'tag': self.experiment_name,
                                                               'buildargs': build_args,
                                                               'rm': 'True'}))
 
-        client.images.build(path=path,
+        client.images.build(path=self.project_path,
                             tag=self.experiment_name,
                             buildargs=build_args,
                             rm=True)
@@ -144,7 +145,7 @@ class Experiment:
 
     def build_project_file(self, path: str = '.'):
         logger.info('Building project file')
-        projectfile = ProjectFile(self.config, path=path, use_localhost=self.use_localhost)
+        projectfile = ProjectFile(self.config, path=self.project_path, use_localhost=self.use_localhost)
         projectfile.generate_yaml()
 
     def run(self, path: str = '.', remote: str = None, **kwargs):
@@ -172,14 +173,14 @@ class Experiment:
         images = [str(img['RepoTags']) for img in client.api.images()]
         if all([(self.experiment_name + ':latest') not in item for item in images]):
             logger.info('No existing image found')
-            self.build_experiment_image(path=path)
+            self.build_experiment_image(path=self.project_path)
         else:
             logger.info('Found existing project image')
 
         artifact_uri = mlflow.get_artifact_uri()
         print("Artifact uri: {}".format(artifact_uri))
 
-        mlflow.run(path,
+        mlflow.run(self.project_path,
                    experiment_id=self.experiment_id,
                    use_conda=False,
                    **kwargs)
