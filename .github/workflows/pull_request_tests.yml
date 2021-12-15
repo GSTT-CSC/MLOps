@@ -21,8 +21,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:  # required for GitPython checks https://github.com/actions/checkout/issues/124
-#        fetch-depth: 0
-        ref: ${{ github.event.pull_request.head.ref }}
+        fetch-depth: 0
+#        ref: ${{ github.event.pull_request.head.ref }}
 
     - name: Set up Python 3.8
       uses: actions/setup-python@v2
