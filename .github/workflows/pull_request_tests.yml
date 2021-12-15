@@ -33,8 +33,9 @@ jobs:
       run: |
         cd tests/data
         git init
-        git commit . -m "initial commit"
-
+        git add .
+        git commit -m "Initial commit"
+        
     - name: print dir
       run: |
         sudo apt-get install -y tree
