@@ -39,7 +39,7 @@ jobs:
         git add .
         git commit -m "Initial commit"
         git init --bare origin_test
-        git remote add origin_test origin_test.git
+        git remote add origin_test origin_test
         git remote -v
         git push -u origin_test main
 
