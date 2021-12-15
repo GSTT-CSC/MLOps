@@ -22,13 +22,17 @@ jobs:
     - uses: actions/checkout@v2
       with:  # required for GitPython checks https://github.com/actions/checkout/issues/124
         fetch-depth: 0
-        ref: ${{ github.event.pull_request.head.sha }}
-#        ref: ${{ github.event.pull_request.head.ref }}
+        ref: ${{ github.event.pull_request.head.ref }}
 
     - name: Set up Python 3.8
       uses: actions/setup-python@v2
       with:
         python-version: 3.8
+
+    - name: print dir
+      run: |
+        apt-get install tree
+        tree
 
     - name: Install python dependencies
       run: |
