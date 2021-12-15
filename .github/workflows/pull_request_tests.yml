@@ -39,7 +39,7 @@ jobs:
         git add .
         git commit -m "Initial commit"
         sudo mkdir /test_local
-        git remote add test_local /test_local/.git
+        git remote add test_local /test_local
         git remote -v
         git push -u test_local main
         cd ../..
