@@ -33,9 +33,11 @@ jobs:
       run: |
         cd tests/data
         git init
+        git config --global user.email "you@example.com"
+        git config --global user.name "Your Name"
         git add .
         git commit -m "Initial commit"
-        
+
     - name: print dir
       run: |
         sudo apt-get install -y tree
