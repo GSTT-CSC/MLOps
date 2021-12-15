@@ -29,9 +29,13 @@ jobs:
       with:
         python-version: 3.8
 
+    - name: init git in test dir
+      run: |
+        git init tests/data
+
     - name: print dir
       run: |
-        sudo apt-get install tree
+        sudo apt-get install -y tree
         tree
 
     - name: Install python dependencies
