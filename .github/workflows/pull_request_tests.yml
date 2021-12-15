@@ -30,19 +30,18 @@ jobs:
         python-version: 3.8
 
     - name: create test .git in test project root
+      working-directory: tests/data
       run: |
         git config --global init.defaultBranch main
         git config --global user.email "you@example.com"
         git config --global user.name "Your Name"
-        cd tests/data
         git init
         git add .
         git commit -m "Initial commit"
-        sudo mkdir /test_local
-        git remote add test_local /test_local
+        sudo mkdir test_local
+        git remote add test_local file://test_local
         git remote -v
         git push -u test_local main
-        cd ../..
 
     - name: print dir
       run: |
