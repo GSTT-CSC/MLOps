@@ -69,7 +69,7 @@ class TestExperiment:
         if os.path.exists('MLproject'):
             os.remove('MLproject')
         self.experiment.build_project_file()
-        assert os.path.exists('MLproject')
+        assert os.path.exists(os.path.join(self.experiment.project_path, 'MLproject'))
 
     def test_build_experiment_image(self):
         client = docker.from_env()
