@@ -11,7 +11,7 @@ class TestExperiment:
     def setup(self):
         # currently only testing localhost code
         use_localhost = True
-        self.experiment = Experiment('tests/data/test_config.cfg', use_localhost=use_localhost)
+        self.experiment = Experiment('tests/data/test_config.cfg', project_path='tests/data', use_localhost=use_localhost)
 
     def test_check_dirty(self):
         """
@@ -75,13 +75,13 @@ class TestExperiment:
         client = docker.from_env()
         images_1 = [img['RepoTags'][0] for img in client.api.images()]
         # assert self.experiment.experiment_name + ':latest' not in images_1
-        self.experiment.build_experiment_image(path='tests/data/')
+        self.experiment.build_experiment_image()
         images_2 = [img['RepoTags'][0] for img in client.api.images()]
         assert self.experiment.experiment_name + ':latest' in images_2
 
     def test_run(self, capsys):
         os.getcwd()
-        self.experiment.build_project_file(path='tests/data/')
+        self.experiment.build_project_file()
         self.experiment.run(path='tests/data/')
         captured = capsys.readouterr()
         assert 'succeeded' in captured.err
