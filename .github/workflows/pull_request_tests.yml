@@ -31,16 +31,17 @@ jobs:
 
     - name: create test .git in test project root
       run: |
-        cd tests/data
-        git init
-        git branch -m master main
+        git config --global init.defaultBranch main
         git config --global user.email "you@example.com"
         git config --global user.name "Your Name"
+        cd tests/data
+        git init
         git add .
         git commit -m "Initial commit"
-        git remote add test_remote_repo /test_remote_repo
+        git remote add test_remote_repo file://test_remote_repo
         git remote -v
         git push test_remote_repo main
+        cd ../..
 
     - name: print dir
       run: |
