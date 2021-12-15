@@ -38,8 +38,8 @@ jobs:
         git init
         git add .
         git commit -m "Initial commit"
-        git init --bare $(cwd)/origin_test
-        git remote add origin_test file:////$(cwd)/origin_test.git
+        git init --bare origin_test
+        git remote add origin_test origin_test.git
         git remote -v
         git push -u origin_test main
 
