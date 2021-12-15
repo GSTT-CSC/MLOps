@@ -38,9 +38,10 @@ jobs:
         git init
         git add .
         git commit -m "Initial commit"
-        git remote add test_remote_repo file://test_remote_repo.git
+        sudo mkdir /test_local
+        git remote add test_local /test_local/.git
         git remote -v
-        git push -u test_remote_repo main
+        git push -u test_local main
         cd ../..
 
     - name: print dir
