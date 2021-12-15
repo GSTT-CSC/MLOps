@@ -29,9 +29,11 @@ jobs:
       with:
         python-version: 3.8
 
-    - name: init git in test dir
+    - name: create test .git in test project root
       run: |
-        git init tests/data
+        cd tests/data
+        git init
+        git commit . -m "initial commit"
 
     - name: print dir
       run: |
