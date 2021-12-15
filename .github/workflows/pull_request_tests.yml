@@ -31,7 +31,7 @@ jobs:
 
     - name: print dir
       run: |
-        apt-get install tree
+        sudo apt-get install tree
         tree
 
     - name: Install python dependencies
