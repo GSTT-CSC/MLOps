@@ -40,7 +40,7 @@ jobs:
         git commit -m "Initial commit"
         git remote add test_remote_repo file://test_remote_repo
         git remote -v
-        git push test_remote_repo main
+#        git push -u test_remote_repo main
         cd ../..
 
     - name: print dir
