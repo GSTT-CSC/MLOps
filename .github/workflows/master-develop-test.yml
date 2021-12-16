@@ -1,13 +1,13 @@
 # This workflow will install Python dependencies, run tests and lint with a single version of Python
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Tests
+name: Tests on production branches
 
 on:
   push:
     branches:
-      - "develop"
-      - "master"
+      - "main"
+      - "release/*"
 
 jobs:
   build:
@@ -23,6 +23,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:  # required for GitPython checks https://github.com/actions/checkout/issues/124
+        fetch-depth: 0
+
     - name: Set up Python 3.8
       uses: actions/setup-python@v2
       with:
@@ -63,7 +66,7 @@ jobs:
          pytest --junitxml=pytest.xml --cov-report=term-missing:skip-covered --cov=mlops tests/ | tee pytest-coverage.txt ; echo $?
 
     - name: Update coverage Badge
-      if: github.ref == 'refs/heads/master'  # only on master
+      if: github.ref == 'refs/heads/main'  # only on main
       uses: schneegans/dynamic-badges-action@v1.0.0
       with:
         auth: ${{ secrets.PYTEST_COVERAGE_COMMENT }}
