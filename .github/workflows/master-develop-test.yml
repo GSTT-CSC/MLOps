@@ -12,7 +12,13 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+        python-version: [ '3.8', '3.10' ]
+
     env:
       POSTGRES_DB: mlflow
       POSTGRES_USER: msdndfvk
@@ -26,10 +32,29 @@ jobs:
       with:  # required for GitPython checks https://github.com/actions/checkout/issues/124
         fetch-depth: 0
 
-    - name: Set up Python 3.8
+    - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
-        python-version: 3.8
+        python-version: ${{ matrix.python-version }}
+
+    - name: create test .git in test project root
+      working-directory: tests/data
+      run: |
+        git config --global init.defaultBranch main
+        git config --global user.email "you@example.com"
+        git config --global user.name "Your Name"
+        git init
+        git add .
+        git commit -m "Initial commit"
+        git init --bare origin_test
+        git remote add origin_test origin_test
+        git remote -v
+        git push -u origin_test main
+
+    - name: print dir
+      run: |
+        sudo apt-get install -y tree
+        tree
 
     - name: Install python dependencies
       run: |
@@ -40,11 +65,6 @@ jobs:
     - name: start MLOps server
       run: |
         docker compose -f mlflow_server/docker-compose.yml up -d --build
-
-    - name: Sleep for 30 seconds to allow MLOps server to start
-      uses: jakejarvis/wait-action@master
-      with:
-        time: '30s'
 
     - name: check mlflow server status
       run: |
