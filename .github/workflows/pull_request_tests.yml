@@ -9,7 +9,13 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+        python-version: [ '3.8', '3.10' ]
+
     env:
       POSTGRES_DB: mlflow
       POSTGRES_USER: msdndfvk
@@ -24,10 +30,10 @@ jobs:
         fetch-depth: 0
         ref: ${{ github.event.pull_request.head.ref }}
 
-    - name: Set up Python 3.8
+    - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
-        python-version: 3.8
+        python-version: ${{ matrix.python-version }}
 
     - name: create test .git in test project root
       working-directory: tests/data
@@ -57,11 +63,6 @@ jobs:
     - name: start MLOps server
       run: |
         docker compose -f mlflow_server/docker-compose.yml up -d --build
-
-    - name: Sleep for 30 seconds to allow MLOps server to start
-      uses: jakejarvis/wait-action@master
-      with:
-        time: '30s'
 
     - name: check mlflow server status
       run: |
