@@ -10,7 +10,7 @@ on:
       - "release/*"
 
 jobs:
-  build:
+  unit_tests:
 
     runs-on: ${{ matrix.os }}
     strategy:
