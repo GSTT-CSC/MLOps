@@ -6,3 +6,5 @@ minio>=7.0.3
 pytest>= 6.2
 colorlog
 fsspec
+monai
+xnat
