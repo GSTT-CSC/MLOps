@@ -10,7 +10,7 @@ from monai.config import KeysCollection
 from mlops.utils.logger import logger
 
 
-class GetXnatTransformd(MapTransform):
+class LoadImageXNATd(MapTransform):
     """
     MapTransform for importing image data from XNAT
     """
@@ -41,10 +41,12 @@ class GetXnatTransformd(MapTransform):
 
                     for scan in experiment.scans.items():
                         with tempfile.TemporaryDirectory() as tmpdirname:
-                            logger.debug('Downloading {project}/{subject}/{experiment}/{scan}'.format(project=project,
-                                                                                                      subject=subject,
-                                                                                                      experiment=experiment,
-                                                                                                      scan=scan))
+                            logger.debug('Downloading {project}/{subject}/{experiment}/{scan}'.
+                                         format(project=project,
+                                                subject=subject,
+                                                experiment=experiment,
+                                                scan=scan))
+
                             experiment.scans[scan[0]].download_dir(tmpdirname)
                             images_path = glob.glob(os.path.join(tmpdirname, '**/*.dcm'), recursive=True)
                             image, meta = self.image_loader()(images_path)

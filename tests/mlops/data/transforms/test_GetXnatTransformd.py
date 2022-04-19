@@ -1,4 +1,4 @@
-from mlops.data.transforms.GetXnatTransformd import GetXnatTransformd
+from mlops.data.transforms.LoadImageXNATd import LoadImageXNATd
 from monai.transforms import LoadImaged, Compose
 from torch.utils.data import DataLoader
 from monai.data import CacheDataset
@@ -20,7 +20,7 @@ class TestXnatTransformd:
 
         self.train_transforms = Compose(
             [
-                GetXnatTransformd(keys=['subject'], xnat_configuration=self.xnat_configuration),
+                LoadImageXNATd(keys=['subject'], xnat_configuration=self.xnat_configuration),
             ]
         )
 
