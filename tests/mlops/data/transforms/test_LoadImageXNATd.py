@@ -75,4 +75,4 @@ class TestLoadImageXNATd:
 
         for i_batch, sample_batched in enumerate(self.loader):
             assert 'test_image' in sample_batched
-            „
+            assert len(sample_batched['test_image']) == self.test_batch_size
