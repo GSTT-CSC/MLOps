@@ -64,7 +64,12 @@ jobs:
       run: |
         docker compose -f mlflow_server/docker-compose.yml up -d --build
 
-    - name: check mlflow server status
+    - name: setup XNAT
+      run: |
+        git clone https://github.com/NrgXnat/xnat-docker-compose.git
+        docker compose -f xnat-docker-compose/docker-compose.yml up -d
+
+    - name: check docker services status
       run: |
         docker ps
 
