@@ -7,7 +7,6 @@ import os
 import glob
 from monai.transforms import MapTransform, LoadImage
 from monai.config import KeysCollection
-from mlops.utils.logger import logger
 
 
 class LoadImageXNATd(MapTransform):
@@ -15,43 +14,48 @@ class LoadImageXNATd(MapTransform):
     MapTransform for importing image data from XNAT
     """
 
-    def __init__(self, keys: KeysCollection, xnat_configuration=None, image_loader=LoadImage):
+    def __init__(self, keys: KeysCollection, actions=None, xnat_configuration=None, image_loader=LoadImage, expected_filetype='.dcm'):
         super().__init__(keys)
         self.image_loader = image_loader
         self.xnat_configuration = xnat_configuration
+        self.actions = actions
+        self.expected_filetype = expected_filetype
 
     def __call__(self, data):
         d = dict(data)
         for key in self.keys:
             if key in data:
 
-                with xnat.connect(server=self.xnat_configuration['server'],
-                                  user=self.xnat_configuration['user'],
-                                  password=self.xnat_configuration['password'], ) as session:
+                for action in self.actions:
+                    """loops over actions in action list, if no action is triggered then raise a warning actions are 
+                    functions that return any of projects, subjects, experiments, scans, or resources XNAT object 
+                    along with a key to be used in the data dictionary"""
 
-                    "XNAT data hierarchy: project/subject/experiment/scan"
-                    project = session.projects[self.xnat_configuration["project"]]
-                    subject = project.subjects[str(d[key])]
+                    with xnat.connect(server=self.xnat_configuration['server'],
+                                      user=self.xnat_configuration['user'],
+                                      password=self.xnat_configuration['password'], ) as session:
 
-                    "Raise exception to >1 experiment. This is not currently supported"
-                    if len(subject.experiments) == 1:
-                        experiment = subject.experiments[0]
-                    else:
-                        raise ValueError("XNAT subject has more than one experiment")
+                        "connect session to subject uri"
+                        subject_obj = session.create_object(d['subject_uri'])
+                        "perform action on subject object"
+                        xnat_obj, image_label = action(subject_obj)
 
-                    for scan in experiment.scans.items():
                         with tempfile.TemporaryDirectory() as tmpdirname:
-                            logger.debug('Downloading {project}/{subject}/{experiment}/{scan}'.
-                                         format(project=project,
-                                                subject=subject,
-                                                experiment=experiment,
-                                                scan=scan))
+                            "download image from XNAT"
+                            session_obj = session.create_object(xnat_obj.uri)
+                            session_obj.download_dir(tmpdirname)
 
-                            experiment.scans[scan[0]].download_dir(tmpdirname)
-                            images_path = glob.glob(os.path.join(tmpdirname, '**/*.dcm'), recursive=True)
-                            image, meta = self.image_loader()(images_path)
+                            images_path = glob.glob(os.path.join(tmpdirname, '**/*' + self.expected_filetype), recursive=True)
 
-                            d['image'] = image
-                            d['meta'] = meta
+                            "find unique directories in list of image paths"
+                            image_dirs = list(set(os.path.dirname(image_path) for image_path in images_path))
 
-                return d
+                            if len(image_dirs) > 1:
+                                raise ValueError(f'More than one image series found in {images_path}')
+
+                            image, meta = self.image_loader()(image_dirs[0])
+
+                            d[image_label] = image
+                            d[image_label + '_meta'] = meta
+
+            return d
