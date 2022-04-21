@@ -213,6 +213,7 @@ def fetch_sag_t2_tse(subject_data: SubjectData = None) -> (ImageScanData, str):
 ```
 
 In this example, the `fetch_sag_t2_tse` function will loop over all experiments available for the subject, then if one of these experiments has 'MR_2' in the label it will loop over all the scans in this experiment until it finds one with 'sag_t2_tse' in the series_description. The uri to this scan is then extracted and returned along with the key it will be stored under in the data dictionary, in this case 'sag_t2_tse'. 
+
 We can now pass this action function to the `LoadImageXNATd` transform. When passing a list of action functions to the `LoadImageXNATd` transform each action function in the list will be performed sequentially. So if multiple datasets are required for each Subject then multiple functions can be used. 
 
 ```python
@@ -236,7 +237,8 @@ train_transforms = Compose(
 dataset = CacheDataset(data=xnat_data_list, transform=train_transforms)
 data_loader = DataLoader(dataset, batch_size=1, shuffle=True, num_workers=0, collate_fn=list_data_collate)
 ```
- 
+
+If further transforms are required they can be added to the `Compose` transform list as usual.
 
 <!-- tools -->
 ## Tools

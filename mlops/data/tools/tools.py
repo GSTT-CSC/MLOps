@@ -10,21 +10,15 @@ def xnat_build_dataset(xnat_configuration, minimal=True):
     e.g.
     [
         {
-        subject_id: '1',
-        experiments:    {
-                        experiment_1: {
-                                        scan_1: {scan_object},
-                                        scan_2: {scan_object}
-                                       },
-                        experiment_2:  {
-                                        scan_1: {scan_object}
-                                      }
-                        },
-        }
-
-        {
-        subject: '2',
-        ...,
+        subjectid: '1',
+        subject_uri: '<unique address to subject in xnat archive>'
+        experiment_1: {
+                        scan_1: {scan_object},
+                        scan_2: {scan_object}
+                       },
+        experiment_2:  {
+                        scan_1: {scan_object}
+                      }
         }
     ]
 
