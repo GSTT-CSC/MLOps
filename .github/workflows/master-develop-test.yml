@@ -69,6 +69,7 @@ jobs:
     - name: setup XNAT
       run: |
         git clone https://github.com/NrgXnat/xnat-docker-compose.git
+        cp default.env .env
         docker compose -f xnat-docker-compose/docker-compose.yml up -d
 
     - name: check docker services status
