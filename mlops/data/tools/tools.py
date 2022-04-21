@@ -31,10 +31,9 @@ def xnat_build_dataset(xnat_configuration, minimal=True):
 
         dataset = []
         for subject in project.subjects:
-            data_series = {}
-            data_series['subject_id'] = subject
-            data_series['subject_uri'] = project.subjects[subject].uri
-            experiment_dict = {}
+
+            data_series = {'subject_id': subject, 'subject_uri': project.subjects[subject].uri}
+
             if not minimal:
                 for experiment in project.subjects[subject].experiments:
                     scan_dict = {}
