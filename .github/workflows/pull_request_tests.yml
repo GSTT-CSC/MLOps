@@ -36,6 +36,10 @@ jobs:
         cp xnat-docker-compose/default.env xnat-docker-compose/.env
         docker compose -f xnat-docker-compose/docker-compose.yml up -d
 
+    - name: Sleep for 5 minutes while xnat starts (REDUCE THIS IF WORKING!)
+      run: sleep 5m
+      shell: bash
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
