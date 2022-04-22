@@ -14,7 +14,7 @@ class TestLoadImageXNATd:
 
     def setup(self):
         self.test_batch_size = 1
-        self.xnat_configuration = {'server': 'http://127.0.0.1',
+        self.xnat_configuration = {'server': 'http://xnat-web',
                                    'user': 'admin',
                                    'password': 'admin',
                                    'project': 'TEST_MLOPS'}
