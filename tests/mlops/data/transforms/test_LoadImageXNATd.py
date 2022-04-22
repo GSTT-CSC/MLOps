@@ -19,19 +19,21 @@ class TestLoadImageXNATd:
                                    'password': 'admin',
                                    'project': 'TEST_MLOPS'}
 
+        self.test_xnat_connection(self.xnat_configuration['server'])
+
         #  create test project and push test data
         with xnat.connect(server=self.xnat_configuration['server'],
                           user=self.xnat_configuration['user'],
                           password=self.xnat_configuration['password'], ) as session:
 
-            xnat_url = self.xnat_configuration['server'] + '/data/projects'
+            xnat_projects_url = self.xnat_configuration['server'] + '/data/projects'
 
             # Set the name of the XML file.
             headers = {'Content-Type': 'text/xml'}
 
             # Open the XML file.
             with open('tests/data/xnat/test_project_setup.xml') as xml:
-                r = requests.post(xnat_url, data=xml, headers=headers,
+                r = requests.post(xnat_projects_url, data=xml, headers=headers,
                                   auth=HTTPBasicAuth(self.xnat_configuration['user'],
                                                      self.xnat_configuration['password']))
 
@@ -44,6 +46,17 @@ class TestLoadImageXNATd:
                 print('Test subject already exists')
 
         self.test_data = xnat_build_dataset(self.xnat_configuration)
+
+    def test_xnat_connection(self, url):
+        try:
+            r = requests.get(url)
+            r.raise_for_status()  # Raises a HTTPError if the status is 4xx, 5xxx
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as e:
+            print(e)
+        except requests.exceptions.HTTPError as e:
+            print(e)
+        else:
+            print("All good!")  # Proceed to do stuff with `r`
 
     def test_create_dataloader_with_transform(self):
 
