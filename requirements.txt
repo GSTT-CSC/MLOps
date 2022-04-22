@@ -8,3 +8,4 @@ colorlog
 fsspec
 monai
 xnat
+GitPython
