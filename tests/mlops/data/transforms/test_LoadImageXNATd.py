@@ -14,12 +14,10 @@ class TestLoadImageXNATd:
 
     def setup(self):
         self.test_batch_size = 1
-        self.xnat_configuration = {'server': 'http://127.0.0.1',
+        self.xnat_configuration = {'server': 'http://localhost:80',
                                    'user': 'admin',
                                    'password': 'admin',
                                    'project': 'TEST_MLOPS'}
-
-        self.test_xnat_connection(self.xnat_configuration['server'])
 
         #  create test project and push test data
         with xnat.connect(server=self.xnat_configuration['server'],
@@ -47,9 +45,9 @@ class TestLoadImageXNATd:
 
         self.test_data = xnat_build_dataset(self.xnat_configuration)
 
-    def test_xnat_connection(self, url):
+    def test_xnat_connection(self):
         try:
-            r = requests.get(url)
+            r = requests.get(self.xnat_configuration['server'])
             r.raise_for_status()  # Raises a HTTPError if the status is 4xx, 5xxx
         except Exception as e:
             raise e
