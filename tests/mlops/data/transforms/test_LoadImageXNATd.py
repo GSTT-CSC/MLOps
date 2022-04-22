@@ -14,7 +14,7 @@ class TestLoadImageXNATd:
 
     def setup(self):
         self.test_batch_size = 1
-        self.xnat_configuration = {'server': 'http://172.17.0.1',
+        self.xnat_configuration = {'server': 'http://127.0.0.1',
                                    'user': 'admin',
                                    'password': 'admin',
                                    'project': 'TEST_MLOPS'}
@@ -51,10 +51,8 @@ class TestLoadImageXNATd:
         try:
             r = requests.get(url)
             r.raise_for_status()  # Raises a HTTPError if the status is 4xx, 5xxx
-        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as e:
-            print(e)
-        except requests.exceptions.HTTPError as e:
-            print(e)
+        except Exception as e:
+            raise e
         else:
             print("All good!")  # Proceed to do stuff with `r`
 
