@@ -30,6 +30,12 @@ jobs:
         fetch-depth: 0
         ref: ${{ github.event.pull_request.head.ref }}
 
+    - name: setup XNAT
+      run: |
+        git clone https://github.com/NrgXnat/xnat-docker-compose.git
+        cp xnat-docker-compose/default.env xnat-docker-compose/.env
+        docker compose -f xnat-docker-compose/docker-compose.yml up -d
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
@@ -63,12 +69,6 @@ jobs:
     - name: start MLOps server
       run: |
         docker compose -f mlflow_server/docker-compose.yml up -d --build
-
-    - name: setup XNAT
-      run: |
-        git clone https://github.com/NrgXnat/xnat-docker-compose.git
-        cp xnat-docker-compose/default.env xnat-docker-compose/.env
-        docker compose -f xnat-docker-compose/docker-compose.yml up -d
 
     - name: check docker services status
       run: |
