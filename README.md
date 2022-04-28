@@ -126,8 +126,8 @@ AWS_ACCESS_KEY_ID=minioUsername
 AWS_SECRET_ACCESS_KEY=minioPassword
 MLFLOW_S3_IGNORE_TLS=true
 POSTGRES_USER=use
-POSTGRESS_PASSWORD=pass
-POSTGRESS_DB=db
+POSTGRES_PASSWORD=pass
+POSTGRES_DB=db
 ```
 
 3. Navigate to the cloned code repository and start the server. Any docker images that are not present on your local system will be pulled from dockerhub (which might take a while).
