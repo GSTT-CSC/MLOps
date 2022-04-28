@@ -9,10 +9,15 @@ from mlops.utils.logger import logger
 
 class ProjectFile:
 
-    def __init__(self, config, path='.', projectfile_name='MLproject', use_localhost=False):
+    def __init__(self, config, path='.', projectfile_name='MLproject', use_localhost=False, clean_projectfile=True):
         self.config = config
         self.projectfile_name = projectfile_name
         self.project_path = os.path.join(path, projectfile_name)
+
+        # Clean projectfile if it exists
+        if clean_projectfile and os.path.exists(self.project_path):
+            logger.debug('Removing existing project file: {0}'.format(self.project_path))
+            os.remove(os.path.join(path, self.projectfile_name))
 
         if use_localhost:
             volume_path = config['project']['LOCAL_VOLUME_MOUNT']

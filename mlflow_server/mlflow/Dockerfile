@@ -6,4 +6,4 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Installing packages
 RUN apt-get update && apt-get -y install libpq-dev gcc
-RUN pip install --upgrade pip && pip install mlflow[extras]==1.20.2 psycopg2 psycopg2-binary sqlalchemy pymysql boto3 torch-model-archiver torchserve mlflow-torchserve
+RUN pip install --upgrade pip && pip install mlflow psycopg2 psycopg2-binary sqlalchemy pymysql boto3 torch-model-archiver torchserve mlflow-torchserve

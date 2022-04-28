@@ -18,7 +18,7 @@ A continuous integration and deployment framework for healthcare AI projects
 <a href="https://github.com/GSTT-CSC/MLOps/issues">Request Feature</a>
 </p>
 <p align="center">
-  <img src="https://github.com/GSTT-CSC/MLOps/actions/workflows/master-develop-test.yml/badge.svg?branch=master">
+  <img src="https://github.com/GSTT-CSC/MLOps/actions/workflows/master-develop-test.yml/badge.svg?branch=main">
   <img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/laurencejackson/ba102d5f3e592fcd50451c2eff8a803d/raw/19cbafdaad049423cf20c725944c52a3ed3764e7/mlops_pytest-coverage-comment.json">
 </p>
 
@@ -152,7 +152,7 @@ a397b4149c5f   minio/minio:RELEASE.2021-03-17T02-33-02Z   "/usr/bin/docker-entâ€
 <!-- Usage -->
 ## Overview
 
-### Components overview
+### Server components overview
 When we ran ```docker-compose up``` we started 4 networked containers, each of which serves a purpose within the MLOps framework.
 1. **NGINX**: The nginx container acts as a reverse proxy to control network traffic.
 2. **MLflow**: The MLflow container hosts our MLflow server instance. This server is responsible for tracking and logging the MLOps events sent to it.
@@ -169,6 +169,76 @@ Currently, we will focus primarily on the tracking and projects components.
 * Tracking refers to tools used to track experiments to record and compare parameters and results. This is done by adding logging snippets to the ML code to record things like hyper-parameters, metrics and artifacts. These entities are then associated with a particular run with a specific git commit. This git commit points to a specific version of the project files. This means that by using MLflow tracking we are able to identifiy the code used to train an AI model and make comparisons following changes to code structure and hyperparameter choices.
 
 * MLflow uses projects to encapsulate AI tools in a reusable and reproducible way, based primarily on conventions. It also enables us to chain together project workflows meaning we are able to automate a great deal of the model development process.
+
+### XNAT data integrations
+Accessing data stored in an XNAT archive is performed through two steps.
+
+#### 1. Create list of data samples
+A list of subjects is extracted from the XNAT archive for the specified project. This is done automatically by the helper function `xnat_build_dataset`. 
+```python
+from mlops.data.tools.tools import xnat_build_dataset
+
+PROJECT_ID = 'my_project'
+xnat_configuration = {'server': XNAT_LOCATION,
+                      'user': XNAT_USER,
+                      'password': XNAT_USER_PASSWORD,
+                      'project': XNAT_PROJECT_ID}
+
+xnat_data_list = xnat_build_dataset(self.xnat_configuration)
+``` 
+Each element in the list `xnat_data_list` is a dictionary with two keys, Where these fields indicated unique references to each subject. 
+```
+{
+    'subject_id': <subject_id>,
+    'subject_uri': <subject_uri>
+}
+```
+#### 2. Download relevant data using LoadImageXNATd and actions
+A MONAI transform `LoadImageXNATd` is used to download the data from XNAT, this transform can be used in place of the conventional `LoadImaged` transform provided by MONAI to access local data.
+
+A worked example is given below to create a valid dataloader containing the sag_t2_tse scans from XNAT where each subject has two experiments
+This first thing that is required is an action function. This is a function that operates on an XNAT SubjectData object and returns the desired ImageScanData object from the archive and the key under which is will be stored in the dataset. For example the function below will extract the 'sag_t2_tse' scans from the archive.
+
+```python
+def fetch_sag_t2_tse(subject_data: SubjectData = None) -> (ImageScanData, str):
+    """
+    Function that identifies and returns the required xnat ImageData object from a xnat SubjectData object
+    along with the 'key' that it will be used to access it.
+    """
+    for exp in subject_data.experiments:
+        if 'MR_2' in subject_data.experiments[exp].label:
+            for scan in subject_data.experiments[exp].scans:
+                if 'sag_t2_tse' in subject_data.experiments[exp].scans[scan].series_description:
+                    return subject_data.experiments[exp].scans[scan], 'sag_t2_tse'
+```
+
+In this example, the `fetch_sag_t2_tse` function will loop over all experiments available for the subject, then if one of these experiments has 'MR_2' in the label it will loop over all the scans in this experiment until it finds one with 'sag_t2_tse' in the series_description. The uri to this scan is then extracted and returned along with the key it will be stored under in the data dictionary, in this case 'sag_t2_tse'. 
+
+We can now pass this action function to the `LoadImageXNATd` transform. When passing a list of action functions to the `LoadImageXNATd` transform each action function in the list will be performed sequentially. So if multiple datasets are required for each Subject then multiple functions can be used. 
+
+```python
+from mlops.data.transforms.LoadImageXNATd import LoadImageXNATd
+from monai.transforms import Compose, ToTensord
+from torch.utils.data import DataLoader
+from monai.data import CacheDataset
+from xnat.mixin import ImageScanData, SubjectData
+from monai.data.utils import list_data_collate
+
+# list of actions to be applied sequentially
+actions = [fetch_sag_t2_tse]
+
+train_transforms = Compose(
+    [
+        LoadImageXNATd(keys=['subject_uri'], actions=actions, xnat_configuration=xnat_configuration),
+        ToTensord(keys=['sag_t2_tse'])
+    ]
+)
+
+dataset = CacheDataset(data=xnat_data_list, transform=train_transforms)
+data_loader = DataLoader(dataset, batch_size=1, shuffle=True, num_workers=0, collate_fn=list_data_collate)
+```
+
+If further transforms are required they can be added to the `Compose` transform list as usual.
 
 <!-- tools -->
 ## Tools

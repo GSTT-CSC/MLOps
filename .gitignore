@@ -23,3 +23,5 @@ mlflow_server/pytest-coverage.txt
 /mlops/bin/
 /mlops/include/
 /mlops/lib/
+!/venv/
+/mlflow_server/.env

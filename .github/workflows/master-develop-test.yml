@@ -1,18 +1,24 @@
 # This workflow will install Python dependencies, run tests and lint with a single version of Python
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Tests
+name: Tests on production branches
 
 on:
   push:
     branches:
-      - "develop"
-      - "master"
+      - "main"
+      - "release/*"
 
 jobs:
-  build:
+  unit_tests:
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+        python-version: [ '3.8', '3.10' ]
+
     env:
       POSTGRES_DB: mlflow
       POSTGRES_USER: msdndfvk
@@ -23,10 +29,38 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.8
+      with:  # required for GitPython checks https://github.com/actions/checkout/issues/124
+        fetch-depth: 0
+
+    - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
-        python-version: 3.8
+        python-version: ${{ matrix.python-version }}
+
+    - name: setup XNAT
+      run: |
+        git clone https://github.com/NrgXnat/xnat-docker-compose.git ../xnat-docker-compose
+        cp ../xnat-docker-compose/default.env ../xnat-docker-compose/.env
+        docker compose -f ../xnat-docker-compose/docker-compose.yml up -d
+
+    - name: create test .git in test project root
+      working-directory: tests/data
+      run: |
+        git config --global init.defaultBranch main
+        git config --global user.email "you@example.com"
+        git config --global user.name "Your Name"
+        git init
+        git add .
+        git commit -m "Initial commit"
+        git init --bare origin_test
+        git remote add origin_test origin_test
+        git remote -v
+        git push -u origin_test main
+
+    - name: print dir
+      run: |
+        sudo apt-get install -y tree
+        tree
 
     - name: Install python dependencies
       run: |
@@ -38,12 +72,13 @@ jobs:
       run: |
         docker compose -f mlflow_server/docker-compose.yml up -d --build
 
-    - name: Sleep for 30 seconds to allow MLOps server to start
-      uses: jakejarvis/wait-action@master
-      with:
-        time: '30s'
+    - name: setup XNAT
+      run: |
+        git clone https://github.com/NrgXnat/xnat-docker-compose.git
+        cp xnat-docker-compose/default.env xnat-docker-compose/.env
+        docker compose -f xnat-docker-compose/docker-compose.yml up -d
 
-    - name: check mlflow server status
+    - name: check docker services status
       run: |
         docker ps
 
@@ -63,7 +98,7 @@ jobs:
          pytest --junitxml=pytest.xml --cov-report=term-missing:skip-covered --cov=mlops tests/ | tee pytest-coverage.txt ; echo $?
 
     - name: Update coverage Badge
-      if: github.ref == 'refs/heads/master'  # only on master
+      if: github.ref == 'refs/heads/main'  # only on main
       uses: schneegans/dynamic-badges-action@v1.0.0
       with:
         auth: ${{ secrets.PYTEST_COVERAGE_COMMENT }}
@@ -76,4 +111,6 @@ jobs:
 
     - name: Stop containers
       if: always()
-      run: docker-compose -f mlflow_server/docker-compose.yml down
+      run:
+        docker-compose -f mlflow_server/docker-compose.yml down
+        docker-compose -f ../xnat-docker-compose/docker-compose.yml down
