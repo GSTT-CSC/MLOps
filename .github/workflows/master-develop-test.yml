@@ -37,6 +37,12 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
+    - name: setup XNAT
+      run: |
+        git clone https://github.com/NrgXnat/xnat-docker-compose.git ../xnat-docker-compose
+        cp ../xnat-docker-compose/default.env ../xnat-docker-compose/.env
+        docker compose -f ../xnat-docker-compose/docker-compose.yml up -d
+
     - name: create test .git in test project root
       working-directory: tests/data
       run: |
@@ -105,4 +111,6 @@ jobs:
 
     - name: Stop containers
       if: always()
-      run: docker-compose -f mlflow_server/docker-compose.yml down
+      run:
+        docker-compose -f mlflow_server/docker-compose.yml down
+        docker-compose -f ../xnat-docker-compose/docker-compose.yml down
