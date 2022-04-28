@@ -1,5 +1,6 @@
 import mlflow
 import os
+import sys
 import configparser
 import docker
 from minio import Minio
@@ -21,7 +22,9 @@ class Experiment:
         self.project_path = project_path
         self.verbose = verbose
 
-        self.check_dirty()
+        if 'pytest' not in sys.modules:
+            self.check_dirty()
+
         self.check_environment_variables()
         self.config_setup()
         self.env_setup()
