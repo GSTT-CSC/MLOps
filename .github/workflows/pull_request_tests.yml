@@ -70,9 +70,9 @@ jobs:
         pip install flake8 pytest pytest-cov .
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-#    - name: start MLOps server
-#      run: |
-#        docker compose -f mlflow_server/docker-compose.yml up -d --build
+    - name: start MLOps server
+      run: |
+        docker compose -f mlflow_server/docker-compose.yml up -d --build
 
     - name: check docker services status
       run: |
