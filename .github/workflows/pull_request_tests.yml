@@ -32,9 +32,9 @@ jobs:
 
     - name: setup XNAT
       run: |
-        git clone https://github.com/NrgXnat/xnat-docker-compose.git
-        cp xnat-docker-compose/default.env xnat-docker-compose/.env
-        docker compose -f xnat-docker-compose/docker-compose.yml up -d
+        git clone https://github.com/NrgXnat/xnat-docker-compose.git ../
+        cp ../xnat-docker-compose/default.env ../xnat-docker-compose/.env
+        docker compose -f ../xnat-docker-compose/docker-compose.yml up -d
 
     - name: Sleep for 2 minutes while xnat starts (REDUCE THIS IF WORKING!)
       run: sleep 2m
