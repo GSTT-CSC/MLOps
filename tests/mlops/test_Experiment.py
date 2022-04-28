@@ -11,7 +11,7 @@ class TestExperiment:
     def setup(self):
         # currently only testing localhost code
         use_localhost = True
-        self.experiment = Experiment('tests/data/test_config.cfg', project_path='.', use_localhost=use_localhost)
+        self.experiment = Experiment('tests/data/test_config.cfg', project_path='tests/data/', use_localhost=use_localhost)
 
     def test_check_dirty(self):
         """
