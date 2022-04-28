@@ -1,5 +1,5 @@
-FROM pytorch/pytorch:1.7.1-cuda11.0-cudnn8-runtime
-RUN apt-get update && apt-get install -y build-essential git ffmpeg libsm6 libxext6
+FROM python:3.9
+RUN apt-get update && apt-get install -y git
 
 # Configure application
 ADD requirements.txt .
