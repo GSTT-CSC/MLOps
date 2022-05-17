@@ -25,3 +25,6 @@ mlflow_server/pytest-coverage.txt
 /mlops/lib/
 !/venv/
 /mlflow_server/.env
+/mlops/mlops.egg-info/
+/mlops/csc_mlops.egg-info/
+/csc_mlops.egg-info/
