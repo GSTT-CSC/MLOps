@@ -1,0 +1,17 @@
+# This action publishes a release to the python package repository.
+
+name: Release package on PyPI
+
+on:
+  release:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Publish a Python distribution to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        user: __token__
+        password: ${{ secrets.PYPI_API_TOKEN }}
