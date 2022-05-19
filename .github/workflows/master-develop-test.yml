@@ -70,6 +70,8 @@ jobs:
 
     - name: start MLOps server
       run: |
+        mkdir -p ~/MLOps_data/mlflow_minio
+        mkdir -p ~/MLOps_data/mlflowdb
         docker compose -f mlflow_server/docker-compose.yml up -d --build
 
     - name: setup XNAT
