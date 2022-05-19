@@ -73,7 +73,7 @@ jobs:
     - name: start MLOps server
       run: |
         mkdir -p ~/MLOps_data/mlflow_minio
-        mkdir -p ~/MLOps_data/mlflowdb
+        mkdir -p ~/MLOps_data/mlflow_db
         docker compose -f mlflow_server/docker-compose.yml up -d --build
 
     - name: check docker services status
