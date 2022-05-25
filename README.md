@@ -1,7 +1,7 @@
 <!-- PROJECT HEADING -->
 <br />
 <p align="center">
-<a href="https://github.com/github_username/repo_name">
+<a href="https://github.com/GSTT-CSC/Project_template">
     <img src="assets/mlops_logo.png" alt="Logo" width="50%">
   </a>
 <p align="center">
