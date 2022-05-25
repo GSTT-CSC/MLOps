@@ -7,7 +7,7 @@
 <p align="center">
 A continuous integration and deployment framework for healthcare AI projects
 <br />
-<a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a>
+<a href="https://pypi.org/project/csc-mlops/"><strong>View on PyPI »</strong></a>
 <br />
 <br />
 <a href="https://github.com/GSTT-CSC/MLOps">View repo</a>
