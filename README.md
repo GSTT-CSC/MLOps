@@ -2,13 +2,12 @@
 <br />
 <p align="center">
 <a href="https://github.com/github_username/repo_name">
-    <img src="https://raw.githubusercontent.com/GSTT-CSC/gstt-csc.github.io/main/assets/transparent-CSC-logo-cropped.png" alt="Logo" width="50%">
+    <img src="assets/mlops_logo.png" alt="Logo" width="50%">
   </a>
-<h1 align="center">MLOps</h1>
 <p align="center">
 A continuous integration and deployment framework for healthcare AI projects
 <br />
-<a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a>
+<a href="https://pypi.org/project/csc-mlops/"><strong>View on PyPI »</strong></a>
 <br />
 <br />
 <a href="https://github.com/GSTT-CSC/MLOps">View repo</a>
