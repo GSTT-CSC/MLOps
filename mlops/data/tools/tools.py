@@ -1,5 +1,5 @@
 import xnat
-
+from mlops.utils.logger import logger
 
 def xnat_build_dataset(xnat_configuration, minimal=True):
     """
@@ -27,6 +27,7 @@ def xnat_build_dataset(xnat_configuration, minimal=True):
                       user=xnat_configuration['user'],
                       password=xnat_configuration['password']) as session:
 
+        logger.info(f"Collecting XNAT project: {xnat_configuration['project']}")
         project = session.projects[xnat_configuration["project"]]
 
         dataset = []
@@ -42,7 +43,7 @@ def xnat_build_dataset(xnat_configuration, minimal=True):
                         scan_dict[project.subjects[subject].experiments[experiment].scans[scan].series_description] = project.subjects[subject].experiments[experiment].scans[scan]
 
                     data_series[project.subjects[subject].experiments[experiment].label] = scan_dict
-
+            logger.debug(f"Adding data series to dataset: {data_series}")
             dataset.append(data_series)
 
     return dataset
