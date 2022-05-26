@@ -26,8 +26,8 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="1.3154409"
-     inkscape:cx="395.68483"
-     inkscape:cy="271.0118"
+     inkscape:cx="392.26392"
+     inkscape:cy="318.90448"
      inkscape:window-width="1496"
      inkscape:window-height="1027"
      inkscape:window-x="0"
@@ -1205,7 +1205,7 @@
      inkscape:groupmode="layer"
      id="layer1">
     <rect
-       style="fill:#ffffff;stroke:none;stroke-width:0.623887;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:none;stroke:none;stroke-width:0.623887;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect14902"
        width="58.901863"
        height="29.086763"
@@ -2468,12 +2468,15 @@
        style="color:#000000;fill:none;stroke-linecap:round;stroke-linejoin:round;-inkscape-stroke:none"
        d="m 117.4043,222.77693 v -4.66128 c 0,-0.94651 -0.7703,-1.7168 -1.7168,-1.7168 H 98.755859 c -0.946497,0 -1.716797,0.77029 -1.716797,1.7168 0.0012,0.79831 0.0021,1.59661 0.0027,2.39492" />
     <rect
-       style="fill:#ffffff;stroke:none;stroke-width:0.623887;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:none;stroke:none;stroke-width:0.623887;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect10479"
        width="58.901863"
        height="29.086763"
        x="42.44532"
-       y="42.632572" />
+       y="42.632572"
+       inkscape:export-filename="/Users/lj16/code/MLOps/assets/mlops_logo.png"
+       inkscape:export-xdpi="551.96893"
+       inkscape:export-ydpi="551.96893" />
     <g
        id="g7777"
        transform="matrix(1.1743095,0,0,1.1743095,6.7843679,-225.75862)"
