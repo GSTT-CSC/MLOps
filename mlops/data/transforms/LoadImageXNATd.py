@@ -7,6 +7,7 @@ import os
 import glob
 from monai.transforms import MapTransform, LoadImage
 from monai.config import KeysCollection
+from mlops.utils.logger import logger
 
 
 class LoadImageXNATd(MapTransform):
@@ -31,6 +32,8 @@ class LoadImageXNATd(MapTransform):
                     functions that return any of projects, subjects, experiments, scans, or resources XNAT object 
                     along with a key to be used in the data dictionary"""
 
+                    logger.debug(f"Running XNAT action: {action}")
+
                     with xnat.connect(server=self.xnat_configuration['server'],
                                       user=self.xnat_configuration['user'],
                                       password=self.xnat_configuration['password'], ) as session:
@@ -52,6 +55,8 @@ class LoadImageXNATd(MapTransform):
 
                             if len(image_dirs) > 1:
                                 raise ValueError(f'More than one image series found in {images_path}')
+
+                            logger.info(f"Downloading image: {image_dirs[0]}")
 
                             image, meta = self.image_loader()(image_dirs[0])
 
