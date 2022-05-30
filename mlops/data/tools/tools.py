@@ -33,7 +33,7 @@ def xnat_build_dataset(xnat_configuration, minimal=True):
         dataset = []
         for subject in project.subjects:
 
-            data_series = {'subject_id': subject, 'subject_uri': project.subjects[subject].uri}
+            data_series = {'subject_id': project.subjects[subject].label, 'subject_uri': project.subjects[subject].uri}
 
             if not minimal:
                 for experiment in project.subjects[subject].experiments:
