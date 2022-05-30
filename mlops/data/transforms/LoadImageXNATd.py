@@ -36,7 +36,7 @@ class LoadImageXNATd(MapTransform):
 
                     with xnat.connect(server=self.xnat_configuration['server'],
                                       user=self.xnat_configuration['user'],
-                                      password=self.xnat_configuration['password'], ) as session:
+                                      password=self.xnat_configuration['password'], verify=bool(os.getenv('MLOPS_SSL'))) as session:
 
                         "connect session to subject uri"
                         subject_obj = session.create_object(d['subject_uri'])
