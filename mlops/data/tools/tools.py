@@ -25,7 +25,7 @@ def xnat_build_dataset(xnat_configuration, minimal=True):
     """
     with xnat.connect(server=xnat_configuration['server'],
                       user=xnat_configuration['user'],
-                      password=xnat_configuration['password']) as session:
+                      password=xnat_configuration['password'], verify=False) as session:
 
         logger.info(f"Collecting XNAT project: {xnat_configuration['project']}")
         project = session.projects[xnat_configuration["project"]]
