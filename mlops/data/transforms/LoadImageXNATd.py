@@ -41,7 +41,11 @@ class LoadImageXNATd(MapTransform):
                         "connect session to subject uri"
                         subject_obj = session.create_object(d['subject_uri'])
                         "perform action on subject object"
-                        xnat_obj, image_label = action(subject_obj)
+                        try:
+                            xnat_obj, image_label = action(subject_obj)
+                        except TypeError:
+                            logger.warn(f'No suitable data found for action {action} and subject {d["subject_uri"]}')
+                            d[image_label] = None
 
                         with tempfile.TemporaryDirectory() as tmpdirname:
                             "download image from XNAT"
