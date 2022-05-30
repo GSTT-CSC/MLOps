@@ -1,7 +1,7 @@
 import os
-
 import xnat
 from mlops.utils.logger import logger
+
 
 def xnat_build_dataset(xnat_configuration, minimal=True):
     """
