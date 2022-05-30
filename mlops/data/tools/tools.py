@@ -1,7 +1,7 @@
 import os
-
 import xnat
 from mlops.utils.logger import logger
+
 
 def xnat_build_dataset(xnat_configuration, minimal=True):
     """
@@ -27,7 +27,8 @@ def xnat_build_dataset(xnat_configuration, minimal=True):
     """
     with xnat.connect(server=xnat_configuration['server'],
                       user=xnat_configuration['user'],
-                      password=xnat_configuration['password'], verify=bool(os.getenv('MLOPS_SSL'))) as session:
+                      password=xnat_configuration['password'],
+                      verify=bool(os.getenv('MLOPS_SSL'))) as session:
 
         logger.info(f"Collecting XNAT project: {xnat_configuration['project']}")
         project = session.projects[xnat_configuration["project"]]
