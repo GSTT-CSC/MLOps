@@ -8,7 +8,7 @@ import glob
 from monai.transforms import MapTransform, LoadImage
 from monai.config import KeysCollection
 from mlops.utils.logger import logger
-
+import time
 
 class LoadImageXNATd(MapTransform):
     """
@@ -41,17 +41,22 @@ class LoadImageXNATd(MapTransform):
                                       verify=self.xnat_configuration['verify'],
                                       ) as session:
 
-                        "connect session to subject uri"
+                        # "connect session to subject uri"
                         subject_obj = session.create_object(d['subject_uri'])
-                        "perform action on subject object"
+                        time.sleep(5)
+                        logger.debug(f"Found XNAT subject: {subject_obj}")
+
+                        # "perform action on subject object"
                         try:
                             xnat_obj = action(subject_obj)
+                            logger.debug(f"Running {action} found XNAT obj: {xnat_obj}")
+                            time.sleep(5)
                         except TypeError:
                             logger.warn(f'No suitable data found for action {action} and subject {d["subject_uri"]}')
                             d[data_label] = None
 
                         if self.validate_data:
-                            if xnat_obj:
+                            if xnat_obj is not None:
                                 d[data_label] = True
                             else:
                                 d[data_label] = False
