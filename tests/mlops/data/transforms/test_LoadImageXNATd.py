@@ -24,7 +24,8 @@ class TestLoadImageXNATd:
         #  create test project and push test data
         with xnat.connect(server=self.xnat_configuration['server'],
                           user=self.xnat_configuration['user'],
-                          password=self.xnat_configuration['password'], ) as session:
+                          password=self.xnat_configuration['password'],
+                          ) as session:
 
             xnat_projects_url = self.xnat_configuration['server'] + '/data/projects'
 
