@@ -51,14 +51,14 @@ class LoadImageXNATd(MapTransform):
                             logger.debug(f"Running {action} found XNAT obj: {xnat_obj}")
                         except TypeError:
                             logger.warn(f'No suitable data found for action {action} and subject {d["subject_uri"]}')
-                            d[data_label] = None
+                            xnat_obj = None
 
                         if self.validate_data:
                             if xnat_obj is not None:
                                 d[data_label] = True
                             else:
                                 d[data_label] = False
-                            return d
+                                return d
 
                         with tempfile.TemporaryDirectory() as tmpdirname:
                             "download image from XNAT"
