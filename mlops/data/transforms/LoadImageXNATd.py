@@ -43,14 +43,12 @@ class LoadImageXNATd(MapTransform):
 
                         # "connect session to subject uri"
                         subject_obj = session.create_object(d['subject_uri'])
-                        time.sleep(5)
                         logger.debug(f"Found XNAT subject: {subject_obj}")
 
                         # "perform action on subject object"
                         try:
                             xnat_obj = action(subject_obj)
                             logger.debug(f"Running {action} found XNAT obj: {xnat_obj}")
-                            time.sleep(5)
                         except TypeError:
                             logger.warn(f'No suitable data found for action {action} and subject {d["subject_uri"]}')
                             d[data_label] = None
