@@ -45,7 +45,7 @@ class LoadImageXNATd(MapTransform):
                         subject_obj = session.create_object(d['subject_uri'])
                         logger.debug(f"Found XNAT subject: {subject_obj}")
 
-                        # "perform action on subject object"
+                        # perform action on subject object
                         try:
                             xnat_obj = action(subject_obj)
                             logger.debug(f"Running {action} found XNAT obj: {xnat_obj}")
@@ -56,6 +56,7 @@ class LoadImageXNATd(MapTransform):
                         if self.validate_data:
                             if xnat_obj is not None:
                                 d[data_label] = True
+                                return d
                             else:
                                 d[data_label] = False
                                 return d
