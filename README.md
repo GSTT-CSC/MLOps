@@ -129,8 +129,29 @@ The csc-mlops package can be installed using pip:
 ```angular2html
 pip install csc-mlops
 ```
+### Experiment 
+The `Experiment` class is the priary interface between the developers project code and the MLOps  processes. By using `Experiment` a number of important processes are automated:
+- Project configuration and registration
+- Communication with the MLOps server
+- Ensures all project code is committed and current with repository
+- Docker image built if it can't be found locally
+- Project logger configured
 
-### XNAT data integrations
+To use the Experiment class the project must be run using a syntax such as:
+
+```python
+from mlops.Experiment import Experiment
+
+config_path = 'config/config.cfg'
+
+exp = Experiment(config_path=config_path)
+exp.run(docker_args={}, entry_point='main')
+```
+
+> When using the project_template this process is performed when executing the `run_project.py` script.
+
+
+### XNAT data handler
 Accessing data stored in an XNAT archive is performed through two steps.
 
 #### 1. Create list of data samples
