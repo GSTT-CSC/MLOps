@@ -148,8 +148,9 @@ exp = Experiment(config_path=config_path)
 exp.run(docker_args={}, entry_point='main')
 ```
 
-> When using the project_template this process is performed when executing the `run_project.py` script.
+> When using the [project template](https://github.com/GSTT-csc/Project_template) this process is performed when executing the `run_project.py` script.
 
+> For more information on how to define the project configuration using a config.cfg file see the [project template](https://github.com/GSTT-csc/Project_template) documentation
 
 ### XNAT data handler
 Accessing data stored in an XNAT archive is performed through two steps.
