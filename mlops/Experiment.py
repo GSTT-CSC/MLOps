@@ -5,14 +5,22 @@ import configparser
 import docker
 from minio import Minio
 from mlops.ProjectFile import ProjectFile
-from mlops.utils.logger import logger
+from mlops.utils.logger import logger, LOG_FILE
 from git import Repo
 
 
 class Experiment:
 
-    def __init__(self, config_path='config.cfg', project_path='.', use_localhost=False, verbose=True):
+    def __init__(self, config_path: str = 'config.cfg', project_path: str = '.', use_localhost: bool = False,
+                 verbose: bool = True):
+        """
+        The Experiment class is the interface through which all projects should be run.
 
+        :param config_path: string path to configuration file
+        :param project_path: string path to project directory
+        :param use_localhost: bool to indicate whether to use the local addresses in the config file
+        :param verbose: verbosity
+        """
         self.config = None
         self.artifact_path = None
         self.experiment_name = None
@@ -34,7 +42,12 @@ class Experiment:
         if self.verbose:
             self.print_experiment_info()
 
-    def check_dirty(self):
+    def check_dirty(self) -> bool:
+        """
+        Checks whether the git repository at self.project_path has any uncommmited changes (is_dirty) or if it has any
+        local commits that are ahead of the remote. If either of these conditions are true  an exception is raised.
+        :return:
+        """
         logger.debug('Comparing to remote git repository')
         repo = Repo(self.project_path)
         head = repo.head.ref
@@ -54,6 +67,12 @@ class Experiment:
 
     @staticmethod
     def check_environment_variables():
+        """
+        Checks that the required environment variables defined by required_env_variables are available.
+
+        Required variables are currently the login credentials for the minio storage.
+        :return:
+        """
         required_env_variables = ['AWS_ACCESS_KEY_ID',
                                   'AWS_SECRET_ACCESS_KEY']
 
@@ -62,13 +81,22 @@ class Experiment:
                 raise Exception('{0} is a required environment variable: set with "export {0}=<value>"'.format(var))
 
     def config_setup(self):
+        """
+        Reads the configuration file and extracts necessary values
+        :return:
+        """
         logger.info('reading config file: {0}'.format(self.config_path))
-        self.read_config()
+        self.config = configparser.ConfigParser()
+        self.config.read(self.config_path)
+
         self.artifact_path = self.config['server']['ARTIFACT_PATH']
         self.experiment_name = self.config['project']['NAME'].lower()
 
     def env_setup(self):
-
+        """
+        Stores the variables required for running mlflow projects with docker in the environemnt
+        :return:
+        """
         if self.use_localhost:
             os.environ['MLFLOW_TRACKING_URI'] = self.config['server']['LOCAL_REMOTE_SERVER_URI']
             os.environ['MLFLOW_S3_ENDPOINT_URL'] = self.config['server']['LOCAL_MLFLOW_S3_ENDPOINT_URL']
@@ -76,12 +104,14 @@ class Experiment:
             os.environ['MLFLOW_TRACKING_URI'] = self.config['server']['REMOTE_SERVER_URI']
             os.environ['MLFLOW_S3_ENDPOINT_URL'] = self.config['server']['MLFLOW_S3_ENDPOINT_URL']
 
-    def read_config(self):
-        self.config = configparser.ConfigParser()
-        self.config.read(self.config_path)
-
     def init_experiment(self):
-        # logger.info('Creating experiment: name: {0} *** ID: {1}'.format(self.experiment_name, exp_id))
+        """
+        Initialises experiment for tracking with mlflow.
+
+        Fetches experiment info from configured mlflow server. If it doesn't exist then one is created.
+        :return:
+        """
+        # Get experiment from mlflow server
         experiment = mlflow.get_experiment_by_name(self.experiment_name)
 
         if experiment is None:
@@ -93,12 +123,18 @@ class Experiment:
 
         logger.info('Setting tracking URI to: {0} '.format(os.environ['MLFLOW_TRACKING_URI']))
         mlflow.set_tracking_uri(os.environ['MLFLOW_TRACKING_URI'])
+
         logger.info('Setting experiment to: {0} '.format(self.experiment_name))
         mlflow.set_experiment(self.experiment_name)
+
         self.configure_minio()
         self.experiment_id = exp_id
 
     def print_experiment_info(self):
+        """
+        Prints basic experiment info to logger
+        :return:
+        """
         experiment = mlflow.get_experiment(self.experiment_id)
         logger.info("Name: {}".format(experiment.name))
         logger.info("Experiment_id: {}".format(experiment.experiment_id))
@@ -107,6 +143,14 @@ class Experiment:
         logger.info("Lifecycle_stage: {}".format(experiment.lifecycle_stage))
 
     def configure_minio(self):
+        """
+        configures the minio artifact storage.
+
+        The moinio auth credentials are fetched from the environmeny and used to create a bucket named "mlflow" for
+        logging mlflow artifacts. If a bucket called mlflow already exists then the existing bucket is used.
+
+        :return:
+        """
         if self.use_localhost:
             self.uri_formatted = self.config['server']['LOCAL_MLFLOW_S3_ENDPOINT_URL'].replace("http://", "")
         else:
@@ -120,12 +164,21 @@ class Experiment:
         os.environ['MINIO_ROOT_PASSWORD'] = os.getenv('AWS_SECRET_ACCESS_KEY')
 
         client = Minio(self.uri_formatted, self.minio_cred['user'], self.minio_cred['password'], secure=False)
-        # if mlflow bucket does not exist, create it
+
         if 'mlflow' not in (bucket.name for bucket in client.list_buckets()):
             logger.info('Creating S3 bucket ''mlflow''')
             client.make_bucket("mlflow")
 
-    def build_experiment_image(self, path: str = '.'):
+    def build_experiment_image(self, path: str = None):
+        """
+        Builds the Dockerfile at location path if parameter is supplied, else uses self.project_path (default)
+
+        Images are tagged using the project name defined in config. If proxy variables exist in the environemnt these
+        are passed to the docker demon as build arguments.
+
+        :param path: optional path to Dockerfile (if not in project_path root)
+        :return:
+        """
         logger.info('Building experiment image ...')
 
         # Collect proxy settings
@@ -135,24 +188,37 @@ class Experiment:
                           'https_proxy': os.getenv('https_proxy')}
 
         client = docker.from_env()
-        logger.info('Running docker build with: {0}'.format({'path': self.project_path,
-                                                              'tag': self.experiment_name,
-                                                              'buildargs': build_args,
-                                                              'rm': 'True'}))
+        logger.info('Running docker build with: {0}'.format({'path': path if path else self.project_path,
+                                                             'tag': self.experiment_name,
+                                                             'buildargs': build_args,
+                                                             'rm': 'True'}))
 
         client.images.build(path=self.project_path,
                             tag=self.experiment_name,
                             buildargs=build_args,
                             rm=True)
-        logger.info('Built: ' + self.experiment_name + ':latest')
+
+        logger.info('Built project image: ' + self.experiment_name + ':latest')
 
     def build_project_file(self, path: str = '.'):
+        """
+        Builds MLProject yaml file used by mlflow to define the project. See the mlops.ProjectFile class for more info.
+        :param path:
+        :return:
+        """
         logger.info('Building project file')
         projectfile = ProjectFile(self.config, path=self.project_path, use_localhost=self.use_localhost)
         projectfile.generate_yaml()
 
-    def run(self, path: str = '.', remote: str = None, **kwargs):
-        logger.info('Starting experiment ...')
+    def run(self, **kwargs):
+        """
+        Runs the mlflow project that has been defined by the MLproject file output by self.build_project_file
+
+        After running the project the logs are stored as an artifact on the mlflow server.
+        :param kwargs:
+        :return:
+        """
+        logger.info(f'Starting experiment: {self.experiment_name}')
 
         docker_args_default = {'network': "host",
                                'ipc': 'host',
@@ -187,3 +253,5 @@ class Experiment:
                    experiment_id=self.experiment_id,
                    use_conda=False,
                    **kwargs)
+
+        mlflow.log_artifact(LOG_FILE)

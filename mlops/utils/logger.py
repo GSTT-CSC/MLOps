@@ -3,7 +3,15 @@ import colorlog
 import sys
 
 
+LOG_FILE: str = 'MLOps_logger.log'
+
+
 def configure_logger():
+    """
+    Defined MLOps logger
+    logs are stored in the file defined by LOG_FILE
+    :return:
+    """
 
     # make log formatters
     stream_formatter = colorlog.ColoredFormatter('%(log_color)s%(asctime)-15s %(levelname).1s '
@@ -14,9 +22,8 @@ def configure_logger():
                                        ' %(message)s',
                                        '%Y-%m-%d %H:%M:%S')
 
-    log_file = 'MLOps_logger.log'
     stream_handler = logging.StreamHandler(sys.stdout)
-    file_handler = logging.FileHandler(log_file)
+    file_handler = logging.FileHandler(LOG_FILE)
 
     # set formatters
     stream_handler.setFormatter(stream_formatter)

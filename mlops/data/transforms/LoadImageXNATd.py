@@ -8,7 +8,7 @@ import glob
 from monai.transforms import MapTransform, LoadImage
 from monai.config import KeysCollection
 from mlops.utils.logger import logger
-import time
+
 
 class LoadImageXNATd(MapTransform):
     """
