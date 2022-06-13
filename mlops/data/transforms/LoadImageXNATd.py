@@ -36,6 +36,10 @@ class LoadImageXNATd(MapTransform):
         Each action function should locate a single image object in XNAT. This image object is then downloaded to a
         temporary directory and loaded into memory as the value defined by key set by the actions' data_label.
 
+        if validate_data is true then NO data will be downloaded. In this case the transform will loop over the actions
+        but will instead return a true/false value for each data sample. This can be used to remove samples where the
+        data is not present in XNAT.
+
         :param data: dictionary of data
         :return:
         """
