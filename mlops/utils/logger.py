@@ -1,9 +1,11 @@
 import logging
 import colorlog
 import sys
+import time
+import os
 
-
-LOG_FILE: str = 'MLOps_logger.log'
+os.makedirs('LOGS', exist_ok=False)
+LOG_FILE: str = os.path.join('LOGS', f'{time.strftime("%Y%m%d-%H%M%S")}_MLOps_logger.log')
 
 
 def configure_logger():
