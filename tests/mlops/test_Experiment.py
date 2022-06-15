@@ -83,6 +83,6 @@ class TestExperiment:
     def test_run(self, capsys):
         os.getcwd()
         self.experiment.build_project_file()
-        self.experiment.run(path='tests/data/')
+        self.experiment.run()
         captured = capsys.readouterr()
         assert 'succeeded' in captured.err
