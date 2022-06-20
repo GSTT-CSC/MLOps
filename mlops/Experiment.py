@@ -94,7 +94,7 @@ class Experiment:
 
     def env_setup(self):
         """
-        Stores the variables required for running mlflow projects with docker in the environemnt
+        Stores the variables required for running mlflow projects with docker in the environment
         :return:
         """
         if self.use_localhost:
@@ -146,7 +146,7 @@ class Experiment:
         """
         configures the minio artifact storage.
 
-        The moinio auth credentials are fetched from the environmeny and used to create a bucket named "mlflow" for
+        The moinio auth credentials are fetched from the environment and used to create a bucket named "mlflow" for
         logging mlflow artifacts. If a bucket called mlflow already exists then the existing bucket is used.
 
         :return:
@@ -173,7 +173,7 @@ class Experiment:
         """
         Builds the Dockerfile at location path if parameter is supplied, else uses self.project_path (default)
 
-        Images are tagged using the project name defined in config. If proxy variables exist in the environemnt these
+        Images are tagged using the project name defined in config. If proxy variables exist in the environment these
         are passed to the docker demon as build arguments.
 
         :param path: optional path to Dockerfile (if not in project_path root)

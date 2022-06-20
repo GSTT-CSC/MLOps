@@ -25,11 +25,11 @@ A continuous integration and deployment framework for healthcare AI projects
 ## Overview
 This project aims to build an effective MLOps framework for the development of AI models in a healthcare setting. The application development framework has three major components:
 #### 1. MLOps server
-The MLOPs server hosts the ML lifecycle management services. An MLFlow instance serves as the  management platform, providing experiment tracking and model serving.
+The MLOps server hosts the ML lifecycle management services. An MLFlow instance serves as the management platform, providing experiment tracking and model serving.
 #### 2. Project Template
 The [project template](https://github.com/GSTT-csc/Project_template) is the starting point for any project using this development framework. This template is flexible enough for any projects and facilitates communication with other parts of the development framework.
 #### 3. csc-mlops package
-The csc-mlops python package is availabe on [PyPI](https://pypi.org/project/csc-mlops) and installed by default by the [project template](https://github.com/GSTT-csc/Project_template). This package handles communication between the project and the server, performs automated tasks, and includes helper functions and classes to streamline development. 
+The csc-mlops python package is available on [PyPI](https://pypi.org/project/csc-mlops) and installed by default by the [project template](https://github.com/GSTT-csc/Project_template). This package handles communication between the project and the server, performs automated tasks, and includes helper functions and classes to streamline development. 
 
 These components work together to simplify and automate many of the processes required for controlled app development. A high level schematic of the framework is illustrated below. In this case XNAT is used as a data archive platform, the framework can be adapted to use other data stores.
 
@@ -55,7 +55,7 @@ The production version of this project is intended to run on a dedicated remote 
 ### Prerequisites
 First follow the instructions to install [Docker](https://docs.docker.com/engine/install/) and [docker-compose](https://docs.docker.com/compose/install/).
 
-Check docker and docker-compose are working by calling passing the help argument on the command line. If the help information is not returned, or an error is given revist the docker installation docs.
+Check docker and docker-compose are working by calling passing the help argument on the command line. If the help information is not returned, or an error is given, revisit the docker installation docs.
 ```sh
 docker --help
 docker-compose --help
@@ -84,8 +84,7 @@ POSTGRES_PASSWORD=pass
 POSTGRES_DB=db
 ```
 
-3. Navigate to the mlflow_server directory start the service. Any docker images that are not present on your local system will be pulled from dockerhub (which might take a while).
- 
+3. Navigate to the mlflow_server directory and start the service. Any docker images that are not present on your local system will be pulled from dockerhub (which might take a while).
  
 ```shell
  cd mlflow_server
@@ -130,7 +129,7 @@ The csc-mlops package can be installed using pip:
 pip install csc-mlops
 ```
 ### Experiment 
-The `Experiment` class is the priary interface between the developers project code and the MLOps  processes. By using `Experiment` a number of important processes are automated:
+The `Experiment` class is the primary interface between the developers project code and the MLOps  processes. By using `Experiment` a number of important processes are automated:
 - Project configuration and registration
 - Communication with the MLOps server
 - Ensures all project code is committed and current with repository
@@ -241,7 +240,7 @@ See the [open issues](https://github.com/GSTT-CSC/MLOps/issues) for a list of pr
 3. Create your Feature Branch off of `develop` (`git checkout -b feature/AmazingFeature`)
 4. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
 5. Push to the remote (`git push origin feature/AmazingFeature`)
-6. Open a Pull Request and specifiy that you want to merge your feature branch into the `develop` branch
+6. Open a Pull Request and specify that you want to merge your feature branch into the `develop` branch
 
 ### Testing
 When contributing, you are _strongly_ encouraged to write tests for any functions or classes you add. Please uses pytest and add your tests to an appropriate location in the  `tests` directory, which also contains some examples to get you started.
