@@ -21,93 +21,48 @@ A continuous integration and deployment framework for healthcare AI projects
   <img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/laurencejackson/ba102d5f3e592fcd50451c2eff8a803d/raw/19cbafdaad049423cf20c725944c52a3ed3764e7/mlops_pytest-coverage-comment.json">
 </p>
 
-<!-- TABLE OF CONTENTS -->
-<details open="open">
-  <summary><h2 style="display: inline-block">Table of Contents</h2></summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#open-source-components">Open source components</a></li>
-      </ul>
-    </li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li>
-      <a href="#getting-started-on-local-hardware">Getting Started On Local Hardware</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#overview">Overview</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contact">Contact</a></li>
-   <li><a href="#acknowledgements">Acknowledgements</a></li>
-  </ol>
-</details>
 
+## Overview
+This project aims to build an effective MLOps framework for the development of AI models in a healthcare setting. The application development framework has three major components:
+#### 1. MLOps server
+The MLOps server hosts the ML lifecycle management services. An MLFlow instance serves as the management platform, providing experiment tracking and model serving.
+#### 2. Project Template
+The [project template](https://github.com/GSTT-csc/Project_template) is the starting point for any project using this development framework. This template is flexible enough for any projects and facilitates communication with other parts of the development framework.
+#### 3. csc-mlops package
+The csc-mlops python package is available on [PyPI](https://pypi.org/project/csc-mlops) and installed by default by the [project template](https://github.com/GSTT-csc/Project_template). This package handles communication between the project and the server, performs automated tasks, and includes helper functions and classes to streamline development. 
 
+These components work together to simplify and automate many of the processes required for controlled app development. A high level schematic of the framework is illustrated below. In this case XNAT is used as a data archive platform, the framework can be adapted to use other data stores.
 
-<!-- ABOUT THE PROJECT -->
-## About The Project
+![](assets/2022-06-05_mlops-dev-schematic.png)
 
-This project aims to build an effective MLOps framework for the development of AI models in a healthcare setting. 
+> This repository contains the source code for the server and csc-mlops components of the development framework. For further details on the project template component see the [project template repository](https://github.com/GSTT-csc/Project_template).
 
-### Open source components
+## The MLOps server
+### Server components
 
-* [MLflow](https://mlflow.org/) Open source platform to manage the ML lifecycle
-* [MONAI](https://monai.io/) PyTorch-based framework for deep learning in healthcare imaging
+* [MLFlow](https://mlflow.org/) Open source platform to manage the ML lifecycle
 * [MINIO](https://min.io/) High performance object storage suite
 * [NGINX](https://www.nginx.com/) Reverse proxy server
 
-It's not essential to have a complete understanding of all of these, but a high-level understanding of [MLflow](https://mlflow.org/) in particular will be useful!
+It's not essential to have a complete understanding of all of these, but a high-level understanding of [MLFlow](https://mlflow.org/) in particular will be useful!
 
-The MLOps framework has two major components a server and an Experiment class that abstracts away a lot of the 
-boilerplate that would otherwise be required to interface with the server. A high level overview of the framework is illustrated below:
-
-
-![](docs/assets/mlops_map.png)
-
-
-In this case we have illustrated the MLOps server and Experiment runner as separate machines, but there is no reason 
-these cannot be the same machine by pointing the environment variables to the localhost address.
-
-
-<!-- CONTRIBUTING -->
-## Contributing
-1. Fork or clone the Project
-2. Since all code changes are staged on the `develop` branch before releases you will need to checkout this branch first (`git checkout -b develop`)
-3. Create your Feature Branch off of `develop` (`git checkout -b feature/AmazingFeature`)
-4. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-5. Push to the remote (`git push origin feature/AmazingFeature`)
-6. Open a Pull Request and specifiy that you want to merge your feature branch into the `develop` branch
-
-### Testing
-When contributing, you are _strongly_ encouraged to write tests for any functions or classes you add. Please uses pytest and add your tests to an appropriate location in the  `tests` directory, which also contains some examples to get you started.
 
 <!-- GETTING STARTED  -->
-## Getting Started On Local Hardware
+### Getting Started
 
-The production version of this project is intended to run on a dedicated remote machine on an isolated network. However, it is simple to set up a local copy to get an understanding of the framework.
-
+The production version of this project is intended to run on a dedicated remote machine on an isolated network. This documentation will often describe the MLOps server, development machine and runner as separate machines, but there is no reason these cannot be the same machine if the network locations point to the localhost.
 
 ### Prerequisites
-
 First follow the instructions to install [Docker](https://docs.docker.com/engine/install/) and [docker-compose](https://docs.docker.com/compose/install/).
-A basic understanding of how docker and docker-compose work is recommended, available below. 
 
-* [Docker overview](https://docs.docker.com/get-started/overview/)
-* [docker-compose overview](https://docs.docker.com/compose/)
-
-Check docker and docker-compose are working by calling passing the help argument on the command line. If the help information is not returned, or an error is given revist the docker installation docs.
+Check docker and docker-compose are working by calling passing the help argument on the command line. If the help information is not returned, or an error is given, revisit the docker installation docs.
 ```sh
 docker --help
 docker-compose --help
 ```
 
-### Installation
-
-1. Clone the repository
+### Setting up the MLOps server
+1. Clone and enter the repository
    ```sh
    git clone https://github.com/GSTT-CSC/MLOps.git
    cd MLOps
@@ -119,7 +74,7 @@ Setting these variables is a requirement, the server will fail to start if they 
 
 **Please do not use shown values. Consider Writing you own usernames and passwords.**
 
-```
+```shell
 # Example env file - fill all required values before using
 AWS_ACCESS_KEY_ID=minioUsername
 AWS_SECRET_ACCESS_KEY=minioPassword
@@ -129,17 +84,17 @@ POSTGRES_PASSWORD=pass
 POSTGRES_DB=db
 ```
 
-3. Navigate to the cloned code repository and start the server. Any docker images that are not present on your local system will be pulled from dockerhub (which might take a while).
-    ```sh
-   cd mlflow_server
-   docker-compose up -d --build
-   ```
+3. Navigate to the mlflow_server directory and start the service. Any docker images that are not present on your local system will be pulled from dockerhub (which might take a while).
+ 
+```shell
+ cd mlflow_server
+ docker-compose up -d --build
+ ```
 
-Upon a successful build the server should now be up and running locally, and should show similar output to the screenshot below. By default, the mlflow user interface can be accessed at ```http:/localhost:85``` and minio can be accessed at ```https:/localhost:8002```.
+Upon a successful build the server should now be up and running locally. By default, the mlflow user interface can be accessed at ```http:/localhost:85``` and minio can be accessed at ```https:/localhost:8002```.
 
-![](docs/assets/docker_start.png)
+To check if the server is up and running successfully running ```docker ps``` in the terminal lists the running containers, and we should see something like:
 
-To double check if the server is up and running successfully running ```docker ps``` in the terminal lists the running containers, and we should see something like this:
 ```angular2html
 CONTAINER ID   IMAGE                                      COMMAND                  CREATED             STATUS                       PORTS                                        NAMES
 3d51a7580b6f   mlflow_nginx                               "nginx -g 'daemon of…"   About an hour ago   Up About an hour             0.0.0.0:80->80/tcp, 0.0.0.0:8002->8002/tcp   mlflow_nginx
@@ -147,9 +102,6 @@ CONTAINER ID   IMAGE                                      COMMAND               
 a397b4149c5f   minio/minio:RELEASE.2021-03-17T02-33-02Z   "/usr/bin/docker-ent…"   About an hour ago   Up About an hour (healthy)   9000/tcp, 9002/tcp                           mlflow_server_s3_1
 65374369fe4d   postgres:13.1                              "/docker-entrypoint.…"   About an hour ago   Up About an hour (healthy)   5432/tcp,                                    mlflow_db
 ```
-
-<!-- Usage -->
-## Overview
 
 ### Server components overview
 When we ran ```docker-compose up``` we started 4 networked containers, each of which serves a purpose within the MLOps framework.
@@ -169,7 +121,37 @@ Currently, we will focus primarily on the tracking and projects components.
 
 * MLflow uses projects to encapsulate AI tools in a reusable and reproducible way, based primarily on conventions. It also enables us to chain together project workflows meaning we are able to automate a great deal of the model development process.
 
-### XNAT data integrations
+
+## csc-mlops package
+
+The csc-mlops package can be installed using pip:
+```angular2html
+pip install csc-mlops
+```
+### Experiment 
+The `Experiment` class is the primary interface between the developers project code and the MLOps  processes. By using `Experiment` a number of important processes are automated:
+- Project configuration and registration
+- Communication with the MLOps server
+- Ensures all project code is committed and current with repository
+- Docker image built if it can't be found locally
+- Project logger configured
+
+To use the Experiment class the project must be run using a syntax such as:
+
+```python
+from mlops.Experiment import Experiment
+
+config_path = 'config/config.cfg'
+
+exp = Experiment(config_path=config_path)
+exp.run(docker_args={}, entry_point='main')
+```
+
+> When using the [project template](https://github.com/GSTT-csc/Project_template) this process is performed when executing the `run_project.py` script.
+
+> For more information on how to define the project configuration using a config.cfg file see the [project template](https://github.com/GSTT-csc/Project_template) documentation
+
+### XNAT data handler
 Accessing data stored in an XNAT archive is performed through two steps.
 
 #### 1. Create list of data samples
@@ -211,7 +193,7 @@ def fetch_sag_t2_tse(subject_data: SubjectData = None) -> (ImageScanData, str):
                     return subject_data.experiments[exp].scans[scan], 'sag_t2_tse'
 ```
 
-In this example, the `fetch_sag_t2_tse` function will loop over all experiments available for the subject, then if one of these experiments has 'MR_2' in the label it will loop over all the scans in this experiment until it finds one with 'sag_t2_tse' in the series_description. The uri to this scan is then extracted and returned along with the key it will be stored under in the data dictionary, in this case 'sag_t2_tse'. 
+In this example, the `fetch_sag_t2_tse` function will loop over all experiments available for the subject, then if one of these experiments has 'MR_2' in the label it will loop over all the scans in this experiment until it finds one with 'sag_t2_tse' in the series_description. The URI to this scan is then extracted and returned along with the key it will be stored under in the data dictionary, in this case 'sag_t2_tse'. 
 
 We can now pass this action function to the `LoadImageXNATd` transform. When passing a list of action functions to the `LoadImageXNATd` transform each action function in the list will be performed sequentially. So if multiple datasets are required for each Subject then multiple functions can be used. 
 
@@ -239,25 +221,29 @@ data_loader = DataLoader(dataset, batch_size=1, shuffle=True, num_workers=0, col
 
 If further transforms are required they can be added to the `Compose` transform list as usual.
 
-<!-- tools -->
-## Tools
-Additional tools designed to be used with MLOps are located in the tools folder. 
+<!-- Additional tools -->
+## Additional Tools
+Additional tools designed to be used with MLOps are located in the [tools](tools) folder.
 
-Current tools:
-datatoolkit
+- [Data toolkit](tools/datatoolkit)
+  - Tools for collecting information about large data stores. 
+
 
 <!-- ROADMAP -->
 ## Roadmap
 See the [open issues](https://github.com/GSTT-CSC/MLOps/issues) for a list of proposed features (and known issues).
 
-<!-- CONTACT -->
-## Contact
+<!-- CONTRIBUTING -->
+## Contributing
+1. Fork or clone the Project
+2. Since all code changes are staged on the `develop` branch before releases you will need to checkout this branch first (`git checkout -b develop`)
+3. Create your Feature Branch off of `develop` (`git checkout -b feature/AmazingFeature`)
+4. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+5. Push to the remote (`git push origin feature/AmazingFeature`)
+6. Open a Pull Request and specify that you want to merge your feature branch into the `develop` branch
 
-Laurence Jackson (GSTT-CSC)
-
-Project Link: [https://github.com/GSTT-CSC/MLOps](https://github.com/GSTT-CSC/MLOps)
-
-
+### Testing
+When contributing, you are _strongly_ encouraged to write tests for any functions or classes you add. Please uses pytest and add your tests to an appropriate location in the  `tests` directory, which also contains some examples to get you started.
 
 <!-- ACKNOWLEDGEMENTS -->
 ## Acknowledgements

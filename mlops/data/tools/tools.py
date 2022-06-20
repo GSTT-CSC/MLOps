@@ -3,7 +3,7 @@ import xnat
 from mlops.utils.logger import logger
 
 
-def xnat_build_dataset(xnat_configuration, minimal=True):
+def xnat_build_dataset(xnat_configuration: dict = None, minimal: bool = True):
     """
     Builds a dictionary that describes the XNAT project dataset using XNAT data hierarchy: project/subject/experiment/scan
 

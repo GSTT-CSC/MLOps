@@ -75,7 +75,7 @@ class TestLoadImageXNATd:
 
         self.train_transforms = Compose(
             [
-                LoadImageXNATd(keys=['subject_uri'], actions=actions, xnat_configuration=self.xnat_configuration, expected_filetype='.IMA'),
+                LoadImageXNATd(keys=['subject_uri'], actions=actions, xnat_configuration=self.xnat_configuration, expected_filetype_ext='.IMA'),
                 ToTensord(keys=['test_image'])
             ]
         )
