@@ -21,7 +21,7 @@ class ProjectFile:
         :param path: path to the project directory
         :param projectfile_name: name of project file, this should not need to be changed if mlflow is the target
         :param use_localhost: flag to indicate using an mlops server hosted on the local machine
-        :param clean_projectfile: bool flag to indicate whether to regenerate the project file on each run (default true)
+        :param clean_projectfile: bool flag to indicate whether to regenerate the project file on each run (recommend keeping this True)
         """
         self.config = config
         self.projectfile_name = projectfile_name

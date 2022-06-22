@@ -12,7 +12,7 @@ from git import Repo
 class Experiment:
 
     def __init__(self, config_path: str = 'config.cfg', project_path: str = '.', use_localhost: bool = False,
-                 verbose: bool = True):
+                 verbose: bool = True, ignore_git_check: bool = False):
         """
         The Experiment class is the interface through which all projects should be run.
 
@@ -30,7 +30,14 @@ class Experiment:
         self.project_path = project_path
         self.verbose = verbose
 
-        if 'pytest' not in sys.modules:
+        if 'pytest' in sys.modules:
+            logger.warn('DEBUG ONLY - ignoring git checks due to test run detected')
+
+        elif ignore_git_check is True:
+            logger.warn('DEBUG ONLY - ignoring git checks, manually disabled. Ensure this run is not for any experiments '
+                        'intended for production use')
+
+        else:
             self.check_dirty()
 
         self.check_environment_variables()
@@ -246,8 +253,7 @@ class Experiment:
         else:
             logger.info('Found existing project image')
 
-        artifact_uri = mlflow.get_artifact_uri()
-        print("Artifact uri: {}".format(artifact_uri))
+        logger.debug(f'Artifact URI: {mlflow.get_artifact_uri()}')
 
         mlflow.run(self.project_path,
                    experiment_id=self.experiment_id,

@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest ]
-        python-version: [ '3.8']
+        python-version: [ '3.8' ]
 
     env:
       POSTGRES_DB: mlflow
@@ -35,10 +35,6 @@ jobs:
         git clone https://github.com/NrgXnat/xnat-docker-compose.git ../xnat-docker-compose
         cp ../xnat-docker-compose/default.env ../xnat-docker-compose/.env
         docker compose -f ../xnat-docker-compose/docker-compose.yml up -d
-
-    - name: Sleep for 2 minutes while xnat starts (REDUCE THIS IF WORKING!)
-      run: sleep 2m
-      shell: bash
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
