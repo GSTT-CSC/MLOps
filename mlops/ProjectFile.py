@@ -14,7 +14,7 @@ class ProjectFile:
         """
         Uses the MLOps configurations to create an MLproject file used my mlflow to define the project.
 
-        This class processes the config object that is inputted and converts it to a project_dict dictionary, This dict
+        This class processes the config object that is inputted and converts it to a project_dict dictionary. This dict
         is then used to create the MLproject yaml file.
 
         :param config: ConfigParser object
