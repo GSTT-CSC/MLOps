@@ -4,7 +4,7 @@ import sys
 import time
 import os
 
-os.makedirs('LOGS', exist_ok=False)
+os.makedirs('LOGS', exist_ok=True)
 LOG_FILE: str = os.path.join('LOGS', f'{time.strftime("%Y%m%d-%H%M%S")}_MLOps_logger.log')
 
 
