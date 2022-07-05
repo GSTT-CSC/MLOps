@@ -251,7 +251,7 @@ class Experiment:
             logger.info('No existing image found')
             self.build_experiment_image(path=self.project_path)
         else:
-            logger.info('Found existing project image')
+            logger.info(f'Found existing project image: {self.experiment_name}:latest')
 
         logger.debug(f'Artifact URI: {mlflow.get_artifact_uri()}')
 
