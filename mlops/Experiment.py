@@ -11,7 +11,7 @@ from git import Repo
 
 class Experiment:
 
-    def __init__(self, config_path: str = 'config.cfg', project_path: str = '.', use_localhost: bool = False,
+    def __init__(self, config_path: str = 'config.cfg', project_path: str = os.getcwd(), use_localhost: bool = False,
                  verbose: bool = True, ignore_git_check: bool = False):
         """
         The Experiment class is the interface through which all projects should be run.
