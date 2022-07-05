@@ -254,8 +254,9 @@ class Experiment:
             logger.info(f'Found existing project image: {self.experiment_name}:latest')
 
         logger.debug(f'Artifact URI: {mlflow.get_artifact_uri()}')
+        logger.debug(f'Project URI: {self.project_path}')
 
-        mlflow.run(self.project_path,
+        mlflow.run(uri=self.project_path,
                    experiment_id=self.experiment_id,
                    use_conda=False,
                    **kwargs)

@@ -81,6 +81,11 @@ class TestExperiment:
         assert self.experiment.experiment_name + ':latest' in images_2
 
     def test_run(self, capsys):
+        """
+        this test will fail locally,  setup git in test data dir is done in github actions
+        :param capsys:
+        :return:
+        """
         os.getcwd()
         self.experiment.build_project_file()
         self.experiment.run()
