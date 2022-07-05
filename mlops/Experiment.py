@@ -153,7 +153,7 @@ class Experiment:
         """
         configures the minio artifact storage.
 
-        The moinio auth credentials are fetched from the environment and used to create a bucket named "mlflow" for
+        The minio auth credentials are fetched from the environment and used to create a bucket named "mlflow" for
         logging mlflow artifacts. If a bucket called mlflow already exists then the existing bucket is used.
 
         :return:
