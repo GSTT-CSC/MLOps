@@ -4,7 +4,7 @@ import setuptools
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-version = "0.5.19"
+version = "0.5.20"
 
 setuptools.setup(
     name="csc-mlops",
