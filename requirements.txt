@@ -1,4 +1,4 @@
-mlflow
+mlflow==1.26.0
 # dvc~=2.0.5
 boto3
 docker
