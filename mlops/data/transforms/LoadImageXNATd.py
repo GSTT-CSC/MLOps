@@ -73,7 +73,7 @@ class LoadImageXNATd(MapTransform):
                             xnat_obj = None
 
                         if self.validate_data:
-                            if xnat_obj is not None:
+                            if len(xnat_obj) > 0:
                                 d[data_label] = True
                                 return d
                             else:
@@ -82,20 +82,24 @@ class LoadImageXNATd(MapTransform):
 
                         with tempfile.TemporaryDirectory() as tmpdirname:
                             "download image from XNAT"
-                            session_obj = session.create_object(xnat_obj.uri)
-                            session_obj.download_dir(tmpdirname)
+                            if len(xnat_obj) > 1:
+                                raise Exception(f'LoadImageXNATd does not currently support >1 series per action. Refine {action} to return just one series.')
 
-                            images_path = glob.glob(os.path.join(tmpdirname, '**/*' + self.expected_filetype), recursive=True)
+                            for obj in xnat_obj:
+                                session_obj = session.create_object(obj.uri)
+                                session_obj.download_dir(tmpdirname)
 
-                            "find unique directories in list of image paths"
-                            image_dirs = list(set(os.path.dirname(image_path) for image_path in images_path))
+                                images_path = glob.glob(os.path.join(tmpdirname, '**/*' + self.expected_filetype), recursive=True)
 
-                            if len(image_dirs) > 1:
-                                raise ValueError(f'More than one image series found in {images_path}')
+                                "find unique directories in list of image paths"
+                                image_dirs = list(set(os.path.dirname(image_path) for image_path in images_path))
 
-                            logger.info(f"Downloading image: {image_dirs[0]}")
+                                if len(image_dirs) > 1:
+                                    raise ValueError(f'More than one image series found in {images_path}')
 
-                            image, meta = self.image_loader()(image_dirs[0])
+                                logger.info(f"Downloading image files: {images_path}")
+
+                                image, meta = self.image_loader()(images_path)
 
                             d[data_label] = image
                             d[data_label + '_meta'] = meta
