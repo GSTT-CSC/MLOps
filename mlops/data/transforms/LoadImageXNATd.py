@@ -107,5 +107,6 @@ class LoadImageXNATd(MapTransform):
 
                             d[data_label] = image
                             d[data_label + '_meta'] = meta
-
+                            d[data_label + '_xnat_uri'] = session_obj.fulluri
+                            
             return d
