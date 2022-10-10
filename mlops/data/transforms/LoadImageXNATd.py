@@ -86,20 +86,24 @@ class LoadImageXNATd(MapTransform):
                                 raise Exception(f'LoadImageXNATd does not currently support >1 series per action. Refine {action} to return just one series.')
 
                             for obj in xnat_obj:
+
                                 session_obj = session.create_object(obj.uri)
                                 session_obj.download_dir(tmpdirname)
+                                images_path = glob.glob(os.path.join(tmpdirname, '**/*' + self.expected_filetype),
+                                                        recursive=True)
+                                logger.info(f"Downloading images: {images_path}")
 
-                                images_path = glob.glob(os.path.join(tmpdirname, '**/*' + self.expected_filetype), recursive=True)
+                                if len(images_path) == 1:  # image loader needs full path to load single images
+                                    image, meta = self.image_loader()(images_path)
 
-                                "find unique directories in list of image paths"
-                                image_dirs = list(set(os.path.dirname(image_path) for image_path in images_path))
+                                else:  # image loader needs directory path to load 3D images
 
-                                if len(image_dirs) > 1:
-                                    raise ValueError(f'More than one image series found in {images_path}')
+                                    "find unique directories in list of image paths"
+                                    image_dirs = list(set(os.path.dirname(image_path) for image_path in images_path))
+                                    if len(image_dirs) > 1:
+                                        raise ValueError(f'More than one image series found in {images_path}')
 
-                                logger.info(f"Downloading image files: {images_path}")
-
-                                image, meta = self.image_loader()(images_path)
+                                    image, meta = self.image_loader()(image_dirs[0])
 
                             d[data_label] = image
                             d[data_label + '_meta'] = meta
