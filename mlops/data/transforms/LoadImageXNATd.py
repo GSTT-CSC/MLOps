@@ -17,7 +17,7 @@ class LoadImageXNATd(MapTransform):
     """
 
     def __init__(self, keys: KeysCollection, actions: list = None, xnat_configuration: dict = None,
-                 image_loader: Transform = LoadImage, validate_data: bool = False, expected_filetype_ext: str = '.dcm'):
+                 image_loader: Transform = LoadImage(), validate_data: bool = False, expected_filetype_ext: str = '.dcm'):
         super().__init__(keys)
         self.image_loader = image_loader
         self.xnat_configuration = xnat_configuration
