@@ -1,10 +1,13 @@
 import xnat
 from mlops.utils.logger import logger
+from itertools import chain
 
 
-def xnat_build_dataset(xnat_configuration: dict, actions: list = None):
+def xnat_build_dataset(xnat_configuration: dict, actions: list = None, structured_output: bool = False):
     """
     Builds a dictionary that describes the XNAT project dataset using XNAT data hierarchy: project/subject/experiment/scan
+
+    structured output returned flattened dataset. Can set structured_output to True to perform custom flattening.
 
     """
     with xnat.connect(server=xnat_configuration['server'],
@@ -20,29 +23,28 @@ def xnat_build_dataset(xnat_configuration: dict, actions: list = None):
         for subject in project.subjects:
             data_series = []
             if actions:
-
                 for action, data_label in actions:
                     #  No actions, just return a list of subject IDs and URIs
-                    data_series
                     logger.debug(f"Running action: {action.__name__} on {subject}")
-                    s = project.subjects[subject]
-                    try:
-                        xnat_obj = action(project.subjects[subject])
-                        output = []
-                        for obj in xnat_obj:
-                            output.append({'source_action': action.__name__,
-                                           'xnat_uri': obj.uri,
-                                           'data_label': data_label,
-                                           'subject_uri': project.subjects[subject].uri})
+                    xnat_obj = action(project.subjects[subject])
+                    output = []
+                    for obj in xnat_obj:
+                        output.append({'source_action': action.__name__,
+                                       'xnat_uri': obj.uri,
+                                       'data_label': data_label,
+                                       'subject_uri': project.subjects[subject].uri,
+                                       'subject_id': project.subjects[subject].label})
+                    if output:
                         dataset.append(output)
-                    except TypeError:
-                        logger.warn(f'No suitable data found for action {action} and subject {d["subject_uri"]}')
-                        xnat_obj = None
-                        # todo: work out how to remove this data from the dataset
+                    else:
+                        logger.warn(f'No suitable data found, ignoring sample')
 
             else:
                 #  No actions, just return a list of subject IDs and URIs
-                data_series['subject_uri'] = project.subjects[subject].uri
+                data_series.append({'subject_uri': project.subjects[subject].uri})
                 dataset.append(data_series)
 
-    return dataset
+    if not structured_output:
+        return list(chain(*dataset))
+    else:
+        return dataset
