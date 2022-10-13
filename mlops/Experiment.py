@@ -229,7 +229,7 @@ class Experiment:
 
         docker_args_default = {'network': "host",
                                'ipc': 'host',
-                               'rm': ''
+                               'rm': 'true',
                                }
 
         if not self.use_localhost:
