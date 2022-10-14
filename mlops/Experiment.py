@@ -97,7 +97,7 @@ class Experiment:
         self.config.read(self.config_path)
 
         self.artifact_path = self.config['server']['ARTIFACT_PATH']
-        self.experiment_name = self.config['project']['NAME'].lower()
+        self.experiment_name = self.config['project']['NAME']
 
     def env_setup(self):
         """
