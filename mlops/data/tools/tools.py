@@ -1,27 +1,13 @@
 import xnat
 from mlops.utils.logger import logger
+from itertools import chain
 
 
-def xnat_build_dataset(xnat_configuration: dict = None, minimal: bool = True):
+def xnat_build_dataset(xnat_configuration: dict, actions: list = None, structured_output: bool = False):
     """
     Builds a dictionary that describes the XNAT project dataset using XNAT data hierarchy: project/subject/experiment/scan
 
-    minimal: if True, only the minimal information is returned, i.e. the  subject ID and the SubjectData
-
-    e.g.
-    [
-        {
-        subjectid: '1',
-        subject_uri: '<unique address to subject in xnat archive>'
-        experiment_1: {
-                        scan_1: {scan_object},
-                        scan_2: {scan_object}
-                       },
-        experiment_2:  {
-                        scan_1: {scan_object}
-                      }
-        }
-    ]
+    structured output returned flattened dataset. Can set structured_output to True to perform custom flattening.
 
     """
     with xnat.connect(server=xnat_configuration['server'],
@@ -35,19 +21,30 @@ def xnat_build_dataset(xnat_configuration: dict = None, minimal: bool = True):
 
         dataset = []
         for subject in project.subjects:
+            data_series = []
+            if actions:
+                for action, data_label in actions:
+                    #  No actions, just return a list of subject IDs and URIs
+                    logger.debug(f"Running action: {action.__name__} on {subject}")
+                    xnat_obj = action(project.subjects[subject])
+                    output = []
+                    for obj in xnat_obj:
+                        output.append({'source_action': action.__name__,
+                                       'xnat_uri': obj.uri,
+                                       'data_label': data_label,
+                                       'subject_uri': project.subjects[subject].uri,
+                                       'subject_id': project.subjects[subject].label})
+                    if output:
+                        dataset.append(output)
+                    else:
+                        logger.warn(f'No suitable data found, ignoring sample')
 
-            data_series = {'subject_id': project.subjects[subject].label, 'subject_uri': project.subjects[subject].uri}
+            else:
+                #  No actions, just return a list of subject IDs and URIs
+                data_series.append({'subject_uri': project.subjects[subject].uri})
+                dataset.append(data_series)
 
-            if not minimal:
-                for experiment in project.subjects[subject].experiments:
-                    scan_dict = {}
-                    for scan in project.subjects[subject].experiments[experiment].scans:
-                        scan_dict['modality'] = project.subjects[subject].experiments[experiment].modality
-                        scan_dict[project.subjects[subject].experiments[experiment].scans[scan].series_description] = project.subjects[subject].experiments[experiment].scans[scan]
-
-                    data_series[project.subjects[subject].experiments[experiment].label] = scan_dict
-            logger.debug(f"Adding data series to dataset: {data_series}")
-            dataset.append(data_series)
-
-    return dataset
-
+    if not structured_output:
+        return list(chain(*dataset))
+    else:
+        return dataset
