@@ -198,7 +198,7 @@ class Experiment:
         logger.info('Running docker build with: {0}'.format({'path': path if path else self.project_path,
                                                              'tag': self.experiment_name,
                                                              'buildargs': build_args,
-                                                             'rm': 'True'}))
+                                                             'rm': ''}))
 
         client.images.build(path=self.project_path,
                             tag=self.experiment_name,
@@ -229,7 +229,7 @@ class Experiment:
 
         docker_args_default = {'network': "host",
                                'ipc': 'host',
-                               'rm': 'true',
+                               'rm': '',
                                }
 
         if not self.use_localhost:
