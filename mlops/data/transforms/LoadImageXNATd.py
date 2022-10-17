@@ -17,12 +17,13 @@ class LoadImageXNATd(MapTransform):
     """
 
     def __init__(self, keys: KeysCollection,  xnat_configuration: dict = None,
-                 image_loader: Transform = LoadImage(), validate_data: bool = False, expected_filetype_ext: str = '.dcm'):
+                 image_loader: Transform = LoadImage(), validate_data: bool = False, expected_filetype_ext: str = '.dcm', return_meta=False):
         super().__init__(keys)
         self.image_loader = image_loader
         self.xnat_configuration = xnat_configuration
         self.expected_filetype = expected_filetype_ext
         self.validate_data = validate_data
+        self.return_meta = return_meta
 
     def __call__(self, data):
         """
@@ -41,6 +42,7 @@ class LoadImageXNATd(MapTransform):
 
         :param data: dictionary of data
         :return:
+
         """
 
         d = dict(data)
@@ -49,7 +51,7 @@ class LoadImageXNATd(MapTransform):
 
             if key in data:
 
-                data_label = d['data_label']
+                # data_label = d['data_label']
 
                 with xnat.connect(server=self.xnat_configuration['server'],
                                   user=self.xnat_configuration['user'],
@@ -57,28 +59,35 @@ class LoadImageXNATd(MapTransform):
                                   verify=self.xnat_configuration['verify'],
                                   ) as session:
 
+                    "Check data list has no duplicate keys"
+                    if len(set([x['data_label'] for x in d[key]])) != len([x['data_label'] for x in d[key]]):
+                        logger.warn('Multiple images with identical labels found')
+                        raise
+
                     "Download image from XNAT"
-                    with tempfile.TemporaryDirectory() as tmpdirname:
-                        session_obj = session.create_object(d['xnat_uri'])
-                        session_obj.download_dir(tmpdirname)
+                    for item in d[key]:
+                        data_label = item['data_label']
+                        with tempfile.TemporaryDirectory() as tmpdirname:
+                            session_obj = session.create_object(item['xnat_uri'])
+                            session_obj.download_dir(tmpdirname)
 
-                        images_path = glob.glob(os.path.join(tmpdirname, '**/*' + self.expected_filetype), recursive=True)
+                            images_path = glob.glob(os.path.join(tmpdirname, '**/*' + self.expected_filetype), recursive=True)
 
-                        # image loader needs full path to load single images
-                        logger.info(f"Downloading images: {images_path}")
-                        if len(images_path) == 1:
-                            image, meta = self.image_loader(images_path)
+                            # image loader needs full path to load single images
+                            logger.info(f"Downloading images: {images_path}")
+                            if len(images_path) == 1:
+                                image, meta = self.image_loader(images_path)
 
-                        # image loader needs directory path to load 3D images
-                        else:
-                            "find unique directories in list of image paths"
-                            image_dirs = list(set(os.path.dirname(image_path) for image_path in images_path))
-                            if len(image_dirs) > 1:
-                                raise ValueError(f'More than one image series found in {images_path}')
-                            image, meta = self.image_loader(image_dirs[0])
+                            # image loader needs directory path to load 3D images
+                            else:
+                                "find unique directories in list of image paths"
+                                image_dirs = list(set(os.path.dirname(image_path) for image_path in images_path))
+                                if len(image_dirs) > 1:
+                                    raise ValueError(f'More than one image series found in {images_path}')
+                                image, meta = self.image_loader(image_dirs[0])
 
-                        # data.append(image, meta)
-                        d[data_label] = image
-                        d[data_label + '_meta'] = meta
+                            d[data_label] = image
+                            if self.return_meta:
+                                d[data_label + '_meta'] = meta
 
-            return d
+        return d
