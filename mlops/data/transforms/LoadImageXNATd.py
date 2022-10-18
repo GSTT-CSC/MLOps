@@ -17,13 +17,12 @@ class LoadImageXNATd(MapTransform):
     """
 
     def __init__(self, keys: KeysCollection,  xnat_configuration: dict = None,
-                 image_loader: Transform = LoadImage(), validate_data: bool = False, expected_filetype_ext: str = '.dcm', return_meta=False):
+                 image_loader: Transform = LoadImage(), validate_data: bool = False, expected_filetype_ext: str = '.dcm'):
         super().__init__(keys)
         self.image_loader = image_loader
         self.xnat_configuration = xnat_configuration
         self.expected_filetype = expected_filetype_ext
         self.validate_data = validate_data
-        self.return_meta = return_meta
 
     def __call__(self, data):
         """
@@ -87,9 +86,5 @@ class LoadImageXNATd(MapTransform):
                                 image = self.image_loader(image_dirs[0])
 
                             d[data_label] = image
-                            if self.return_meta:
-                                d[data_label + '_meta'] = meta
-
-
 
         return d
