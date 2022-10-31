@@ -19,7 +19,6 @@ class Experiment:
         :param script: path to script to run
         :param config_path: string path to configuration file
         :param project_path: string path to project directory
-        :param use_localhost: bool to indicate whether to use the local addresses in the config file
         :param verbose: verbosity
         """
         self.script = script
