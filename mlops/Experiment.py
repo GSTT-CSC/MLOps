@@ -36,7 +36,6 @@ class Experiment:
         elif ignore_git_check is True:
             logger.warn('DEBUG ONLY - ignoring git checks, manually disabled. Ensure this run is not for any experiments '
                         'intended for production use')
-
         else:
             self.check_dirty()
 
