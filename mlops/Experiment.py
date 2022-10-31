@@ -7,26 +7,27 @@ from minio import Minio
 from mlops.ProjectFile import ProjectFile
 from mlops.utils.logger import logger, LOG_FILE
 from git import Repo
+from torch.cuda import is_available
 
 
 class Experiment:
 
-    def __init__(self, config_path: str = 'config.cfg', project_path: str = '.', use_localhost: bool = False,
+    def __init__(self, script, config_path, project_path: str = '.',
                  verbose: bool = True, ignore_git_check: bool = False):
         """
         The Experiment class is the interface through which all projects should be run.
-
+        :param script: path to script to run
         :param config_path: string path to configuration file
         :param project_path: string path to project directory
         :param use_localhost: bool to indicate whether to use the local addresses in the config file
         :param verbose: verbosity
         """
+        self.script = script
         self.config = None
         self.artifact_path = None
         self.experiment_name = None
         self.experiment_id = None
         self.config_path = config_path
-        self.use_localhost = use_localhost
         self.project_path = project_path
         self.verbose = verbose
 
@@ -42,6 +43,7 @@ class Experiment:
 
         self.check_environment_variables()
         self.config_setup()
+        self.use_gpu = self.config.getboolean('system', 'USE_GPU')
         self.env_setup()
         self.build_project_file()
         self.init_experiment()
@@ -104,12 +106,12 @@ class Experiment:
         Stores the variables required for running mlflow projects with docker in the environment
         :return:
         """
-        if self.use_localhost:
-            os.environ['MLFLOW_TRACKING_URI'] = self.config['server']['LOCAL_REMOTE_SERVER_URI']
-            os.environ['MLFLOW_S3_ENDPOINT_URL'] = self.config['server']['LOCAL_MLFLOW_S3_ENDPOINT_URL']
-        else:
-            os.environ['MLFLOW_TRACKING_URI'] = self.config['server']['REMOTE_SERVER_URI']
-            os.environ['MLFLOW_S3_ENDPOINT_URL'] = self.config['server']['MLFLOW_S3_ENDPOINT_URL']
+        # if self.use_localhost:
+        #     os.environ['MLFLOW_TRACKING_URI'] = self.config['server']['LOCAL_REMOTE_SERVER_URI']
+        #     os.environ['MLFLOW_S3_ENDPOINT_URL'] = self.config['server']['LOCAL_MLFLOW_S3_ENDPOINT_URL']
+        # else:
+        os.environ['MLFLOW_TRACKING_URI'] = self.config['server']['MLFLOW_TRACKING_URI']
+        os.environ['MLFLOW_S3_ENDPOINT_URL'] = self.config['server']['MLFLOW_S3_ENDPOINT_URL']
 
     def init_experiment(self):
         """
@@ -158,10 +160,10 @@ class Experiment:
 
         :return:
         """
-        if self.use_localhost:
-            self.uri_formatted = self.config['server']['LOCAL_MLFLOW_S3_ENDPOINT_URL'].replace("http://", "")
-        else:
-            self.uri_formatted = self.config['server']['MLFLOW_S3_ENDPOINT_URL'].replace("http://", "")
+        # if self.use_localhost:
+        #     self.uri_formatted = self.config['server']['LOCAL_MLFLOW_S3_ENDPOINT_URL'].replace("http://", "")
+        # else:
+        self.uri_formatted = self.config['server']['MLFLOW_S3_ENDPOINT_URL'].replace("http://", "")
 
         self.minio_cred = {'user': os.getenv('AWS_ACCESS_KEY_ID'),
                            'password': os.getenv('AWS_SECRET_ACCESS_KEY')}
@@ -214,7 +216,7 @@ class Experiment:
         :return:
         """
         logger.info('Building project file')
-        projectfile = ProjectFile(self.config, path=self.project_path, use_localhost=self.use_localhost)
+        projectfile = ProjectFile(self.config, self.config_path, self.script, path=self.project_path)
         projectfile.generate_yaml()
 
     def run(self, **kwargs):
@@ -232,7 +234,10 @@ class Experiment:
                                'rm': '',
                                }
 
-        if not self.use_localhost:
+        # if not self.use_localhost:
+        if self.use_gpu and not is_available():
+            logger.warn('requested GPU resource but none available - using CPU')
+        elif self.use_gpu and is_available():
             gpu_params = {'gpus': 'all',
                           'runtime': 'nvidia'}
             logger.info('Adding docker args: {0}'.format(gpu_params))
@@ -258,7 +263,7 @@ class Experiment:
 
         mlflow.run(uri=self.project_path,
                    experiment_id=self.experiment_id,
-                   use_conda=False,
+                   env_manager='local',
                    **kwargs)
 
         mlflow.log_artifact(LOG_FILE)
