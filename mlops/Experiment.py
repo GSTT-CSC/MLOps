@@ -104,10 +104,6 @@ class Experiment:
         Stores the variables required for running mlflow projects with docker in the environment
         :return:
         """
-        # if self.use_localhost:
-        #     os.environ['MLFLOW_TRACKING_URI'] = self.config['server']['LOCAL_REMOTE_SERVER_URI']
-        #     os.environ['MLFLOW_S3_ENDPOINT_URL'] = self.config['server']['LOCAL_MLFLOW_S3_ENDPOINT_URL']
-        # else:
         os.environ['MLFLOW_TRACKING_URI'] = self.config['server']['MLFLOW_TRACKING_URI']
         os.environ['MLFLOW_S3_ENDPOINT_URL'] = self.config['server']['MLFLOW_S3_ENDPOINT_URL']
 
@@ -158,9 +154,6 @@ class Experiment:
 
         :return:
         """
-        # if self.use_localhost:
-        #     self.uri_formatted = self.config['server']['LOCAL_MLFLOW_S3_ENDPOINT_URL'].replace("http://", "")
-        # else:
         self.uri_formatted = self.config['server']['MLFLOW_S3_ENDPOINT_URL'].replace("http://", "")
 
         self.minio_cred = {'user': os.getenv('AWS_ACCESS_KEY_ID'),
