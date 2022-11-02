@@ -195,13 +195,24 @@ class Experiment:
                                                              'buildargs': build_args,
                                                              'rm': ''}))
 
-        filepath = os.path.join(self.project_path, 'Dockerfile')
-        with open(filepath, "rb") as fh:
-            f = BytesIO(fh.read())
-            cli = docker.APIClient(base_url='unix://var/run/docker.sock')
-            for line in cli.build(fileobj=f, rm=True, tag=self.experiment_name):
+        try:
+            docker_base_url = 'unix://var/run/docker.sock'
+            cli = docker.APIClient(base_url=docker_base_url)
+            valid_cli = True
+        except:
+            logger.warn(f'Low level Docker SDK not available on non-unix systems, the build will continue but will not output any logs')
+            valid_cli = False
+
+        if valid_cli:
+            for line in cli.build(path=self.project_path, tag=self.experiment_name, use_config_proxy=True):
                 block = line.decode('utf-8').splitlines()
                 print(str(literal_eval(block[0])['stream']), end='')
+        else:
+            client = docker.from_env()
+            client.images.build(path=self.project_path,
+                                tag=self.experiment_name,
+                                buildargs=build_args,
+                                rm=True)
 
         logger.info('Built project image: ' + self.experiment_name + ':latest')
 
