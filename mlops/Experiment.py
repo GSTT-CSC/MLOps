@@ -7,6 +7,9 @@ from minio import Minio
 from mlops.ProjectFile import ProjectFile
 from mlops.utils.logger import logger, LOG_FILE
 from git import Repo
+from torch.cuda import is_available
+from io import BytesIO
+from ast import literal_eval
 
 
 class Experiment:
@@ -34,9 +37,9 @@ class Experiment:
             logger.warn('DEBUG ONLY - ignoring git checks due to test run detected')
 
         elif ignore_git_check is True:
-            logger.warn('DEBUG ONLY - ignoring git checks, manually disabled. Ensure this run is not for any experiments '
-                        'intended for production use')
-
+            logger.warn(
+                'DEBUG ONLY - ignoring git checks, manually disabled. Ensure this run is not for any experiments '
+                'intended for production use')
         else:
             self.check_dirty()
 
@@ -194,16 +197,18 @@ class Experiment:
             build_args = {'http_proxy': os.getenv('http_proxy'),
                           'https_proxy': os.getenv('https_proxy')}
 
-        client = docker.from_env()
         logger.info('Running docker build with: {0}'.format({'path': path if path else self.project_path,
                                                              'tag': self.experiment_name,
                                                              'buildargs': build_args,
                                                              'rm': ''}))
 
-        client.images.build(path=self.project_path,
-                            tag=self.experiment_name,
-                            buildargs=build_args,
-                            rm=True)
+        filepath = os.path.join(self.project_path, 'Dockerfile')
+        with open(filepath, "rb") as fh:
+            f = BytesIO(fh.read())
+            cli = docker.APIClient(base_url='unix://var/run/docker.sock')
+            for line in cli.build(fileobj=f, rm=True, tag=self.experiment_name):
+                block = line.decode('utf-8').splitlines()
+                print(str(literal_eval(block[0])['stream']), end='')
 
         logger.info('Built project image: ' + self.experiment_name + ':latest')
 
