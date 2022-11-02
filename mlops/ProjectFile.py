@@ -9,7 +9,7 @@ from mlops.utils.logger import logger
 
 class ProjectFile:
 
-    def __init__(self, config, path: str = '.', projectfile_name: str = 'MLproject', use_localhost: bool = False,
+    def __init__(self, config, config_path, script, path: str = '.', projectfile_name: str = 'MLproject',
                  clean_projectfile: bool = True) -> None:
         """
         Uses the MLOps configurations to create an MLproject file used my mlflow to define the project.
@@ -20,9 +20,9 @@ class ProjectFile:
         :param config: ConfigParser object
         :param path: path to the project directory
         :param projectfile_name: name of project file, this should not need to be changed if mlflow is the target
-        :param use_localhost: flag to indicate using an mlops server hosted on the local machine
         :param clean_projectfile: bool flag to indicate whether to regenerate the project file on each run (recommend keeping this True)
         """
+        self.config_path = config_path
         self.config = config
         self.projectfile_name = projectfile_name
         self.project_path = os.path.join(path, projectfile_name)
@@ -32,26 +32,17 @@ class ProjectFile:
             logger.debug('Removing existing project file: {0}'.format(self.project_path))
             os.remove(os.path.join(path, self.projectfile_name))
 
-        if use_localhost:
-            volume_path = config['project']['LOCAL_VOLUME_MOUNT']
-        else:
-            volume_path = config['project']['VOLUME_MOUNT']
+        docker_env = {'image': config['project']['NAME'].lower()}
 
-        self.project_dict = {'name': config['project']['NAME'].lower(),
-                             'docker_env': {'volumes': [volume_path],
-                                            'image': config['project']['NAME'].lower()}}
+        if config.has_option('project', 'VOLUME_MOUNT'):
+            docker_env['volumes'] = [config['project']['VOLUME_MOUNT']]
 
-        self._parse_entry_points()
-
-    def _parse_entry_points(self):
-        """
-        Collects entry_points from config and adds them to the project file
-        :return:
-        """
-        entry_points_dict = {}
-        for key in self.config['entry_points']:
-            entry_points_dict[key] = {'command': self.config['entry_points'][key]}
-        self.project_dict['entry_points'] = entry_points_dict
+        self.project_dict = {
+            'name': config['project']['NAME'].lower(), 'docker_env': docker_env,
+            'entry_points': {'main': {'command': ' '.join(['python3', script, self.config_path])
+                                      }
+                             }
+        }
 
     def generate_yaml(self):
         """

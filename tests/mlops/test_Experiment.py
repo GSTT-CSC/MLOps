@@ -10,14 +10,14 @@ class TestExperiment:
 
     def setup(self):
         # currently only testing localhost code
-        self.experiment = Experiment('tests/data/test_config.cfg', project_path='tests/data', use_localhost=True)
+        self.experiment = Experiment('test_entry.py', config_path='tests/data/test_config.cfg', project_path='tests/data')
 
     def test_check_dirty(self):
         """
         Test that the local and remote experiments are the same
         """
         # Need to set project_path at level of git directory for this test.
-        self.experiment = Experiment('tests/data/test_config.cfg', project_path='.', use_localhost=True)
+        self.experiment = Experiment('test_entry.py', 'tests/data/test_config.cfg', project_path='.')
         assert not self.experiment.check_dirty()
 
     def test_check_environment_variables(self):
@@ -35,8 +35,8 @@ class TestExperiment:
 
     def test_env_setup(self):
         self.experiment.env_setup()
-        assert os.getenv('MLFLOW_TRACKING_URI') == self.experiment.config['server']['LOCAL_REMOTE_SERVER_URI']
-        assert os.getenv('MLFLOW_S3_ENDPOINT_URL') == self.experiment.config['server']['LOCAL_MLFLOW_S3_ENDPOINT_URL']
+        assert os.getenv('MLFLOW_TRACKING_URI') == self.experiment.config['server']['MLFLOW_TRACKING_URI']
+        assert os.getenv('MLFLOW_S3_ENDPOINT_URL') == self.experiment.config['server']['MLFLOW_S3_ENDPOINT_URL']
 
     def test_read_config(self):
         # Create config file and assert identical
