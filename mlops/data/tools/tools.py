@@ -3,7 +3,7 @@ from mlops.utils.logger import logger
 from itertools import chain
 
 
-def xnat_build_dataset(xnat_configuration: dict, actions: list = None, flatten_output=True):
+def xnat_build_dataset(xnat_configuration: dict, actions: list = None, flatten_output=True, test_batch: int = -1):
     """
     Builds a dictionary that describes the XNAT project dataset using XNAT data hierarchy: project/subject/experiment/scan
 
@@ -21,10 +21,17 @@ def xnat_build_dataset(xnat_configuration: dict, actions: list = None, flatten_o
         project = session.projects[xnat_configuration["project"]]
 
         dataset = []
-        for subject in project.subjects:
 
-            data_sample = {'subject_uri': project.subjects[subject].uri,
-                           'subject_id': project.subjects[subject].label,
+        if 0 < test_batch < len(project.subjects):
+            from random import sample
+            project_subjects = sample(project.subjects, test_batch)
+        else:
+            project_subjects = range(0, len(project.subjects))
+
+        for subject_i in project_subjects:
+            subject = project.subjects.data[subject_i.id]
+            data_sample = {'subject_uri': project.subjects[subject.id].uri,
+                           'subject_id': project.subjects[subject.id].label,
                            'data': []}
 
             if actions:
@@ -33,8 +40,8 @@ def xnat_build_dataset(xnat_configuration: dict, actions: list = None, flatten_o
                     for action, data_label in actions:
                         action_data = []
                         #  No actions, just return a list of subject IDs and URIs
-                        logger.debug(f"Running action: {action.__name__} on {subject}")
-                        xnat_obj = action(project.subjects[subject])
+                        logger.debug(f"Running action: {action.__name__} on {subject.id}")
+                        xnat_obj = action(project.subjects[subject.id])
 
                         if len(xnat_obj) == 0:
                             raise Exception
