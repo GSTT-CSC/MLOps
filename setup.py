@@ -4,7 +4,7 @@ import setuptools
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-version = "0.6.4"
+version = "0.7.0"
 
 setuptools.setup(
     name="csc-mlops",
@@ -22,6 +22,11 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",
     ],
+    entry_points={
+        'console_scripts': [
+            'mlops = mlops.cli:cli',
+        ],
+    },
     packages=setuptools.find_packages(),
     python_requires=">=3.8",
 )

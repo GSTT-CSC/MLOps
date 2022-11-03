@@ -5,8 +5,8 @@ class TestExperiment:
 
     def setup(self):
         # currently only testing localhost code
-        use_localhost = True
-        self.experiment = Experiment('tests/data/test_config.cfg', use_localhost=use_localhost)
+        self.experiment = Experiment('test_entry.py', config_path='tests/data/test_config.cfg', project_path='tests/data')
+
 
     def test_log_artifact(self):
         """Test to log artifact and then check it is available on MINIO"""
