@@ -11,12 +11,11 @@ itk
 tqdm
 pandas
 matplotlib
-xnat~=0.4.2
+xnat
 GitPython
 protobuf~=3.19.0 # temporary solution to avoid breaking changes made to 3rd party streamlit (necessary for mlflow) https://discuss.streamlit.io/t/typeerror-descriptors-cannot-not-be-created-directly/25639
 PyYAML~=6.0
 requests~=2.27.1
-torch~=1.11.0
 click~=8.1.2
 setuptools~=57.0.0
 torch
