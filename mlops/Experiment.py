@@ -206,7 +206,9 @@ class Experiment:
         if valid_cli:
             for line in cli.build(path=self.project_path, tag=self.experiment_name, use_config_proxy=True):
                 block = line.decode('utf-8').splitlines()
-                print(str(literal_eval(block[0])['stream']), end='')
+                block_dict = literal_eval(block[0])
+                if 'stream' in block_dict.keys():
+                    print(str(block_dict['stream']), end='')
         else:
             client = docker.from_env()
             client.images.build(path=self.project_path,
