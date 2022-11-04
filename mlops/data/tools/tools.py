@@ -26,7 +26,7 @@ def xnat_build_dataset(xnat_configuration: dict, actions: list = None, flatten_o
             from random import sample
             project_subjects = sample(project.subjects, test_batch)
         else:
-            project_subjects = range(0, len(project.subjects))
+            project_subjects = project.subjects[:]
 
         for subject_i in project_subjects:
             subject = project.subjects.data[subject_i.id]
