@@ -1,15 +1,15 @@
-import mlflow
+import configparser
 import os
 import sys
-import configparser
+from ast import literal_eval
+
 import docker
-from minio import Minio
-from mlops.ProjectFile import ProjectFile
-from mlops.utils.logger import logger, LOG_FILE
+import mlflow
 from git import Repo
 from torch.cuda import is_available
-from io import BytesIO
-from ast import literal_eval
+
+from mlops.ProjectFile import ProjectFile
+from mlops.utils.logger import logger, LOG_FILE
 
 
 class Experiment:
@@ -42,7 +42,6 @@ class Experiment:
         else:
             self.check_dirty()
 
-        # self.check_environment_variables()
         self.config_setup()
         self.use_gpu = self.config.getboolean('system', 'USE_GPU')
         self.env_setup()
@@ -74,21 +73,6 @@ class Experiment:
             return False
         else:
             raise Exception('Please synchronise local and remote code versions before running the experiment')
-
-    @staticmethod
-    def check_environment_variables():
-        """
-        Checks that the required environment variables defined by required_env_variables are available.
-
-        Required variables are currently the login credentials for the minio storage.
-        :return:
-        """
-        required_env_variables = ['AWS_ACCESS_KEY_ID',
-                                  'AWS_SECRET_ACCESS_KEY']
-
-        for var in required_env_variables:
-            if os.getenv(var) is None:
-                raise Exception('{0} is a required environment variable: set with "export {0}=<value>"'.format(var))
 
     def config_setup(self):
         """
@@ -147,30 +131,6 @@ class Experiment:
         logger.info("Artifact Location: {}".format(experiment.artifact_location))
         logger.info("Tags: {}".format(experiment.tags))
         logger.info("Lifecycle_stage: {}".format(experiment.lifecycle_stage))
-
-    def configure_minio(self):
-        """
-        configures the minio artifact storage.
-
-        The minio auth credentials are fetched from the environment and used to create a bucket named "mlflow" for
-        logging mlflow artifacts. If a bucket called mlflow already exists then the existing bucket is used.
-
-        :return:
-        """
-        self.uri_formatted = self.config['server']['MLFLOW_S3_ENDPOINT_URL'].replace("http://", "")
-
-        self.minio_cred = {'user': os.getenv('AWS_ACCESS_KEY_ID'),
-                           'password': os.getenv('AWS_SECRET_ACCESS_KEY')}
-
-        # todo: replace this with either a machine level IAM role or ~/.aws/credentials profile
-        os.environ['MINIO_ROOT_USER'] = os.getenv('AWS_ACCESS_KEY_ID')
-        os.environ['MINIO_ROOT_PASSWORD'] = os.getenv('AWS_SECRET_ACCESS_KEY')
-
-        client = Minio(self.uri_formatted, self.minio_cred['user'], self.minio_cred['password'], secure=False)
-
-        if 'mlflow' not in (bucket.name for bucket in client.list_buckets()):
-            logger.info('Creating S3 bucket ''mlflow''')
-            client.make_bucket("mlflow")
 
     def build_experiment_image(self, path: str = None):
         """

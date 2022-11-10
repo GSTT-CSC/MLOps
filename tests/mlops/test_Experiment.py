@@ -20,14 +20,6 @@ class TestExperiment:
         self.experiment = Experiment('test_entry.py', 'tests/data/test_config.cfg', project_path='.')
         assert not self.experiment.check_dirty()
 
-    def test_check_environment_variables(self):
-        test_var = os.environ['AWS_ACCESS_KEY_ID']
-        del os.environ['AWS_ACCESS_KEY_ID']
-        with pytest.raises(Exception) as e:
-            self.experiment.check_environment_variables()
-        # reset env var
-        os.environ['AWS_ACCESS_KEY_ID'] = test_var
-
     def test_config_setup(self):
         self.experiment.config_setup()
         assert self.experiment.experiment_name == 'test_project'
@@ -56,15 +48,6 @@ class TestExperiment:
         self.experiment.print_experiment_info()  # Call function.
         assert 'Name: test_project' in caplog.text
         assert 'Artifact Location: s3://mlflow' in caplog.text
-
-    def test_configure_minio(self):
-        # check mlflow bucket is created
-        self.experiment.configure_minio()
-        client = Minio(self.experiment.uri_formatted,
-                       self.experiment.minio_cred['user'],
-                       self.experiment.minio_cred['password'],
-                       secure=False)
-        assert 'mlflow' in (bucket.name for bucket in client.list_buckets())
 
     def test_build_project_file(self):
         if os.path.exists('MLproject'):
