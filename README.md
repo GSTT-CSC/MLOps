@@ -91,6 +91,14 @@ POSTGRES_DB=db
  docker-compose up -d --build
  ```
 
+4. To enable access to the minio artifact storage the host machine needs to be authenticated. Any of the methods supported by boto3 should be compatible, the recommended authentication method is to create an [aws credentials file](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html). e.g. for ubuntu/linux
+
+```
+[credentials]
+AWS_ACCESS_KEY_ID=minioUsername
+AWS_SECRET_ACCESS_KEY=minioPassword
+```
+
 Upon a successful build the server should now be up and running locally. By default, the mlflow user interface can be accessed at ```http:/localhost:85``` and minio can be accessed at ```https:/localhost:8002```.
 
 To check if the server is up and running successfully running ```docker ps``` in the terminal lists the running containers, and we should see something like:
