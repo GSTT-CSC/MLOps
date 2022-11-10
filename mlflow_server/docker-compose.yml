@@ -34,13 +34,11 @@ services:
         environment:
             - MINIO_ROOT_USER=${AWS_ACCESS_KEY_ID}
             - MINIO_ROOT_PASSWORD=${AWS_SECRET_ACCESS_KEY}
-#            - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-#            - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
 #        volumes:
 #            - minio_data:/data
         volumes:
             - type: bind
-              source: ~/MLOps_data/mlflow_minio_migrate
+              source: ~/MLOps_data/mlflow_minio
               target: /data
 
     createbuckets:
@@ -73,7 +71,7 @@ services:
             - type: bind
               source: ~/MLOps_data/mlflow_db
               target: /var/lib/postgresql/data
-#
+
     web:
         restart: always
         build: ./mlflow
@@ -96,9 +94,9 @@ services:
         command: mlflow server --backend-store-uri postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB} --default-artifact-root s3://mlflow/ --host 0.0.0.0
 
 # use these docker volumes for testings and development - use bind mounts in production
-volumes:
-    dbdata_pg:
-    minio_data:
+#volumes:
+#    dbdata_pg:
+#    minio_data:
 
 networks:
     frontend:

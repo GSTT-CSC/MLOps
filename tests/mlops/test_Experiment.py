@@ -1,9 +1,9 @@
-from mlops.Experiment import Experiment
 import configparser
-from minio import Minio
 import os
+
 import docker
-import pytest
+
+from mlops.Experiment import Experiment
 
 
 class TestExperiment:
@@ -11,6 +11,10 @@ class TestExperiment:
     def setup(self):
         # currently only testing localhost code
         self.experiment = Experiment('test_entry.py', config_path='tests/data/test_config.cfg', project_path='tests/data')
+
+    def test_check_minio_credentials(self):
+        self.experiment.check_minio_credentials()
+        assert self.experiment.auth
 
     def test_check_dirty(self):
         """

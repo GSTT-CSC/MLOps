@@ -3,6 +3,7 @@ import os
 import sys
 from ast import literal_eval
 
+import boto3
 import docker
 import mlflow
 from git import Repo
@@ -15,7 +16,8 @@ from mlops.utils.logger import logger, LOG_FILE
 class Experiment:
 
     def __init__(self, script, config_path, project_path: str = '.',
-                 verbose: bool = True, ignore_git_check: bool = False):
+                 verbose: bool = True, ignore_git_check: bool = False,
+                 artifact_path: str = 's3://mlflow'):
         """
         The Experiment class is the interface through which all projects should be run.
         :param script: path to script to run
@@ -25,12 +27,13 @@ class Experiment:
         """
         self.script = script
         self.config = None
-        self.artifact_path = None
+        self.artifact_path = artifact_path
         self.experiment_name = None
         self.experiment_id = None
         self.config_path = config_path
         self.project_path = project_path
         self.verbose = verbose
+        self.auth = None
 
         if 'pytest' in sys.modules:
             logger.warn('DEBUG ONLY - ignoring git checks due to test run detected')
@@ -42,6 +45,7 @@ class Experiment:
         else:
             self.check_dirty()
 
+        self.check_minio_credentials()
         self.config_setup()
         self.use_gpu = self.config.getboolean('system', 'USE_GPU')
         self.env_setup()
@@ -50,6 +54,13 @@ class Experiment:
 
         if self.verbose:
             self.print_experiment_info()
+
+    def check_minio_credentials(self):
+        self.auth = boto3.session.Session().get_credentials()
+        if self.auth is None:
+            logger.debug(f'Found minio credentials in {self.auth.method}')
+            raise Exception(
+                f'minio credentials not found - either specify in ~/.aws/credentials or using environment variables (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)')
 
     def check_dirty(self) -> bool:
         """
@@ -83,7 +94,6 @@ class Experiment:
         self.config = configparser.ConfigParser()
         self.config.read(self.config_path)
 
-        self.artifact_path = self.config['server']['ARTIFACT_PATH']
         self.experiment_name = self.config['project']['NAME'].lower()
 
     def env_setup(self):
@@ -190,7 +200,7 @@ class Experiment:
 
     def run(self, **kwargs):
         """
-        Runs the mlflow project that has been defined by the MLproject file output by self.build_project_file
+        Runs the mlflow project that has been defined by the MLProject file output by self.build_project_file
 
         After running the project the logs are stored as an artifact on the mlflow server.
         :param kwargs:
@@ -202,6 +212,10 @@ class Experiment:
                                'ipc': 'host',
                                'rm': '',
                                }
+
+        if self.auth.method == 'shared-credentials-file':
+            logger.debug(f'Mounting shared env file for minio authentication to /root/.aws')
+            docker_args_default['v'] = '~/.aws/credentials:/root/.aws/credentials:ro'
 
         # if not self.use_localhost:
         if self.use_gpu and not is_available():
