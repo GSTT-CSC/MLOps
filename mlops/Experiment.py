@@ -42,7 +42,7 @@ class Experiment:
         else:
             self.check_dirty()
 
-        self.check_environment_variables()
+        # self.check_environment_variables()
         self.config_setup()
         self.use_gpu = self.config.getboolean('system', 'USE_GPU')
         self.env_setup()
@@ -133,7 +133,7 @@ class Experiment:
         logger.info('Setting experiment to: {0} '.format(self.experiment_name))
         mlflow.set_experiment(self.experiment_name)
 
-        self.configure_minio()
+        # self.configure_minio()
         self.experiment_id = exp_id
 
     def print_experiment_info(self):
