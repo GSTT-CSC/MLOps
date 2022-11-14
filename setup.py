@@ -7,26 +7,28 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 version = "0.8.0"
 
-install_requires = ['mlflow==1.26.0'
-                    'boto3',
-                    'docker~=5.0.3',
-                    'minio>=7.0.3',
-                    'pytest>= 6.2',
-                    'colorlog~=6.6.0',
-                    'fsspec',
-                    'monai',
-                    'itk',
-                    'tqdm',
-                    'pandas',
-                    'matplotlib',
-                    'xnat',
-                    'GitPython',
-                    'protobuf~=3.19.0',
-                    'PyYAML~=6.0',
-                    'requests~=2.27.1',
-                    'click~=8.1.2',
-                    'setuptools~=57.0.0',
-                    'torch']
+install_requires = [
+    'mlflow==1.26.0',
+    'boto3',
+    'docker~=5.0.3',
+    'minio>=7.0.3',
+    'pytest>= 6.2',
+    'colorlog~=6.6.0',
+    'fsspec',
+    'monai',
+    'itk',
+    'tqdm',
+    'pandas',
+    'matplotlib',
+    'xnat',
+    'GitPython',
+    'protobuf~=3.19.0',
+    'PyYAML~=6.0',
+    'requests~=2.27.1',
+    'click~=8.1.2',
+    'setuptools~=57.0.0',
+    'torch'
+]
 
 setuptools.setup(
     name="csc-mlops",
