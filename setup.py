@@ -25,8 +25,7 @@ install_requires = [
     'requests~=2.27.1',
     'click~=8.1.2',
     'setuptools~=57.0.0',
-    '--extra-index-url https://download.pytorch.org/whl/cpu',
-    'torch'
+    'torch==1.13.0'
 ]
 
 setuptools.setup(
@@ -46,6 +45,9 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",
     ],
+    dependency_links=[
+            'https://download.pytorch.org/whl/torch_stable.html'
+        ],
     entry_points={
         'console_scripts': [
             'mlops = mlops.cli:cli',
