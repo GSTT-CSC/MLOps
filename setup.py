@@ -25,6 +25,7 @@ install_requires = [
     'requests~=2.27.1',
     'click~=8.1.2',
     'setuptools~=57.0.0',
+    '--extra-index-url https://download.pytorch.org/whl/cpu',
     'torch'
 ]
 
