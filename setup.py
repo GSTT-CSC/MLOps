@@ -1,7 +1,5 @@
 import setuptools
 
-# from mlops import __version__
-
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
