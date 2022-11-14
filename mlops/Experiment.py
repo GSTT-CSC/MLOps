@@ -1,15 +1,16 @@
-import mlflow
+import configparser
 import os
 import sys
-import configparser
+from ast import literal_eval
+
 import docker
+import mlflow
+from git import Repo
 from minio import Minio
+from torch.cuda import is_available
+
 from mlops.ProjectFile import ProjectFile
 from mlops.utils.logger import logger, LOG_FILE
-from git import Repo
-from torch.cuda import is_available
-from io import BytesIO
-from ast import literal_eval
 
 
 class Experiment:
