@@ -40,6 +40,7 @@ setuptools.setup(
     project_urls={
         "Bug Tracker": "https://github.com/GSTT-CSC/MLOps/issues",
     },
+    install_requires=install_requires,
     classifiers=[
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",
