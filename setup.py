@@ -14,16 +14,16 @@ install_requires = [
     # 'fsspec',
     'monai',
     'itk',
-    # 'tqdm',
-    # 'pandas',
-    # 'matplotlib',
+    'tqdm',
+    'pandas',
+    'matplotlib',
     'xnat',
     'GitPython',
     # 'protobuf~=3.19.0',
-    # 'PyYAML~=6.0',
-    # 'requests~=2.27.1',
+    'PyYAML~=6.0',
+    'requests~=2.27.1',
     'click~=8.1.2',
-    # 'setuptools~=57.0.0',
+    'setuptools~=57.0.0',
     # 'torch==1.13.0'
 ]
 
