@@ -2,8 +2,11 @@ import configparser
 import os
 import sys
 from ast import literal_eval
+import boto3
+import docker
+import mlflow
+from git import Repo
 import subprocess
-
 import docker
 import mlflow
 from git import Repo
@@ -17,7 +20,8 @@ from mlops.utils.logger import logger, LOG_FILE
 class Experiment:
 
     def __init__(self, script, config_path, project_path: str = '.',
-                 verbose: bool = True, ignore_git_check: bool = False):
+                 verbose: bool = True, ignore_git_check: bool = False,
+                 artifact_path: str = 's3://mlflow'):
         """
         The Experiment class is the interface through which all projects should be run.
         :param script: path to script to run
@@ -27,12 +31,13 @@ class Experiment:
         """
         self.script = script
         self.config = None
-        self.artifact_path = None
+        self.artifact_path = artifact_path
         self.experiment_name = None
         self.experiment_id = None
         self.config_path = config_path
         self.project_path = project_path
         self.verbose = verbose
+        self.auth = None
 
         if 'pytest' in sys.modules:
             logger.warn('DEBUG ONLY - ignoring git checks due to test run detected')
@@ -44,7 +49,7 @@ class Experiment:
         else:
             self.check_dirty()
 
-        self.check_environment_variables()
+        self.check_minio_credentials()
         self.config_setup()
         self.use_gpu = self.config.getboolean('system', 'USE_GPU')
         self.env_setup()
@@ -53,6 +58,13 @@ class Experiment:
 
         if self.verbose:
             self.print_experiment_info()
+
+    def check_minio_credentials(self):
+        self.auth = boto3.session.Session().get_credentials()
+        if self.auth is None:
+            logger.debug(f'Found minio credentials in {self.auth.method}')
+            raise Exception(
+                f'minio credentials not found - either specify in ~/.aws/credentials or using environment variables (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)')
 
     def check_dirty(self) -> bool:
         """
@@ -77,21 +89,6 @@ class Experiment:
         else:
             raise Exception('Please synchronise local and remote code versions before running the experiment')
 
-    @staticmethod
-    def check_environment_variables():
-        """
-        Checks that the required environment variables defined by required_env_variables are available.
-
-        Required variables are currently the login credentials for the minio storage.
-        :return:
-        """
-        required_env_variables = ['AWS_ACCESS_KEY_ID',
-                                  'AWS_SECRET_ACCESS_KEY']
-
-        for var in required_env_variables:
-            if os.getenv(var) is None:
-                raise Exception('{0} is a required environment variable: set with "export {0}=<value>"'.format(var))
-
     def config_setup(self):
         """
         Reads the configuration file and extracts necessary values
@@ -101,7 +98,6 @@ class Experiment:
         self.config = configparser.ConfigParser()
         self.config.read(self.config_path)
 
-        self.artifact_path = self.config['server']['ARTIFACT_PATH']
         self.experiment_name = self.config['project']['NAME'].lower()
 
     def env_setup(self):
@@ -137,7 +133,7 @@ class Experiment:
         logger.info('Setting experiment to: {0} '.format(self.experiment_name))
         mlflow.set_experiment(self.experiment_name)
 
-        self.configure_minio()
+        # self.configure_minio()
         self.experiment_id = exp_id
 
     def print_experiment_info(self):
@@ -189,7 +185,7 @@ class Experiment:
         """
 
         # Build dockerfile into an MAP image
-        docker_build_cmd = f'''docker build -f "{path}" -t {self.experiment_name} "{self.project_path}"'''
+        docker_build_cmd = f'''docker build -t {self.experiment_name} "{path}"'''
         if sys.platform != "win32":
             docker_build_cmd += """ --build-arg UID=$(id -u) --build-arg GID=$(id -g)"""
         if no_cache:
@@ -211,52 +207,6 @@ class Experiment:
         if return_code == 0:
             logger.info(f"Successfully built {self.experiment_name}")
 
-    def build_experiment_image(self, path: str = None):
-        """
-        Builds the Dockerfile at location path if parameter is supplied, else uses self.project_path (default)
-
-        Images are tagged using the project name defined in config. If proxy variables exist in the environment these
-        are passed to the docker demon as build arguments.
-
-        :param path: optional path to Dockerfile (if not in project_path root)
-        :return:
-        """
-        logger.info('Building experiment image ...')
-
-        # Collect proxy settings
-        build_args = {}
-        if os.getenv('http_proxy') is not None or os.getenv('https_proxy') is not None:
-            build_args = {'http_proxy': os.getenv('http_proxy'),
-                          'https_proxy': os.getenv('https_proxy')}
-
-        logger.info('Running docker build with: {0}'.format({'path': path if path else self.project_path,
-                                                             'tag': self.experiment_name,
-                                                             'buildargs': build_args,
-                                                             'rm': ''}))
-
-        try:
-            docker_base_url = 'unix://var/run/docker.sock'
-            cli = docker.APIClient(base_url=docker_base_url)
-            valid_cli = True
-        except:
-            logger.warn(f'Low level Docker SDK not available on non-unix systems, the build will continue but will not output any logs')
-            valid_cli = False
-
-        if valid_cli:
-            for line in cli.build(path=self.project_path, tag=self.experiment_name, use_config_proxy=True):
-                block = line.decode('utf-8').splitlines()
-                block_dict = literal_eval(block[0])
-                if 'stream' in block_dict.keys():
-                    print(str(block_dict['stream']), end='')
-        else:
-            client = docker.from_env()
-            client.images.build(path=self.project_path,
-                                tag=self.experiment_name,
-                                buildargs=build_args,
-                                rm=True)
-
-        logger.info('Built project image: ' + self.experiment_name + ':latest')
-
     def build_project_file(self, path: str = '.'):
         """
         Builds MLProject yaml file used by mlflow to define the project. See the mlops.ProjectFile class for more info.
@@ -269,7 +219,7 @@ class Experiment:
 
     def run(self, **kwargs):
         """
-        Runs the mlflow project that has been defined by the MLproject file output by self.build_project_file
+        Runs the mlflow project that has been defined by the MLProject file output by self.build_project_file
 
         After running the project the logs are stored as an artifact on the mlflow server.
         :param kwargs:
@@ -281,6 +231,10 @@ class Experiment:
                                'ipc': 'host',
                                'rm': '',
                                }
+
+        if self.auth.method == 'shared-credentials-file':
+            logger.debug(f'Mounting shared env file for minio authentication to /root/.aws')
+            docker_args_default['v'] = '~/.aws/credentials:/root/.aws/credentials:ro'
 
         # if not self.use_localhost:
         if self.use_gpu and not is_available():

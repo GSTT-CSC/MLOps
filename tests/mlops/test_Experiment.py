@@ -1,9 +1,9 @@
-from mlops.Experiment import Experiment
 import configparser
-from minio import Minio
 import os
+
 import docker
-import pytest
+
+from mlops.Experiment import Experiment
 
 
 class TestExperiment:
@@ -12,6 +12,10 @@ class TestExperiment:
         # currently only testing localhost code
         self.experiment = Experiment('test_entry.py', config_path='tests/data/test_config.cfg', project_path='tests/data')
 
+    def test_check_minio_credentials(self):
+        self.experiment.check_minio_credentials()
+        assert self.experiment.auth
+
     def test_check_dirty(self):
         """
         Test that the local and remote experiments are the same
@@ -19,14 +23,6 @@ class TestExperiment:
         # Need to set project_path at level of git directory for this test.
         self.experiment = Experiment('test_entry.py', 'tests/data/test_config.cfg', project_path='.')
         assert not self.experiment.check_dirty()
-
-    def test_check_environment_variables(self):
-        test_var = os.environ['AWS_ACCESS_KEY_ID']
-        del os.environ['AWS_ACCESS_KEY_ID']
-        with pytest.raises(Exception) as e:
-            self.experiment.check_environment_variables()
-        # reset env var
-        os.environ['AWS_ACCESS_KEY_ID'] = test_var
 
     def test_config_setup(self):
         self.experiment.config_setup()
@@ -57,26 +53,17 @@ class TestExperiment:
         assert 'Name: test_project' in caplog.text
         assert 'Artifact Location: s3://mlflow' in caplog.text
 
-    def test_configure_minio(self):
-        # check mlflow bucket is created
-        self.experiment.configure_minio()
-        client = Minio(self.experiment.uri_formatted,
-                       self.experiment.minio_cred['user'],
-                       self.experiment.minio_cred['password'],
-                       secure=False)
-        assert 'mlflow' in (bucket.name for bucket in client.list_buckets())
-
     def test_build_project_file(self):
         if os.path.exists('MLproject'):
             os.remove('MLproject')
         self.experiment.build_project_file()
         assert os.path.exists(os.path.join(self.experiment.project_path, 'MLproject'))
 
-    def test_build_experiment_image(self):
+    def build_experiment_image_subprocess(self):
         client = docker.from_env()
         images_1 = [img['RepoTags'][0] for img in client.api.images()]
         # assert self.experiment.experiment_name + ':latest' not in images_1
-        self.experiment.build_experiment_image()
+        self.experiment.build_experiment_image_subprocess()
         images_2 = [img['RepoTags'][0] for img in client.api.images()]
         assert self.experiment.experiment_name + ':latest' in images_2
 
