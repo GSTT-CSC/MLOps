@@ -2,11 +2,15 @@ import configparser
 import os
 import sys
 from ast import literal_eval
-
 import boto3
 import docker
 import mlflow
 from git import Repo
+import subprocess
+import docker
+import mlflow
+from git import Repo
+from minio import Minio
 from torch.cuda import is_available
 
 from mlops.ProjectFile import ProjectFile
@@ -111,6 +115,8 @@ class Experiment:
         Fetches experiment info from configured mlflow server. If it doesn't exist then one is created.
         :return:
         """
+        logger.info(f'Initialising Experiment {self.experiment_name}')
+
         # Get experiment from mlflow server
         experiment = mlflow.get_experiment_by_name(self.experiment_name)
 
@@ -142,7 +148,32 @@ class Experiment:
         logger.info("Tags: {}".format(experiment.tags))
         logger.info("Lifecycle_stage: {}".format(experiment.lifecycle_stage))
 
-    def build_experiment_image(self, path: str = None):
+    def configure_minio(self):
+        """
+        configures the minio artifact storage.
+
+        The minio auth credentials are fetched from the environment and used to create a bucket named "mlflow" for
+        logging mlflow artifacts. If a bucket called mlflow already exists then the existing bucket is used.
+
+        :return:
+        """
+        logger.info('Configuring Minio')
+        self.uri_formatted = self.config['server']['MLFLOW_S3_ENDPOINT_URL'].replace("http://", "")
+
+        self.minio_cred = {'user': os.getenv('AWS_ACCESS_KEY_ID'),
+                           'password': os.getenv('AWS_SECRET_ACCESS_KEY')}
+
+        # todo: replace this with either a machine level IAM role or ~/.aws/credentials profile
+        os.environ['MINIO_ROOT_USER'] = os.getenv('AWS_ACCESS_KEY_ID')
+        os.environ['MINIO_ROOT_PASSWORD'] = os.getenv('AWS_SECRET_ACCESS_KEY')
+
+        client = Minio(self.uri_formatted, self.minio_cred['user'], self.minio_cred['password'], secure=False)
+
+        if 'mlflow' not in (bucket.name for bucket in client.list_buckets()):
+            logger.info('Creating S3 bucket ''mlflow''')
+            client.make_bucket("mlflow")
+
+    def build_experiment_image_subprocess(self, path: str = None, no_cache: bool = False, build_args: dict = {}):
         """
         Builds the Dockerfile at location path if parameter is supplied, else uses self.project_path (default)
 
@@ -152,41 +183,29 @@ class Experiment:
         :param path: optional path to Dockerfile (if not in project_path root)
         :return:
         """
-        logger.info('Building experiment image ...')
 
-        # Collect proxy settings
-        build_args = {}
-        if os.getenv('http_proxy') is not None or os.getenv('https_proxy') is not None:
-            build_args = {'http_proxy': os.getenv('http_proxy'),
-                          'https_proxy': os.getenv('https_proxy')}
+        # Build dockerfile into an MAP image
+        docker_build_cmd = f'''docker build -f "{path}" -t {self.experiment_name} "{self.project_path}"'''
+        if sys.platform != "win32":
+            docker_build_cmd += """ --build-arg UID=$(id -u) --build-arg GID=$(id -g)"""
+        if no_cache:
+            docker_build_cmd += " --no-cache"
+        if build_args:
+            for k, v in build_args.items():
+                docker_build_cmd += f' --build-arg {k}={v}'
 
-        logger.info('Running docker build with: {0}'.format({'path': path if path else self.project_path,
-                                                             'tag': self.experiment_name,
-                                                             'buildargs': build_args,
-                                                             'rm': ''}))
+        proc = subprocess.Popen(docker_build_cmd, stdout=subprocess.PIPE, shell=True)
 
-        try:
-            docker_base_url = 'unix://var/run/docker.sock'
-            cli = docker.APIClient(base_url=docker_base_url)
-            valid_cli = True
-        except:
-            logger.warn(f'Low level Docker SDK not available on non-unix systems, the build will continue but will not output any logs')
-            valid_cli = False
+        logger.info("Docker image build command: %s", docker_build_cmd)
 
-        if valid_cli:
-            for line in cli.build(path=self.project_path, tag=self.experiment_name, use_config_proxy=True):
-                block = line.decode('utf-8').splitlines()
-                block_dict = literal_eval(block[0])
-                if 'stream' in block_dict.keys():
-                    print(str(block_dict['stream']), end='')
-        else:
-            client = docker.from_env()
-            client.images.build(path=self.project_path,
-                                tag=self.experiment_name,
-                                buildargs=build_args,
-                                rm=True)
+        while proc.poll() is None:
+            if proc.stdout:
+                logger.debug(proc.stdout.readline().decode("utf-8"))
 
-        logger.info('Built project image: ' + self.experiment_name + ':latest')
+        return_code = proc.returncode
+
+        if return_code == 0:
+            logger.info(f"Successfully built {self.experiment_name}")
 
     def build_project_file(self, path: str = '.'):
         """
@@ -237,7 +256,7 @@ class Experiment:
         images = [str(img['RepoTags']) for img in client.api.images()]
         if all([(self.experiment_name + ':latest') not in item for item in images]):
             logger.info('No existing image found')
-            self.build_experiment_image(path=self.project_path)
+            self.build_experiment_image_subprocess(path=self.project_path)
         else:
             logger.info(f'Found existing project image: {self.experiment_name}:latest')
 
