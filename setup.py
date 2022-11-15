@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 version = "0.8.0"
 
 install_requires = [
-    'mlflow==1.26.0',
+    'mlflow==2.0.1',
     'boto3',
     'docker~=5.0.3',
     'minio>=7.0.3',
