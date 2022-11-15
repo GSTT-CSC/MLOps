@@ -10,7 +10,8 @@ class TestExperiment:
 
     def setup(self):
         # currently only testing localhost code
-        self.experiment = Experiment('test_entry.py', config_path='tests/data/test_config.cfg', project_path='tests/data')
+        self.experiment = Experiment('test_entry.py', config_path='tests/data/test_config.cfg',
+                                     project_path='tests/data')
 
     def test_check_minio_credentials(self):
         self.experiment.check_minio_credentials()
@@ -59,11 +60,13 @@ class TestExperiment:
         self.experiment.build_project_file()
         assert os.path.exists(os.path.join(self.experiment.project_path, 'MLproject'))
 
-    def build_experiment_image_subprocess(self):
+    def test_build_experiment_image_subprocess(self):
         client = docker.from_env()
         images_1 = [img['RepoTags'][0] for img in client.api.images()]
         # assert self.experiment.experiment_name + ':latest' not in images_1
-        self.experiment.build_experiment_image_subprocess()
+        self.experiment.build_experiment_image_subprocess(context_path='.',
+                                                          dockerfile_path=self.experiment.project_path + '/Dockerfile',
+                                                          no_cache=True)
         images_2 = [img['RepoTags'][0] for img in client.api.images()]
         assert self.experiment.experiment_name + ':latest' in images_2
 

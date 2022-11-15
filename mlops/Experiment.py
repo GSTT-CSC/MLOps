@@ -173,19 +173,19 @@ class Experiment:
             logger.info('Creating S3 bucket ''mlflow''')
             client.make_bucket("mlflow")
 
-    def build_experiment_image_subprocess(self, path: str = None, no_cache: bool = False, build_args: dict = {}):
+    def build_experiment_image_subprocess(self, dockerfile_path = 'Dockerfile', context_path: str = '.', no_cache: bool = False, build_args: dict = {}):
         """
         Builds the Dockerfile at location path if parameter is supplied, else uses self.project_path (default)
 
         Images are tagged using the project name defined in config. If proxy variables exist in the environment these
         are passed to the docker demon as build arguments.
 
-        :param path: optional path to Dockerfile (if not in project_path root)
+        :param context_path: optional path to Dockerfile (if not in project_path root)
         :return:
         """
 
         # Build dockerfile into an MAP image
-        docker_build_cmd = f'''docker build -t {self.experiment_name} "{path}"'''
+        docker_build_cmd = f'''docker build -f {dockerfile_path} -t {self.experiment_name} "{context_path}"'''
         if sys.platform != "win32":
             docker_build_cmd += """ --build-arg UID=$(id -u) --build-arg GID=$(id -g)"""
         if no_cache:
@@ -256,7 +256,7 @@ class Experiment:
         images = [str(img['RepoTags']) for img in client.api.images()]
         if all([(self.experiment_name + ':latest') not in item for item in images]):
             logger.info('No existing image found')
-            self.build_experiment_image_subprocess(path=self.project_path)
+            self.build_experiment_image_subprocess(context_path=self.project_path)
         else:
             logger.info(f'Found existing project image: {self.experiment_name}:latest')
 
