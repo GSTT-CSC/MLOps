@@ -59,11 +59,11 @@ class TestExperiment:
         self.experiment.build_project_file()
         assert os.path.exists(os.path.join(self.experiment.project_path, 'MLproject'))
 
-    def test_build_experiment_image(self):
+    def build_experiment_image_subprocess(self):
         client = docker.from_env()
         images_1 = [img['RepoTags'][0] for img in client.api.images()]
         # assert self.experiment.experiment_name + ':latest' not in images_1
-        self.experiment.build_experiment_image()
+        self.experiment.build_experiment_image_subprocess()
         images_2 = [img['RepoTags'][0] for img in client.api.images()]
         assert self.experiment.experiment_name + ':latest' in images_2
 
