@@ -11,7 +11,7 @@ import docker
 import mlflow
 from git import Repo
 from minio import Minio
-from torch.cuda import is_available
+# from torch.cuda import is_available
 
 from mlops.ProjectFile import ProjectFile
 from mlops.utils.logger import logger, LOG_FILE
@@ -185,7 +185,7 @@ class Experiment:
         """
 
         # Build dockerfile into an MAP image
-        docker_build_cmd = f'''docker build -f {dockerfile_path} -t {self.experiment_name} "{context_path}"'''
+        docker_build_cmd = f'docker build -f "{dockerfile_path}" -t {self.experiment_name} "{context_path}"'
         if sys.platform != "win32":
             docker_build_cmd += """ --build-arg UID=$(id -u) --build-arg GID=$(id -g)"""
         if no_cache:
@@ -193,6 +193,8 @@ class Experiment:
         if build_args:
             for k, v in build_args.items():
                 docker_build_cmd += f' --build-arg {k}={v}'
+
+        logger.info("Docker image build command: %s", docker_build_cmd)
 
         proc = subprocess.Popen(docker_build_cmd, stdout=subprocess.PIPE, shell=True)
 
@@ -237,9 +239,11 @@ class Experiment:
             docker_args_default['v'] = '~/.aws/credentials:/root/.aws/credentials:ro'
 
         # if not self.use_localhost:
-        if self.use_gpu and not is_available():
-            logger.warn('requested GPU resource but none available - using CPU')
-        elif self.use_gpu and is_available():
+        # if self.use_gpu and not is_available():
+        # if self.use_gpu and not is_available():
+        #     logger.warn('requested GPU resource but none available - using CPU')
+        # elif self.use_gpu and is_available():
+        elif self.use_gpu:
             gpu_params = {'gpus': 'all',
                           'runtime': 'nvidia'}
             logger.info('Adding docker args: {0}'.format(gpu_params))

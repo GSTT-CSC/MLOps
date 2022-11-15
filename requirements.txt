@@ -1,21 +1,9 @@
 mlflow==2.0.1
 boto3
-docker~=5.0.3
-minio>=7.0.3
-pytest>= 6.2
-colorlog~=6.6.0
-fsspec
-monai~=0.8.1
-itk
-tqdm
-pandas
-matplotlib
+docker
+minio
+pytest
+colorlog
 xnat
 GitPython
-protobuf~=3.19.0 # temporary solution to avoid breaking changes made to 3rd party streamlit (necessary for mlflow) https://discuss.streamlit.io/t/typeerror-descriptors-cannot-not-be-created-directly/25639
-PyYAML~=6.0
-requests~=2.27.1
-click~=8.1.2
-setuptools~=57.0.0
--f https://download.pytorch.org/whl/torch_stable.html
-torch==1.13.0
+click

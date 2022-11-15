@@ -65,8 +65,7 @@ class TestExperiment:
         images_1 = [img['RepoTags'][0] for img in client.api.images()]
         # assert self.experiment.experiment_name + ':latest' not in images_1
         self.experiment.build_experiment_image_subprocess(context_path='.',
-                                                          dockerfile_path=self.experiment.project_path + '/Dockerfile',
-                                                          no_cache=True)
+                                                          dockerfile_path=self.experiment.project_path + '/Dockerfile')
         images_2 = [img['RepoTags'][0] for img in client.api.images()]
         assert self.experiment.experiment_name + ':latest' in images_2
 

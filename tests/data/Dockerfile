@@ -8,3 +8,4 @@ RUN python3 -m pip install --upgrade pip && python3 -m pip install --ignore-inst
 
 # Setup MLOps
 RUN python setup.py install
+WORKDIR /tests/data
