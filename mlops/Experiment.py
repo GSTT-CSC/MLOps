@@ -185,7 +185,7 @@ class Experiment:
         """
 
         # Build dockerfile into an MAP image
-        docker_build_cmd = f'''docker build -f "{path}" -t {self.experiment_name} "{self.project_path}"'''
+        docker_build_cmd = f'''docker build -t {self.experiment_name} "{path}"'''
         if sys.platform != "win32":
             docker_build_cmd += """ --build-arg UID=$(id -u) --build-arg GID=$(id -g)"""
         if no_cache:
