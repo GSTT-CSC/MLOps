@@ -7,3 +7,5 @@ colorlog
 xnat
 GitPython
 click
+monai
+itk
