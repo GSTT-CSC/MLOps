@@ -177,7 +177,7 @@ class Experiment:
             logger.info('Creating S3 bucket ''mlflow''')
             client.make_bucket("mlflow")
 
-    def build_experiment_image_subprocess(self, path: str = None, no_cache: bool = False):
+    def build_experiment_image_subprocess(self, path: str = None, no_cache: bool = False, build_args: dict = {}):
         """
         Builds the Dockerfile at location path if parameter is supplied, else uses self.project_path (default)
 
@@ -187,11 +187,6 @@ class Experiment:
         :param path: optional path to Dockerfile (if not in project_path root)
         :return:
         """
-        # Collect proxy settings
-        build_args = {}
-        if os.getenv('http_proxy') is not None or os.getenv('https_proxy') is not None:
-            build_args = {'http_proxy': os.getenv('http_proxy'),
-                          'https_proxy': os.getenv('https_proxy')}
 
         # Build dockerfile into an MAP image
         docker_build_cmd = f'''docker build -f "{path}" -t {self.experiment_name} "{self.project_path}"'''
@@ -200,21 +195,17 @@ class Experiment:
         if no_cache:
             docker_build_cmd += " --no-cache"
         if build_args:
-            for k, v in build_args:
-                docker_build_cmd += f' -e {k}={v}'
+            for k, v in build_args.items():
+                docker_build_cmd += f' --build-arg {k}={v}'
 
         proc = subprocess.Popen(docker_build_cmd, stdout=subprocess.PIPE, shell=True)
 
-        logger.debug("Docker image build command: %s", docker_build_cmd)
-
-        # spinner = ProgressSpinner("Building MONAI Application Package... ")
-        # spinner.start()
+        logger.info("Docker image build command: %s", docker_build_cmd)
 
         while proc.poll() is None:
             if proc.stdout:
                 logger.debug(proc.stdout.readline().decode("utf-8"))
 
-        # spinner.stop()
         return_code = proc.returncode
 
         if return_code == 0:
