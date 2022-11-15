@@ -2,6 +2,7 @@ import configparser
 import os
 import sys
 from ast import literal_eval
+import subprocess
 
 import docker
 import mlflow
@@ -118,6 +119,8 @@ class Experiment:
         Fetches experiment info from configured mlflow server. If it doesn't exist then one is created.
         :return:
         """
+        logger.info(f'Initialising Experiment {self.experiment_name}')
+
         # Get experiment from mlflow server
         experiment = mlflow.get_experiment_by_name(self.experiment_name)
 
@@ -158,6 +161,7 @@ class Experiment:
 
         :return:
         """
+        logger.info('Configuring Minio')
         self.uri_formatted = self.config['server']['MLFLOW_S3_ENDPOINT_URL'].replace("http://", "")
 
         self.minio_cred = {'user': os.getenv('AWS_ACCESS_KEY_ID'),
@@ -172,6 +176,40 @@ class Experiment:
         if 'mlflow' not in (bucket.name for bucket in client.list_buckets()):
             logger.info('Creating S3 bucket ''mlflow''')
             client.make_bucket("mlflow")
+
+    def build_experiment_image_subprocess(self, path: str = None, no_cache: bool = False, build_args: dict = {}):
+        """
+        Builds the Dockerfile at location path if parameter is supplied, else uses self.project_path (default)
+
+        Images are tagged using the project name defined in config. If proxy variables exist in the environment these
+        are passed to the docker demon as build arguments.
+
+        :param path: optional path to Dockerfile (if not in project_path root)
+        :return:
+        """
+
+        # Build dockerfile into an MAP image
+        docker_build_cmd = f'''docker build -f "{path}" -t {self.experiment_name} "{self.project_path}"'''
+        if sys.platform != "win32":
+            docker_build_cmd += """ --build-arg UID=$(id -u) --build-arg GID=$(id -g)"""
+        if no_cache:
+            docker_build_cmd += " --no-cache"
+        if build_args:
+            for k, v in build_args.items():
+                docker_build_cmd += f' --build-arg {k}={v}'
+
+        proc = subprocess.Popen(docker_build_cmd, stdout=subprocess.PIPE, shell=True)
+
+        logger.info("Docker image build command: %s", docker_build_cmd)
+
+        while proc.poll() is None:
+            if proc.stdout:
+                logger.debug(proc.stdout.readline().decode("utf-8"))
+
+        return_code = proc.returncode
+
+        if return_code == 0:
+            logger.info(f"Successfully built {self.experiment_name}")
 
     def build_experiment_image(self, path: str = None):
         """
@@ -264,7 +302,7 @@ class Experiment:
         images = [str(img['RepoTags']) for img in client.api.images()]
         if all([(self.experiment_name + ':latest') not in item for item in images]):
             logger.info('No existing image found')
-            self.build_experiment_image(path=self.project_path)
+            self.build_experiment_image_subprocess(path=self.project_path)
         else:
             logger.info(f'Found existing project image: {self.experiment_name}:latest')
 
