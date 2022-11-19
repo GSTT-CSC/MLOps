@@ -62,7 +62,8 @@ class Experiment:
     def check_gpu(self):
         try:
             request_gpu = self.config.getboolean('system', 'USE_GPU')
-        except configparser.NoSectionError or configparser.NoOptionError:
+        except (configparser.NoSectionError, configparser.NoOptionError) as e:
+            logger.debug(f'GPU resource not explicitly requested {e} defaulting to True')
             request_gpu = True
 
         logger.info(f'GPU requested: {request_gpu}, cuda_available {torch.cuda.is_available()}')
