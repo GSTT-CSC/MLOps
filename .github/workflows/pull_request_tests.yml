@@ -72,10 +72,6 @@ jobs:
         mkdir -p ~/MLOps_data/mlflow_db
         docker compose -f mlflow_server/docker-compose.yml up -d --build
 
-    - name: check docker services status
-      run: |
-        docker ps
-
     - name: Setup flake8 annotations
       uses: rbialon/flake8-annotations@v1
 
@@ -90,6 +86,15 @@ jobs:
       run: |
          set -o pipefail
          pytest --junitxml=pytest.xml --cov-report=term-missing:skip-covered --cov=mlops tests/ | tee pytest-coverage.txt ; echo $?
+
+    - name: check docker services status
+      if: always()
+      run: |
+        docker ps
+
+    - name: Dump docker logs on failure
+      if: failure()
+      uses: jwalton/gh-docker-logs@v2
 
     - name: Pytest coverage
       id: coverageComment
