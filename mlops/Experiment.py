@@ -204,6 +204,7 @@ class Experiment:
             if proc.stdout:
                 logger.debug(proc.stdout.readline().decode("utf-8"))
 
+        proc.wait()
         return_code = proc.returncode
 
         if return_code == 0:
