@@ -5,6 +5,7 @@ from ast import literal_eval
 import boto3
 import docker
 import mlflow
+import torch.cuda
 from git import Repo
 import subprocess
 import docker
@@ -48,16 +49,28 @@ class Experiment:
                 'intended for production use')
         else:
             self.check_dirty()
-
         self.check_minio_credentials()
         self.config_setup()
-        self.use_gpu = self.config.getboolean('system', 'USE_GPU')
+        self.use_gpu = self.check_gpu()
         self.env_setup()
         self.build_project_file()
         self.init_experiment()
 
         if self.verbose:
             self.print_experiment_info()
+
+    def check_gpu(self):
+        try:
+            request_gpu = self.config.getboolean('system', 'USE_GPU')
+        except configparser.NoSectionError or configparser.NoOptionError:
+            request_gpu = True
+
+        logger.info(f'GPU requested: {request_gpu}, cuda_available {torch.cuda.is_available()}')
+        if torch.cuda.is_available() and request_gpu:
+            return True
+        else:
+            return False
+
 
     def check_minio_credentials(self):
         self.auth = boto3.session.Session().get_credentials()
