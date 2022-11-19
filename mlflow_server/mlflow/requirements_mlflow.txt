@@ -7,4 +7,3 @@ boto3
 torch-model-archiver
 torchserve
 mlflow-torchserve
-protobuf~=3.19.0

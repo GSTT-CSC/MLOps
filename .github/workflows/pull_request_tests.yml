@@ -88,6 +88,7 @@ jobs:
          pytest --junitxml=pytest.xml --cov-report=term-missing:skip-covered --cov=mlops tests/ | tee pytest-coverage.txt ; echo $?
 
     - name: check docker services status
+      if: always()
       run: |
         docker ps
 
