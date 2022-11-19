@@ -38,7 +38,7 @@ services:
 #            - minio_data:/data
         volumes:
             - type: bind
-              source: ~/MLOps_data/mlflow_minio
+              source: ~/MLOps_data/mlflow_minio2
               target: /data
 
     createbuckets:

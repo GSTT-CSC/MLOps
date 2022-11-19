@@ -80,10 +80,6 @@ jobs:
         cp xnat-docker-compose/default.env xnat-docker-compose/.env
         docker compose -f xnat-docker-compose/docker-compose.yml up -d
 
-    - name: check docker services status
-      run: |
-        docker ps
-
     - name: Setup flake8 annotations
       uses: rbialon/flake8-annotations@v1
 
@@ -110,6 +106,15 @@ jobs:
         message: ${{ steps.coverageComment.outputs.coverage }}
         color: ${{ steps.coverageComment.outputs.color }}
         namedLogo: python
+
+    - name: check docker services status
+      if: always()
+      run: |
+        docker ps
+
+    - name: Dump docker logs on failure
+      if: failure()
+      uses: jwalton/gh-docker-logs@v2
 
     - name: Stop containers
       if: always()
