@@ -45,6 +45,10 @@ services:
         image: minio/mc
         depends_on:
             - minio
+        environment:
+            - no_proxy=minio,db
+            - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+            - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
         networks:
             - backend
         entrypoint: >
