@@ -1,6 +1,7 @@
 import xnat
 from mlops.utils.logger import logger
 from itertools import chain
+import pandas as pd
 
 
 def xnat_build_dataset(xnat_configuration: dict, actions: list = None, flatten_output=True, test_batch: int = -1):
@@ -28,6 +29,7 @@ def xnat_build_dataset(xnat_configuration: dict, actions: list = None, flatten_o
         else:
             project_subjects = project.subjects[:]
 
+        missing_data_log = []
         for subject_i in project_subjects:
             subject = project.subjects.data[subject_i.id]
             data_sample = {'subject_uri': project.subjects[subject.id].uri,
@@ -44,7 +46,11 @@ def xnat_build_dataset(xnat_configuration: dict, actions: list = None, flatten_o
                         xnat_obj = action(project.subjects[subject.id])
 
                         if len(xnat_obj) == 0:
-                            raise Exception
+                            missing_data_log.append({'subject_id': subject_i.id,
+                                                     'subject_label': subject_i.label,
+                                                     'failed_action': action})
+                            logger.warn(f'No data found for {subject_i}: action {action} removing sample')
+                            continue
 
                         for obj in xnat_obj:
                             action_data.append({'source_action': action.__name__,
@@ -53,8 +59,8 @@ def xnat_build_dataset(xnat_configuration: dict, actions: list = None, flatten_o
 
                         data.append(action_data)
 
-                except:
-                    logger.warn('No data found; removing sample.')
+                except Exception as e:
+                    logger.warn(f'No data found for {subject_i}; removing sample. Exception {e}')
                     continue
 
                 if flatten_output:
@@ -63,5 +69,8 @@ def xnat_build_dataset(xnat_configuration: dict, actions: list = None, flatten_o
                 data_sample['data'] = data
 
             dataset.append((data_sample))
+
+        if missing_data_log:
+            pd.DataFrame(missing_data_log).to_csv('missing_data_log.csv')
 
     return dataset
