@@ -32,8 +32,7 @@ class ProjectFile:
             logger.debug('Removing existing project file: {0}'.format(self.project_path))
             os.remove(os.path.join(path, self.projectfile_name))
 
-        docker_env = {'image': config['project']['NAME'].lower(),
-                      'environment': ["PYTHONPATH"]}
+        docker_env = {'image': config['project']['NAME'].lower()}
 
         if config.has_option('project', 'VOLUME_MOUNT'):
             docker_env['volumes'] = [config['project']['VOLUME_MOUNT']]
