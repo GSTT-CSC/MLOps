@@ -42,7 +42,7 @@ def xnat_build_dataset(xnat_configuration: dict, actions: list = None, flatten_o
                     data = []
                     for action, data_label in actions:
                         action_data = []
-                        #  No actions, just return a list of subject IDs and URIs
+
                         logger.debug(f"Running action: {action.__name__} on {subject.id}")
                         xnat_obj = action(project.subjects[subject.id])
 
