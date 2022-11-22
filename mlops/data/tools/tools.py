@@ -1,6 +1,7 @@
 import xnat
 from mlops.utils.logger import logger
 from itertools import chain
+import mlflow
 import pandas as pd
 
 
@@ -72,5 +73,6 @@ def xnat_build_dataset(xnat_configuration: dict, actions: list = None, flatten_o
 
         if missing_data_log:
             pd.DataFrame(missing_data_log).to_csv('missing_data_log.csv')
+            mlflow.log_artifact('missing_data_log.csv')
 
     return dataset
