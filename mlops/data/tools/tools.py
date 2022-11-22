@@ -72,7 +72,9 @@ def xnat_build_dataset(xnat_configuration: dict, actions: list = None, flatten_o
             dataset.append((data_sample))
 
         if missing_data_log:
-            pd.DataFrame(missing_data_log).to_csv('missing_data_log.csv')
+            df = pd.DataFrame(missing_data_log)
+            df.to_csv('missing_data_log.csv')
             mlflow.log_artifact('missing_data_log.csv')
+            mlflow.log_param('N_failed_xnat_samples', len(df))
 
     return dataset
