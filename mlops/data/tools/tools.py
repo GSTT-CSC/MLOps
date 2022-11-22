@@ -51,7 +51,7 @@ def xnat_build_dataset(xnat_configuration: dict, actions: list = None, flatten_o
                                                      'subject_label': subject_i.label,
                                                      'failed_action': action})
                             logger.warn(f'No data found for {subject_i}: action {action} removing sample')
-                            continue
+                            raise Exception
 
                         for obj in xnat_obj:
                             action_data.append({'source_action': action.__name__,
