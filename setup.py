@@ -3,7 +3,7 @@ import setuptools
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-version = "0.8.2"
+version = "0.8.3"
 
 install_requires = [
     'mlflow==2.0.1',
