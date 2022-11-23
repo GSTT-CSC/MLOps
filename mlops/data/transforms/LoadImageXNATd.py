@@ -66,8 +66,12 @@ class LoadImageXNATd(MapTransform):
                     "Download image from XNAT"
                     for item in d[key]:
                         data_label = item['data_label']
+                        if item['data_type'] == 'value':
+                            d[data_label] = item['action_data']
+                            continue
+
                         with tempfile.TemporaryDirectory() as tmpdirname:
-                            session_obj = session.create_object(item['xnat_uri'])
+                            session_obj = session.create_object(item['action_data'])
                             session_obj.download_dir(tmpdirname)
 
                             images_path = glob.glob(os.path.join(tmpdirname, '**/*' + self.expected_filetype), recursive=True)

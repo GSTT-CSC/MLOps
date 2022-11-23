@@ -46,16 +46,23 @@ def xnat_build_dataset(xnat_configuration: dict, actions: list = None, flatten_o
                         logger.debug(f"Running action: {action.__name__} on {subject.id}")
                         xnat_obj = action(project.subjects[subject.id])
 
-                        if len(xnat_obj) == 0:
-                            missing_data_log.append({'subject_id': subject_i.id,
-                                                     'subject_label': subject_i.label,
-                                                     'failed_action': action})
-                            logger.warn(f'No data found for {subject_i}: action {action} removing sample')
-                            raise Exception
+                        if type(xnat_obj) == list:
+                            if len(xnat_obj) == 0:
+                                missing_data_log.append({'subject_id': subject_i.id,
+                                                         'action_data': subject_i.label,
+                                                         'failed_action': action})
+                                logger.warn(f'No data found for {subject_i}: action {action} removing sample')
+                                raise Exception
 
-                        for obj in xnat_obj:
+                            for obj in xnat_obj:
+                                action_data.append({'source_action': action.__name__,
+                                                    'action_data': obj.uri,
+                                                    'data_type': 'xnat_uri',
+                                                    'data_label': data_label})
+                        elif type(xnat_obj) == str:
                             action_data.append({'source_action': action.__name__,
-                                                'xnat_uri': obj.uri,
+                                                'action_data': xnat_obj,
+                                                'data_type': 'value',
                                                 'data_label': data_label})
 
                         data.append(action_data)
