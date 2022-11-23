@@ -72,7 +72,6 @@ class Experiment:
         else:
             return False
 
-
     def check_minio_credentials(self):
         self.auth = boto3.session.Session().get_credentials()
         if self.auth is None:
