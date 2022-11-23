@@ -26,7 +26,7 @@ def xnat_build_dataset(xnat_configuration: dict, actions: list = None, flatten_o
 
         if 0 < test_batch < len(project.subjects):
             from random import sample
-            project_subjects = sample(project.subjects, test_batch)
+            project_subjects = sample(project.subjects[:], test_batch)
         else:
             project_subjects = project.subjects[:]
 
