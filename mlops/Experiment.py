@@ -217,7 +217,7 @@ class Experiment:
             if proc.stdout:
                 logger.debug(proc.stdout.readline().decode("utf-8"))
 
-        proc.wait()
+        # proc.wait()
         return_code = proc.returncode
 
         if return_code == 0:
@@ -241,6 +241,7 @@ class Experiment:
         :param kwargs:
         :return:
         """
+        rebuild_docker = kwargs.get('rebuild_docker', False)
         logger.info(f'Starting experiment: {self.experiment_name}')
 
         docker_args_default = {'network': "host",
@@ -272,7 +273,7 @@ class Experiment:
         logger.info('Checking for existing image')
         client = docker.from_env()
         images = [str(img['RepoTags']) for img in client.api.images()]
-        if all([(self.experiment_name + ':latest') not in item for item in images]):
+        if all([(self.experiment_name + ':latest') not in item for item in images]) or rebuild_docker:
             logger.info('No existing image found')
             self.build_experiment_image_subprocess(context_path=self.project_path)
         else:
@@ -284,7 +285,7 @@ class Experiment:
         mlflow.run(uri=self.project_path,
                    experiment_id=self.experiment_id,
                    env_manager='local',
-                   build_image=True, # revisit this in the future, mlflow 2.0 changed this behaviour, can we be more efficient?
+                   build_image=True,  # revisit this in the future, mlflow 2.0 changed this behaviour, can we be more efficient?
                    **kwargs)
 
         mlflow.log_artifact(LOG_FILE)
