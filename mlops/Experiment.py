@@ -267,7 +267,7 @@ class Experiment:
         # update docker_args_default with values passed by project
         if 'docker_args' in kwargs:
             docker_args_default.update(kwargs['docker_args'])
-            kwargs['docker_args'] = docker_args_default
+            docker_args_default = docker_args_default
 
         # check image exists and build if not
         logger.info('Checking for existing image')
@@ -286,6 +286,7 @@ class Experiment:
                    experiment_id=self.experiment_id,
                    env_manager='local',
                    build_image=True,  # revisit this in the future, mlflow 2.0 changed this behaviour, can we be more efficient?
+                   docker_args=docker_args_default
                    )
 
         mlflow.log_artifact(LOG_FILE)
