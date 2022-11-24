@@ -274,7 +274,7 @@ class Experiment:
         client = docker.from_env()
         images = [str(img['RepoTags']) for img in client.api.images()]
         if all([(self.experiment_name + ':latest') not in item for item in images]) or rebuild_docker:
-            logger.info('No existing image found')
+            logger.info(f'No existing image found, rebuild flag {rebuild_docker}')
             self.build_experiment_image_subprocess(context_path=self.project_path)
         else:
             logger.info(f'Found existing project image: {self.experiment_name}:latest')
