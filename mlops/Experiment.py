@@ -284,7 +284,7 @@ class Experiment:
         mlflow.run(uri=self.project_path,
                    experiment_id=self.experiment_id,
                    env_manager='local',
-                   build_image=True, # revisit this in the future, mlflow 2.0 changed this behaviour, can we be more efficient?
-                   **kwargs)
+                   build_image=True,  # revisit this in the future, mlflow 2.0 changed this behaviour, can we be more efficient?
+                   )
 
         mlflow.log_artifact(LOG_FILE)
