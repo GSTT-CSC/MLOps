@@ -199,8 +199,8 @@ class Experiment:
 
         # Build dockerfile into an MAP image
         docker_build_cmd = f'docker build -f "{dockerfile_path}" -t {self.experiment_name} "{context_path}"'
-        if sys.platform != "win32":
-            docker_build_cmd += """ --build-arg UID=$(id -u) --build-arg GID=$(id -g)"""
+        # if sys.platform != "win32":
+        #     docker_build_cmd += """ --build-arg UID=$(id -u) --build-arg GID=$(id -g)"""
         if no_cache:
             docker_build_cmd += " --no-cache"
         if build_args:
@@ -284,6 +284,7 @@ class Experiment:
         mlflow.run(uri=self.project_path,
                    experiment_id=self.experiment_id,
                    env_manager='local',
+                   build_image=True, # revisit this in the future, mlflow 2.0 changed this behaviour, can we be more efficient?
                    **kwargs)
 
         mlflow.log_artifact(LOG_FILE)
