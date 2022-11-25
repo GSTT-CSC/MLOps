@@ -64,7 +64,9 @@ class DataBuilderXNAT:
                 ]
                 for response in await asyncio.gather(*tasks):
                     pass
-                self.dataset = [item for item in self.dataset if item['data']]
+
+                # remove any items where not all actions returned a vale
+                self.dataset = [item for item in self.dataset if len(item['data']) == len(self.actions)]
 
     def process_subject(self, project, subject_i):
         subject = project.subjects.data[subject_i.id]
