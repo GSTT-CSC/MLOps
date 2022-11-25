@@ -90,7 +90,7 @@ class LoadImageXNATd(MapTransform):
                                         raise ValueError(f'More than one image series found in {images_path}')
                                     image = self.image_loader(image_dirs[0])
                             except Exception as e:
-                                raise f'Image loader failed on {item} due to {e}'
+                                raise Exception(f'Image loader failed on {item} due to {e}')
 
                             d[data_label] = image
 
