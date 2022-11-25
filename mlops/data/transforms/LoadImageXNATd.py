@@ -77,17 +77,20 @@ class LoadImageXNATd(MapTransform):
                             images_path = glob.glob(os.path.join(tmpdirname, '**/*' + self.expected_filetype), recursive=True)
 
                             # image loader needs full path to load single images
-                            logger.info(f"Downloading images: {images_path}")
-                            if len(images_path) == 1:
-                                image = self.image_loader(images_path)
+                            # logger.info(f"Downloading images: {images_path}")
+                            try:
+                                if len(images_path) == 1:
+                                    image = self.image_loader(images_path)
 
-                            # image loader needs directory path to load 3D images
-                            else:
-                                "find unique directories in list of image paths"
-                                image_dirs = list(set(os.path.dirname(image_path) for image_path in images_path))
-                                if len(image_dirs) > 1:
-                                    raise ValueError(f'More than one image series found in {images_path}')
-                                image = self.image_loader(image_dirs[0])
+                                # image loader needs directory path to load 3D images
+                                else:
+                                    "find unique directories in list of image paths"
+                                    image_dirs = list(set(os.path.dirname(image_path) for image_path in images_path))
+                                    if len(image_dirs) > 1:
+                                        raise ValueError(f'More than one image series found in {images_path}')
+                                    image = self.image_loader(image_dirs[0])
+                            except Exception as e:
+                                raise f'Image loader failed on {item} due to {e}'
 
                             d[data_label] = image
 
