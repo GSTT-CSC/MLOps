@@ -43,7 +43,7 @@ def xnat_build_dataset(xnat_configuration: dict, actions: list = None, flatten_o
                     for action, data_label in actions:
                         action_data = []
 
-                        logger.debug(f"Running action: {action.__name__} on {subject.id}")
+                        # logger.debug(f"Running action: {action.__name__} on {subject.id}")
                         xnat_obj = action(project.subjects[subject.id])
 
                         if type(xnat_obj) == list:
@@ -59,6 +59,7 @@ def xnat_build_dataset(xnat_configuration: dict, actions: list = None, flatten_o
                                                     'action_data': obj.uri,
                                                     'data_type': 'xnat_uri',
                                                     'data_label': data_label})
+
                         elif type(xnat_obj) == str:
                             action_data.append({'source_action': action.__name__,
                                                 'action_data': xnat_obj,
