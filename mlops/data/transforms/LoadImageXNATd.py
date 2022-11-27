@@ -79,6 +79,14 @@ class LoadImageXNATd(MapTransform):
                             # image loader needs full path to load single images
                             # logger.info(f"Downloading images: {images_path}")
                             try:
+
+                                if not images_path:
+                                    raise Exception('No images were retrieved')
+
+                                if len(images_path) != session_obj.frames:
+                                    raise Exception(
+                                        f'Expected {session_obj.frames} files, but received {len(images_path)}')
+
                                 if len(images_path) == 1:
                                     image = self.image_loader(images_path)
 
