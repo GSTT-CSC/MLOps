@@ -9,6 +9,7 @@ from monai.transforms import MapTransform, LoadImage
 from monai.config import KeysCollection
 from mlops.utils.logger import logger
 from monai.transforms import Transform
+import time
 
 
 class LoadImageXNATd(MapTransform):
@@ -100,8 +101,9 @@ class LoadImageXNATd(MapTransform):
 
                             except Exception as e:
                                 attempts += 1
-                                if attempts > 3:
-                                    raise Exception(f'Image loader failed on {item} due to {e}')
+                                time.sleep(0.5)
+                                if attempts == 3:
+                                    raise Exception(f'Image loader failed on {item} after 3 retries due to {e}')
 
                             d[data_label] = image
 
