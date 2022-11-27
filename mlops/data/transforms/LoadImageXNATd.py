@@ -55,6 +55,7 @@ class LoadImageXNATd(MapTransform):
                 with xnat.connect(server=self.xnat_configuration['server'],
                                   user=self.xnat_configuration['user'],
                                   password=self.xnat_configuration['password'],
+                                  verify=self.xnat_configuration['verify'],
                                   ) as session:
 
                     "Check data list has no duplicate keys"
