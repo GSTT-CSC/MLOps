@@ -39,7 +39,6 @@ class DataBuilderXNAT:
             with xnat.connect(server=self.xnat_configuration['server'],
                               user=self.xnat_configuration['user'],
                               password=self.xnat_configuration['password'],
-                              verify=self.xnat_configuration['verify'],
                               ) as session:
 
                 logger.info(f"Collecting XNAT project: {self.xnat_configuration['project']}")

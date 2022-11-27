@@ -17,12 +17,14 @@ class LoadImageXNATd(MapTransform):
     """
 
     def __init__(self, keys: KeysCollection,  xnat_configuration: dict = None,
-                 image_loader: Transform = LoadImage(), validate_data: bool = False, expected_filetype_ext: str = '.dcm'):
+                 image_loader: Transform = LoadImage(), validate_data: bool = False, expected_filetype_ext: str = '.dcm',
+                 verbose=False):
         super().__init__(keys)
         self.image_loader = image_loader
         self.xnat_configuration = xnat_configuration
         self.expected_filetype = expected_filetype_ext
         self.validate_data = validate_data
+        self.verbose = verbose
 
     def __call__(self, data):
         """
@@ -50,12 +52,9 @@ class LoadImageXNATd(MapTransform):
 
             if key in data:
 
-                # data_label = d['data_label']
-
                 with xnat.connect(server=self.xnat_configuration['server'],
                                   user=self.xnat_configuration['user'],
                                   password=self.xnat_configuration['password'],
-                                  verify=self.xnat_configuration['verify'],
                                   ) as session:
 
                     "Check data list has no duplicate keys"
@@ -72,7 +71,7 @@ class LoadImageXNATd(MapTransform):
 
                         with tempfile.TemporaryDirectory() as tmpdirname:
                             session_obj = session.create_object(item['action_data'])
-                            session_obj.download_dir(tmpdirname)
+                            session_obj.download_dir(tmpdirname, verbose=self.verbose)
 
                             images_path = glob.glob(os.path.join(tmpdirname, '**/*' + self.expected_filetype), recursive=True)
 
