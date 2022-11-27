@@ -85,9 +85,6 @@ class LoadImageXNATd(MapTransform):
                                     if not images_path:
                                         raise Exception
 
-                                    if len(images_path) != session_obj.frames:
-                                        raise Exception(f'Expected {session_obj.frames} files, but received {len(images_path)}')
-
                                     if len(images_path) == 1:
                                         image = self.image_loader(images_path)
 
