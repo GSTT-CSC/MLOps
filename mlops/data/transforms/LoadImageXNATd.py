@@ -17,7 +17,8 @@ class LoadImageXNATd(MapTransform):
     """
 
     def __init__(self, keys: KeysCollection,  xnat_configuration: dict = None,
-                 image_loader: Transform = LoadImage(), validate_data: bool = False, expected_filetype_ext: str = '.dcm', verbose=False):
+                 image_loader: Transform = LoadImage(), validate_data: bool = False, expected_filetype_ext: str = '.dcm',
+                 verbose=False):
         super().__init__(keys)
         self.image_loader = image_loader
         self.xnat_configuration = xnat_configuration
@@ -51,13 +52,9 @@ class LoadImageXNATd(MapTransform):
 
             if key in data:
 
-                # data_label = d['data_label']
-
                 with xnat.connect(server=self.xnat_configuration['server'],
                                   user=self.xnat_configuration['user'],
                                   password=self.xnat_configuration['password'],
-                                  verify=self.xnat_configuration['verify'],
-                                  logger=logger,
                                   ) as session:
 
                     "Check data list has no duplicate keys"
