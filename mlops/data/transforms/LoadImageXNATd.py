@@ -9,6 +9,7 @@ from monai.transforms import MapTransform, LoadImage
 from monai.config import KeysCollection
 from mlops.utils.logger import logger
 from monai.transforms import Transform
+import time
 
 
 class LoadImageXNATd(MapTransform):
@@ -70,31 +71,39 @@ class LoadImageXNATd(MapTransform):
                             d[data_label] = item['action_data']
                             continue
 
-                        with tempfile.TemporaryDirectory() as tmpdirname:
-                            session_obj = session.create_object(item['action_data'])
-                            session_obj.download_dir(tmpdirname, verbose=self.verbose)
-
-                            images_path = glob.glob(os.path.join(tmpdirname, '**/*' + self.expected_filetype), recursive=True)
-
-                            # image loader needs full path to load single images
-                            # logger.info(f"Downloading images: {images_path}")
+                        attempts = 0
+                        while attempts < 3:
                             try:
+                                with tempfile.TemporaryDirectory() as tmpdirname:
+                                    session_obj = session.create_object(item['action_data'])
+                                    session_obj.download_dir(tmpdirname, verbose=self.verbose)
 
-                                if not images_path:
-                                    raise Exception('No images were retrieved')
+                                    images_path = glob.glob(os.path.join(tmpdirname, '**/*' + self.expected_filetype), recursive=True)
 
-                                if len(images_path) == 1:
-                                    image = self.image_loader(images_path)
+                                    # image loader needs full path to load single images
+                                    # logger.info(f"Downloading images: {images_path}")
+                                    if not images_path:
+                                        raise Exception
 
-                                # image loader needs directory path to load 3D images
-                                else:
-                                    "find unique directories in list of image paths"
-                                    image_dirs = list(set(os.path.dirname(image_path) for image_path in images_path))
-                                    if len(image_dirs) > 1:
-                                        raise ValueError(f'More than one image series found in {images_path}')
-                                    image = self.image_loader(image_dirs[0])
+                                    if len(images_path) != session_obj.frames:
+                                        raise Exception(f'Expected {session_obj.frames} files, but received {len(images_path)}')
+
+                                    if len(images_path) == 1:
+                                        image = self.image_loader(images_path)
+
+                                    # image loader needs directory path to load 3D images
+                                    else:
+                                        "find unique directories in list of image paths"
+                                        image_dirs = list(set(os.path.dirname(image_path) for image_path in images_path))
+                                        if len(image_dirs) > 1:
+                                            raise ValueError(f'More than one image series found in {images_path}')
+                                        image = self.image_loader(image_dirs[0])
+
                             except Exception as e:
-                                raise Exception(f'Image loader failed on {item} due to {e}')
+                                attempts += 1
+                                time.sleep(0.5)
+                                if attempts == 3:
+                                    raise Exception(f'Image loader failed on {item} after 3 retries due to {e}')
 
                             d[data_label] = image
 
