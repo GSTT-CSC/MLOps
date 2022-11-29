@@ -245,7 +245,7 @@ class Experiment:
         logger.info(f'Starting experiment: {self.experiment_name}')
 
         docker_args_default = {'network': "host",
-                               'ipc': 'host',
+                               'ipc': 'private',
                                'rm': '',
                                }
 
