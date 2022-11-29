@@ -242,11 +242,14 @@ class Experiment:
         :return:
         """
         rebuild_docker = kwargs.get('rebuild_docker', False)
+        shared_memory = kwargs.get('shared_memory', '8gb')
+
         logger.info(f'Starting experiment: {self.experiment_name}')
 
         docker_args_default = {'network': "host",
                                'ipc': 'private',
                                'rm': '',
+                               'shm-size': shared_memory
                                }
 
         if self.auth.method == 'shared-credentials-file':

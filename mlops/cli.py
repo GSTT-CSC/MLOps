@@ -23,6 +23,7 @@ def cli():
               default='config/config.cfg', type=click.Path())
 @click.option('-n', '--name', 'run_name', help='MLFlow run name', default=None)
 @click.option('-l', '--logging_level', 'logging_level', help='Logging level', default='INFO')
+@click.option('-sh', '--shared_memory', 'shared_memory', help='shared_memory docker ag', default=None)
 @click.option('-r', '--rebuild_docker', 'rebuild_docker', help='Rebuild docker container on run', is_flag=True, show_default=True, default=False)
 @click.option('--ignore_git_check', is_flag=True, show_default=True, default=False,
               help='TESTING ONLY - ignore git checks, occasionally it might be necessary to ignore the git checks for example, offline testing, do not use this feature if working on tracked models')
