@@ -3,7 +3,7 @@ import setuptools
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-version = "0.9.14"
+version = "0.9.15"
 
 install_requires = [
     'mlflow==2.0.1',
@@ -20,10 +20,10 @@ install_requires = [
     'xnat',
     'GitPython',
     # 'protobuf~=3.19.0',
-    'PyYAML~=6.0',
-    'requests~=2.27.1',
-    'click~=8.1.2',
-    'setuptools~=57.0.0',
+    'PyYAML',
+    'requests',
+    'click',
+    'setuptools',
     # 'torch==1.13.0'
 ]
 
