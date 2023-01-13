@@ -54,7 +54,7 @@ jobs:
     - name: Test CLI
       run: |
          mlops run -h
-#
+
 #    - name: Stop containers
 #      if: always()
 #      run: |

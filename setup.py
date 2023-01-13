@@ -6,13 +6,12 @@ with open("README.md", "r", encoding="utf-8") as fh:
 version = "0.9.15"
 
 install_requires = [
-    'mlflow==2.1.1',
+    'mlflow==2.0.1',
     'packaging<22',
     'boto3',
     'docker',
     'minio',
     'colorlog',
-    # 'fsspec',
     'monai',
     'itk',
     'tqdm',
@@ -20,12 +19,11 @@ install_requires = [
     'matplotlib',
     'xnat',
     'GitPython',
-    # 'protobuf~=3.19.0',
+    'protobuf~=3.19.0',
     'PyYAML',
     'requests',
     'click',
     'setuptools',
-    # 'torch==1.13.0'
 ]
 
 setuptools.setup(
