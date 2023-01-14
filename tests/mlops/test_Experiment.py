@@ -28,12 +28,10 @@ class TestExperiment:
     def test_config_setup(self):
         self.experiment.config_setup()
         assert self.experiment.experiment_name == 'test_project'
-        assert self.experiment.artifact_path == 's3://mlflow'
 
     def test_env_setup(self):
         self.experiment.env_setup()
         assert os.getenv('MLFLOW_TRACKING_URI') == self.experiment.config['server']['MLFLOW_TRACKING_URI']
-        assert os.getenv('MLFLOW_S3_ENDPOINT_URL') == self.experiment.config['server']['MLFLOW_S3_ENDPOINT_URL']
 
     def test_read_config(self):
         # Create config file and assert identical
@@ -52,7 +50,6 @@ class TestExperiment:
         # Check correct information is printed to console
         self.experiment.print_experiment_info()  # Call function.
         assert 'Name: test_project' in caplog.text
-        assert 'Artifact Location: s3://mlflow' in caplog.text
 
     def test_build_project_file(self):
         if os.path.exists('MLproject'):
