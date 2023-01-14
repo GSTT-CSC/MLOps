@@ -18,20 +18,22 @@ from concurrent.futures import ThreadPoolExecutor
 class DataBuilderXNAT:
 
     def __init__(self, xnat_configuration: dict, actions: list = None, flatten_output=True, test_batch: int = -1,
-                 num_workers: int = 1):
+                 num_workers: int = 1, validate_data=True):
         self.xnat_configuration = xnat_configuration
         self.actions = actions
         self.flatten_output = flatten_output
         self.test_batch = test_batch
         self.missing_data_log = []
         self.num_workers = num_workers
+        self.validate_returns = validate_returns
 
         self.dataset = []
 
     def fetch_data(self):
-        loop = asyncio.get_event_loop()
-        future = asyncio.ensure_future(self.start_async_process())
-        loop.run_until_complete(future)
+        # loop = asyncio.get_event_loop()
+        # future = asyncio.ensure_future(self.start_async_process())
+        # loop.run_until_complete(future)
+        asyncio.run(self.start_async_process())
 
     async def start_async_process(self):
         with ThreadPoolExecutor(max_workers=self.num_workers) as executor:
@@ -44,8 +46,6 @@ class DataBuilderXNAT:
 
                 logger.info(f"Collecting XNAT project: {self.xnat_configuration['project']}")
                 project = session.projects[self.xnat_configuration["project"]]
-
-                dataset = []
 
                 if 0 < self.test_batch < len(project.subjects):
                     from random import sample
@@ -66,7 +66,8 @@ class DataBuilderXNAT:
                     pass
 
                 # remove any items where not all actions returned a value
-                self.dataset = [item for item in self.dataset if len(item['data']) == len(self.actions)]
+                if self.validate_data:
+                    self.dataset = [item for item in self.dataset if len(item['data']) >= len(self.actions)]
 
     def process_subject(self, project, subject_i):
         subject = project.subjects.data[subject_i.id]
