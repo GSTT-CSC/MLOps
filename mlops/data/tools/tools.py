@@ -25,14 +25,11 @@ class DataBuilderXNAT:
         self.test_batch = test_batch
         self.missing_data_log = []
         self.num_workers = num_workers
-        self.validate_returns = validate_returns
+        self.validate_data = validate_data
 
         self.dataset = []
 
     def fetch_data(self):
-        # loop = asyncio.get_event_loop()
-        # future = asyncio.ensure_future(self.start_async_process())
-        # loop.run_until_complete(future)
         asyncio.run(self.start_async_process())
 
     async def start_async_process(self):
