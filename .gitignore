@@ -29,4 +29,3 @@ mlflow_server/pytest-coverage.txt
 /mlops/csc_mlops.egg-info/
 /csc_mlops.egg-info/
 assests/MOps_logo.svg
-*.cfg
