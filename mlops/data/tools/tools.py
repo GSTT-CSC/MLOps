@@ -83,21 +83,21 @@ class DataBuilderXNAT:
                     # logger.debug(f"Running action: {action.__name__} on {subject.id}")
                     xnat_obj = action(project.subjects[subject.id])
 
-                    if type(xnat_obj) == list:
-                        if len(xnat_obj) == 0:
-                            self.missing_data_log.append({'subject_id': subject_i.id,
-                                                          'action_data': subject_i.label,
-                                                          'failed_action': action})
-                            logger.warn(f'No data found for {subject_i}: action {action} removing sample')
-                            raise Exception
+                    if xnat_obj is None or type(xnat_obj) == list and len(xnat_obj) == 0:
+                        self.missing_data_log.append({'subject_id': subject_i.id,
+                                                      'action_data': subject_i.label,
+                                                      'failed_action': action})
+                        logger.warn(f'No data found for {subject_i}: action {action} removing sample')
+                        raise Exception
 
+                    elif type(xnat_obj) == list:
                         for obj in xnat_obj:
                             action_data.append({'source_action': action.__name__,
                                                 'action_data': obj.uri,
                                                 'data_type': 'xnat_uri',
                                                 'data_label': data_label})
 
-                    elif type(xnat_obj) == str:
+                    else:
                         action_data.append({'source_action': action.__name__,
                                             'action_data': xnat_obj,
                                             'data_type': 'value',
