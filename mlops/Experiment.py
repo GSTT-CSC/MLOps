@@ -21,8 +21,7 @@ from mlops.utils.logger import logger, LOG_FILE
 class Experiment:
 
     def __init__(self, script, config_path, project_path: str = '.',
-                 verbose: bool = True, ignore_git_check: bool = False,
-                 artifact_path: str = 's3://mlflow'):
+                 verbose: bool = True, ignore_git_check: bool = False):
         """
         The Experiment class is the interface through which all projects should be run.
         :param script: path to script to run
@@ -32,7 +31,6 @@ class Experiment:
         """
         self.script = script
         self.config = None
-        self.artifact_path = artifact_path
         self.experiment_name = None
         self.experiment_id = None
         self.config_path = config_path
@@ -119,7 +117,6 @@ class Experiment:
         :return:
         """
         os.environ['MLFLOW_TRACKING_URI'] = self.config['server']['MLFLOW_TRACKING_URI']
-        os.environ['MLFLOW_S3_ENDPOINT_URL'] = self.config['server']['MLFLOW_S3_ENDPOINT_URL']
 
     def init_experiment(self):
         """
@@ -134,7 +131,7 @@ class Experiment:
         experiment = mlflow.get_experiment_by_name(self.experiment_name)
 
         if experiment is None:
-            exp_id = mlflow.create_experiment(self.experiment_name, artifact_location=self.artifact_path)
+            exp_id = mlflow.create_experiment(self.experiment_name)
             logger.info('Creating experiment: name: {0} *** ID: {1}'.format(self.experiment_name, exp_id))
         else:
             exp_id = experiment.experiment_id
