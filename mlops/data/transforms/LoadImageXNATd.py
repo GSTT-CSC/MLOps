@@ -66,7 +66,7 @@ class LoadImageXNATd(MapTransform):
 
                     "Check data list has no duplicate keys"
                     if len(set([x['data_label'] for x in d[key]])) != len([x['data_label'] for x in d[key]]):
-                        logger.warn('Multiple images with identical labels found')
+                        logger.warning('Multiple images with identical labels found')
                         raise
 
                     "Download image from XNAT"
