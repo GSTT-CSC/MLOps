@@ -11,6 +11,7 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(__name__)
+logger.propagate=True
 
 from . import Experiment
 from . import ProjectFile

@@ -39,10 +39,10 @@ class Experiment:
         self.auth = None
 
         if 'pytest' in sys.modules:
-            logger.warn('DEBUG ONLY - ignoring git checks due to test run detected')
+            logger.warning('DEBUG ONLY - ignoring git checks due to test run detected')
 
         elif ignore_git_check is True:
-            logger.warn(
+            logger.warning(
                 'DEBUG ONLY - ignoring git checks, manually disabled. Ensure this run is not for any experiments '
                 'intended for production use')
         else:

@@ -2,7 +2,7 @@ import asyncio
 import logging
 from concurrent.futures import ThreadPoolExecutor
 from itertools import chain
-
+import tqdm
 import mlflow
 import pandas as pd
 import xnat
@@ -55,6 +55,9 @@ class DataBuilderXNAT:
                     )
                     for subject_i in project_subjects
                 ]
+
+                responses = [await f for f in tqdm.tqdm(asyncio.as_completed(tasks), total=len(tasks))]
+
                 for response in await asyncio.gather(*tasks):
                     pass
 
@@ -68,8 +71,7 @@ class DataBuilderXNAT:
                        'subject_id': project.subjects[subject.id].label,
                        'data': []}
 
-        logger.info(f'checking subject {subject_i}')
-
+        logger.debug(f'checking subject {subject_i}')
         if self.actions:
             try:
                 data = []
@@ -83,7 +85,7 @@ class DataBuilderXNAT:
                         self.missing_data_log.append({'subject_id': subject_i.id,
                                                       'action_data': subject_i.label,
                                                       'failed_action': action})
-                        logger.warn(f'No data found for {subject_i}: action {action} removing sample')
+                        logger.debug(f'No data found for {subject_i}: action {action} removing sample')
                         raise Exception
 
                     elif type(xnat_obj) == list:
@@ -102,7 +104,7 @@ class DataBuilderXNAT:
                     data.append(action_data)
 
             except Exception as e:
-                logger.warn(f'No data found for {subject_i}; removing sample. Exception {e}')
+                logger.debug(f'No data found for {subject_i}; removing sample. Exception {e}')
                 pass
 
             if self.flatten_output:
@@ -162,7 +164,7 @@ def xnat_build_dataset(xnat_configuration: dict, actions: list = None, flatten_o
                                 missing_data_log.append({'subject_id': subject_i.id,
                                                          'action_data': subject_i.label,
                                                          'failed_action': action})
-                                logger.warn(f'No data found for {subject_i}: action {action} removing sample')
+                                logger.debug(f'No data found for {subject_i}: action {action} removing sample')
                                 raise Exception
 
                             for obj in xnat_obj:
@@ -180,7 +182,7 @@ def xnat_build_dataset(xnat_configuration: dict, actions: list = None, flatten_o
                         data.append(action_data)
 
                 except Exception as e:
-                    logger.warn(f'No data found for {subject_i}; removing sample. Exception {e}')
+                    logger.debug(f'No data found for {subject_i}; removing sample. Exception {e}')
                     continue
 
                 if flatten_output:
