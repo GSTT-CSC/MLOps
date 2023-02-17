@@ -1,18 +1,13 @@
-import xnat
-from mlops.utils.logger import logger
-from itertools import chain
-import mlflow
-import pandas as pd
-
-import xnat
-from mlops.utils.logger import logger
-from itertools import chain
-import mlflow
-import pandas as pd
-import requests
 import asyncio
-from timeit import default_timer
+import logging
 from concurrent.futures import ThreadPoolExecutor
+from itertools import chain
+
+import mlflow
+import pandas as pd
+import xnat
+
+logger = logging.getLogger(__name__)
 
 
 class DataBuilderXNAT:
@@ -39,6 +34,7 @@ class DataBuilderXNAT:
                               user=self.xnat_configuration['user'],
                               password=self.xnat_configuration['password'],
                               verify=self.xnat_configuration['verify'],
+                              loglevel='ERROR',
                               ) as session:
 
                 logger.info(f"Collecting XNAT project: {self.xnat_configuration['project']}")
@@ -131,6 +127,7 @@ def xnat_build_dataset(xnat_configuration: dict, actions: list = None, flatten_o
                       user=xnat_configuration['user'],
                       password=xnat_configuration['password'],
                       verify=xnat_configuration['verify'],
+                      loglevel='ERROR',
                       ) as session:
 
         logger.info(f"Collecting XNAT project: {xnat_configuration['project']}")
