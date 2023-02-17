@@ -1,15 +1,18 @@
 """
 MONAI MapTransform for importing image data from XNAT
 """
-import tempfile
-import xnat
-import os
 import glob
-from monai.transforms import MapTransform, LoadImage
-from monai.config import KeysCollection
-from mlops.utils.logger import logger
-from monai.transforms import Transform
+import logging
+import os
+import tempfile
 import time
+
+import xnat
+from monai.config import KeysCollection
+from monai.transforms import MapTransform, LoadImage
+from monai.transforms import Transform
+
+logger = logging.getLogger(__name__)
 
 
 class LoadImageXNATd(MapTransform):
@@ -17,8 +20,9 @@ class LoadImageXNATd(MapTransform):
     MapTransform for importing image data from XNAT
     """
 
-    def __init__(self, keys: KeysCollection,  xnat_configuration: dict = None,
-                 image_loader: Transform = LoadImage(), validate_data: bool = False, expected_filetype_ext: str = '.dcm',
+    def __init__(self, keys: KeysCollection, xnat_configuration: dict = None,
+                 image_loader: Transform = LoadImage(), validate_data: bool = False,
+                 expected_filetype_ext: str = '.dcm',
                  verbose=False):
         super().__init__(keys)
         self.image_loader = image_loader
@@ -57,11 +61,12 @@ class LoadImageXNATd(MapTransform):
                                   user=self.xnat_configuration['user'],
                                   password=self.xnat_configuration['password'],
                                   verify=self.xnat_configuration['verify'],
+                                  loglevel='ERROR',
                                   ) as session:
 
                     "Check data list has no duplicate keys"
                     if len(set([x['data_label'] for x in d[key]])) != len([x['data_label'] for x in d[key]]):
-                        logger.warn('Multiple images with identical labels found')
+                        logger.warning('Multiple images with identical labels found')
                         raise
 
                     "Download image from XNAT"
@@ -78,7 +83,8 @@ class LoadImageXNATd(MapTransform):
                                     session_obj = session.create_object(item['action_data'])
                                     session_obj.download_dir(tmpdirname, verbose=self.verbose)
 
-                                    images_path = glob.glob(os.path.join(tmpdirname, '**/*' + self.expected_filetype), recursive=True)
+                                    images_path = glob.glob(os.path.join(tmpdirname, '**/*' + self.expected_filetype),
+                                                            recursive=True)
 
                                     # image loader needs full path to load single images
                                     # logger.info(f"Downloading images: {images_path}")
@@ -91,7 +97,8 @@ class LoadImageXNATd(MapTransform):
                                     # image loader needs directory path to load 3D images
                                     else:
                                         "find unique directories in list of image paths"
-                                        image_dirs = list(set(os.path.dirname(image_path) for image_path in images_path))
+                                        image_dirs = list(
+                                            set(os.path.dirname(image_path) for image_path in images_path))
                                         if len(image_dirs) > 1:
                                             raise ValueError(f'More than one image series found in {images_path}')
                                         image = self.image_loader(image_dirs[0])

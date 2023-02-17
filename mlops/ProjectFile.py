@@ -1,10 +1,13 @@
 """
 ProjectFile
 """
-import yaml
 import datetime
+import logging
 import os
-from mlops.utils.logger import logger
+
+import yaml
+
+logger = logging.getLogger(__name__)
 
 
 class ProjectFile:

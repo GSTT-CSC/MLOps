@@ -1,21 +1,21 @@
 import configparser
+import logging
 import os
+import subprocess
 import sys
-from ast import literal_eval
+
 import boto3
 import docker
 import mlflow
 import torch.cuda
 from git import Repo
-import subprocess
-import docker
-import mlflow
-from git import Repo
 from minio import Minio
-# from torch.cuda import is_available
 
+# from torch.cuda import is_available
+from mlops import LOG_FILE
 from mlops.ProjectFile import ProjectFile
-from mlops.utils.logger import logger, LOG_FILE
+
+logger = logging.getLogger(__name__)
 
 
 class Experiment:
@@ -39,10 +39,10 @@ class Experiment:
         self.auth = None
 
         if 'pytest' in sys.modules:
-            logger.warn('DEBUG ONLY - ignoring git checks due to test run detected')
+            logger.warning('DEBUG ONLY - ignoring git checks due to test run detected')
 
         elif ignore_git_check is True:
-            logger.warn(
+            logger.warning(
                 'DEBUG ONLY - ignoring git checks, manually disabled. Ensure this run is not for any experiments '
                 'intended for production use')
         else:
@@ -183,7 +183,8 @@ class Experiment:
             logger.info('Creating S3 bucket ''mlflow''')
             client.make_bucket("mlflow")
 
-    def build_experiment_image_subprocess(self, dockerfile_path = 'Dockerfile', context_path: str = '.', no_cache: bool = False, build_args: dict = {}):
+    def build_experiment_image_subprocess(self, dockerfile_path='Dockerfile', context_path: str = '.',
+                                          no_cache: bool = False, build_args: dict = {}):
         """
         Builds the Dockerfile at location path if parameter is supplied, else uses self.project_path (default)
 
@@ -285,7 +286,8 @@ class Experiment:
         mlflow.run(uri=self.project_path,
                    experiment_id=self.experiment_id,
                    env_manager='local',
-                   build_image=True,  # revisit this in the future, mlflow 2.0 changed this behaviour, can we be more efficient?
+                   build_image=True,
+                   # revisit this in the future, mlflow 2.0 changed this behaviour, can we be more efficient?
                    docker_args=docker_args_default
                    )
 
