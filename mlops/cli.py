@@ -1,6 +1,7 @@
 import click
 
 from mlops.Experiment import Experiment
+from mlops.Release import Release
 
 CONTEXT_SETTINGS = {'help_option_names': ['-h', '--help'],
                     'show_default': True}
@@ -49,6 +50,17 @@ def run(script, config_path, run_name, ignore_git_check, shared_memory, logging_
             shared_memory=shared_memory,
             )
 
+@cli.command('release', context_settings=CONTEXT_SETTINGS)
+@click.option('run_id', 'run_id', help='MLFlow run id', default=None)
+@click.option('source', 'source', help='MLFlow run id', default='mlflow')
+def release():
+    """
+    Performs actions associated with release
+    :return: 
+    """
+
+    candidate = Release(run_id, source=source)
+    candidate.release()
 
 if __name__ == '__main__':
     cli()
