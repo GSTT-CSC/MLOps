@@ -1,14 +1,25 @@
 import click
-
+import logging
 from mlops.Experiment import Experiment
-from mlops.Release import Release
+from mlops.release.Release import Release
+from mlops._version import __version__
+logger = logging.getLogger(__name__)
 
 CONTEXT_SETTINGS = {'help_option_names': ['-h', '--help'],
                     'show_default': True}
 
 
+def print_version(ctx, param, value):
+    if not value or ctx.resilient_parsing:
+        return
+    click.echo('no idea')
+    ctx.exit()
+
+
 @click.group('cli', context_settings=CONTEXT_SETTINGS)
-def cli():
+@click.pass_context
+@click.version_option(__version__)
+def cli(ctx):
     """
     CLI tool for csc-mlops projects.
 
@@ -50,17 +61,19 @@ def run(script, config_path, run_name, ignore_git_check, shared_memory, logging_
             shared_memory=shared_memory,
             )
 
+
 @cli.command('release', context_settings=CONTEXT_SETTINGS)
-@click.option('run_id', 'run_id', help='MLFlow run id', default=None)
-@click.option('source', 'source', help='MLFlow run id', default='mlflow')
-def release():
+@click.argument('release_target', default=None)
+@click.option('-s', '--release_source', 'release_source', help='release_source', default='mlflow')
+def release(release_target, release_source):
     """
     Performs actions associated with release
+
     :return: 
     """
-
-    candidate = Release(run_id, source=source)
+    candidate = Release(release_target, release_source)
     candidate.release()
+
 
 if __name__ == '__main__':
     cli()

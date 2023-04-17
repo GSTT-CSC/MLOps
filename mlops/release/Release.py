@@ -1,43 +1,28 @@
-from abc import ABC, abstractmethod
-from typing import Any
-from mlops.release.sources.MLFlowCandidate import MLFLowCandidate
+from mlops.release.sources import MLFLowCandidate
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Release:
 
-    def __init__(self, release_target, source='mlflow'):
+    def __init__(self, release_target, release_source):
         self.release_target = release_target
-        self.source = source
+        self.source = release_source
         self.release_candidate = None
 
     def release(self):
+
+        # Create candidate from release source
         if self.source == 'mlflow':
-            self.release_candidate = MLFLowProject(self.release_target)
+            self.release_candidate = MLFLowCandidate(self.release_target)
         else:
             raise Exception(f'Unknown release source: "{self.release}"')
 
-        self.release_candidate.run()
+        logger.info(f'Created release candidate: {self.release_candidate.__class__.__name__}')
+
+        # Collect release artifacts
+        self.release_candidate.collect()
 
     def push_release(self):
         pass
-
-
-class ReleaseCandidate(ABC):
-
-    def __init__(self, **kwargs):
-        for k, v in kwargs.items():
-            setattr(self, k, v)
-        self.release_artifacts = {}
-
-    def __str__(self):
-        return 'ReleaseCandidate({})'.format(self._name)
-
-    def __repr__(self):
-        return self.__str__()
-
-    @abstractmethod
-    def run(self) -> Any:
-        """
-        Override this method to fetch release artifacts from release source
-        """
-        raise NotImplementedError(f'Error in {repr(self.__name__)}: You must define a run method on this task')
