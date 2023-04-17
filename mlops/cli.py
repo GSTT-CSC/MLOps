@@ -65,7 +65,9 @@ def run(script, config_path, run_name, ignore_git_check, shared_memory, logging_
 @cli.command('release', context_settings=CONTEXT_SETTINGS)
 @click.argument('release_target', default=None)
 @click.option('-s', '--release_source', 'release_source', help='release_source', default='mlflow')
-def release(release_target, release_source):
+@click.option('-c', '--config', 'config_path', help='Path to config file storing parameters for this run',
+              default='config/config.cfg', type=click.Path())
+def release(release_target, release_source, config_path):
     """
     Performs actions associated with release
 

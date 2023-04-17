@@ -1,3 +1,5 @@
+import os
+
 from mlops.release import ReleaseCandidate
 import logging
 import mlflow
@@ -16,9 +18,8 @@ class MLFLowCandidate(ReleaseCandidate):
         The run method needs to populate the `self.artifacts` property, a dict that contains the build artifacts.
         :return:
         """
-        logger.info(f"Collecting {self.__class__.__name__} build artifacts")
-
-        pass
-
-    def get_artifacts(self):
-        pass
+        # os.environ['MLFLOW_TRACKING_URI'] = 'http://0.0.0.0:85'
+        self.release_artifacts = {
+                'model': mlflow.artifacts.download_artifacts(artifact_uri=self.mlflow_id,
+                                                             tracking_uri='http://0.0.0.0:85')
+            }
