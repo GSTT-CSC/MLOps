@@ -37,6 +37,12 @@ These components work together to simplify and automate many of the processes re
 
 > This repository contains the source code for the server and csc-mlops components of the development framework. For further details on the project template component see the [project template repository](https://github.com/GSTT-csc/Project_template).
 
+## Guiding Principles
+This is an open source project and all contributions are welcome. Please see the [contribution guidelines](#Contributing).
+
+![](assets/guiding-principles.png)
+
+
 ## The MLOps server
 ### Server components
 
