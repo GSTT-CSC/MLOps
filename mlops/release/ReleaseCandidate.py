@@ -2,13 +2,13 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 
-class ReleaseCandidate(ABC):
+class ReleaseSource(ABC):
 
     def __init__(self, **kwargs):
         for k, v in kwargs.items():
             setattr(self, k, v)
         self.release_artifacts = {}
-        self.remote_path = None
+        self.remote_destination = None
 
     @abstractmethod
     def collect(self) -> Any:
@@ -19,7 +19,7 @@ class ReleaseCandidate(ABC):
 
     def push_artifacts(self):
         """
-        Pushes artifacts to location defined by remote_path attr
+        Pushes artifacts to location defined by remote_destination attr
         :return:
         """
         for k, v in self.release_artifacts.items():

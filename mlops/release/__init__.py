@@ -1,1 +1,1 @@
-from .ReleaseCandidate import ReleaseCandidate
+from .ReleaseCandidate import ReleaseSource

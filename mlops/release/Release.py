@@ -21,8 +21,6 @@ class Release:
 
         logger.info(f'Created release candidate: {self.release_candidate.__class__.__name__}')
 
-        # Collect release artifacts and push to remote storage
+        # Collect release artifacts and push to storage
         self.release_candidate.collect()
-        logger.info(f'Created release candidate: {self.release_candidate.__class__.__name__}')
         self.release_candidate.push_artifacts()
-
