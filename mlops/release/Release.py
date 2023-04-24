@@ -1,4 +1,4 @@
-from mlops.release.sources import MLFLowCandidate
+from mlops.release.sources import MLFlowSource
 import logging
 
 logger = logging.getLogger(__name__)
@@ -15,7 +15,7 @@ class Release:
 
         # Create candidate from release source
         if self.source == 'mlflow':
-            self.release_candidate = MLFLowCandidate(self.release_target)
+            self.release_candidate = MLFlowSource(self.release_target)
         else:
             raise Exception(f'Unknown release source: "{self.release}"')
 
@@ -23,4 +23,13 @@ class Release:
 
         # Collect release artifacts and push to storage
         self.release_candidate.collect()
-        self.release_candidate.push_artifacts()
+        self.push_artifacts(self.release_candidate.release_artifacts)
+
+    def push_artifacts(self, release_artifacts: dict = None):
+        """
+        Pushes artifacts to location defined by remote_destination attr
+        :return:
+        """
+        for k, v in release_artifacts.items():
+            # push k as v
+            pass
