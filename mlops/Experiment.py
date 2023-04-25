@@ -47,6 +47,7 @@ class Experiment:
                 'intended for production use')
         else:
             self.check_dirty()
+
         self.check_minio_credentials()
         self.config_setup()
         self.use_gpu = self.check_gpu()
@@ -117,6 +118,7 @@ class Experiment:
         :return:
         """
         os.environ['MLFLOW_TRACKING_URI'] = self.config['server']['MLFLOW_TRACKING_URI']
+        os.environ['MLFLOW_S3_ENDPOINT_URL'] = self.config['server']['MLFLOW_S3_ENDPOINT_URL']
 
     def init_experiment(self):
         """
