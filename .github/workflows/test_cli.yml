@@ -52,9 +52,13 @@ jobs:
 #        mkdir -p ~/MLOps_data/mlflow_db
 #        docker compose -f mlflow_server/docker-compose.yml up -d --build
 
-    - name: Test CLI
+    - name: Test run CLI
       run: |
          mlops run -h
+
+    - name: Test release CLI
+      run: |
+         mlops release -h
 
 #    - name: Stop containers
 #      if: always()

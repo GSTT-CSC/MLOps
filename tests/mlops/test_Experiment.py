@@ -1,12 +1,13 @@
 import configparser
+import logging
 import os
 
 import docker
-import logging
 
 from mlops.Experiment import Experiment
 
 logger = logging.getLogger(__name__)
+
 
 class TestExperiment:
 

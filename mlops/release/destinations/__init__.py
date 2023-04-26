@@ -1,1 +1,2 @@
 from .SharepointDestination import SharepointDestination
+from .LocalDestination import LocalDestination

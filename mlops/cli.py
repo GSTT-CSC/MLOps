@@ -63,17 +63,18 @@ def run(script, config_path, run_name, ignore_git_check, shared_memory, logging_
 
 
 @cli.command('release', context_settings=CONTEXT_SETTINGS)
-@click.argument('release_target', default=None)
+@click.argument('release_target')
 @click.option('-s', '--release_source', 'release_source', help='release_source', default='mlflow')
+@click.option('-d', '--release_destination', 'release_destination', help='release_release_destination', default='local')
 @click.option('-c', '--config', 'config_path', help='Path to config file storing parameters for this run',
               default='config/config.cfg', type=click.Path())
-def release(release_target, release_source, config_path):
+def release(release_target, release_source, release_destination, config_path):
     """
     Performs actions associated with release
 
     :return: 
     """
-    candidate = Release(release_target, release_source)
+    candidate = Release(release_target, release_source, release_destination)
     candidate.release()
 
 
