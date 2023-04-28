@@ -11,7 +11,3 @@ class TestExperiment:
     def test_log_artifact(self):
         """Test to log artifact and then check it is available on MINIO"""
         pass
-
-    def test_log_artifact(self):
-        """Test to log artifact and then check it is available on MINIO"""
-        pass

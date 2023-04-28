@@ -23,26 +23,19 @@ class Release:
             self.source = MLFlowSource(self.release_target)
         else:
             raise Exception(f'Unknown release source: "{self.release}"')
-        logger.info(f'Created release source: {self.source.__class__.__name__}')
 
         # Create release destination
-        if self.release_destination == 'sharepoint':
-            self.destination = SharepointDestination()
-        elif self.release_destination == 'local':
+        if self.release_destination == 'local':
             self.destination = LocalDestination()
+        elif self.release_destination == 'sharepoint':
+            self.destination = SharepointDestination()
         else:
             raise Exception(f'Unknown release destination: "{self.destination}"')
-        logger.info(f'Created release destination: {self.destination.__class__.__name__}')
 
         # Collect release artifacts and push to storage
         self.source.collect()
-        self.push_artifacts(self.source.release_artifacts, destination=self.destination)
+        destination_paths = self.destination.push(self.source.release_artifacts)
+        self.build_release()
 
-    def push_artifacts(self, release_artifacts: dict = None, destination: ReleaseDestination = None):
-        """
-        Pushes artifacts to destination
-        :return:
-        """
-        for k, v in release_artifacts.items():
-            # push k as v
-            pass
+    def build_release(self):
+        pass

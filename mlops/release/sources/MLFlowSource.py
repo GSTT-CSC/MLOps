@@ -18,7 +18,6 @@ class MLFlowSource(ReleaseSource):
         The run method needs to populate the `self.artifacts` property, a dict that contains the build artifacts.
         :return:
         """
-        # os.environ['MLFLOW_TRACKING_URI'] = 'http://0.0.0.0:85'
         # todo requires error handling
         self.release_artifacts = {
                 'model': mlflow.artifacts.download_artifacts(artifact_uri=self.mlflow_id,

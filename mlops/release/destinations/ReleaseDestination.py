@@ -1,12 +1,21 @@
 from abc import ABC, abstractmethod
 from typing import Any
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class ReleaseDestination(ABC):
 
     def __init__(self):
-        pass
+        logger.info(f'Creating ReleaseDestination: {self.__class__.__name__}')
 
     @abstractmethod
-    def validate_destination(self):
-        pass
+    def push(self, item):
+        """
+        ite
+        :return:
+        """
+        raise NotImplementedError(
+            f'Error in {repr(self.__class__.__name__)}: the class requires a collect method')
+
