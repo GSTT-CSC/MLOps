@@ -1,4 +1,5 @@
 import click
+import yaml
 import logging
 from mlops.Experiment import Experiment
 from mlops.release.Release import Release
@@ -63,18 +64,25 @@ def run(script, config_path, run_name, ignore_git_check, shared_memory, logging_
 
 
 @cli.command('release', context_settings=CONTEXT_SETTINGS)
-@click.argument('release_target')
-@click.option('-s', '--release_source', 'release_source', help='release_source', default='mlflow')
-@click.option('-d', '--release_destination', 'release_destination', help='release_release_destination', default='local')
-@click.option('-c', '--config', 'config_path', help='Path to config file storing parameters for this run',
-              default='config/config.cfg', type=click.Path())
-def release(release_target, release_source, release_destination, config_path):
+@click.argument('config')
+# todo: allow overwriting the config by passing arguments directly?
+# @click.option('-s', '--release_source', 'release_source', help='release_source', default='mlflow')
+# @click.option('-d', '--release_destination', 'release_destination', help='release_destination', default='local')
+# @click.option('-c', '--config', 'config_path', help='Path to config file storing parameters for this run',
+#               default='config/config.cfg', type=click.Path())
+def release(config):
     """
     Performs actions associated with release
 
     :return: 
     """
-    candidate = Release(release_target, release_source, release_destination)
+    with open(config, "r") as stream:
+        try:
+            conf = yaml.safe_load(stream)
+        except yaml.YAMLError as exc:
+            print(exc)
+
+    candidate = Release(conf)
     candidate.release()
 
 

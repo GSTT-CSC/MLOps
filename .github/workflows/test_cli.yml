@@ -58,7 +58,7 @@ jobs:
 
     - name: Test release CLI
       run: |
-         mlops release -h
+         mlops release tests/mlops/release/data/release_config.yml
 
 #    - name: Stop containers
 #      if: always()

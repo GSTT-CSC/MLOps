@@ -1,0 +1,9 @@
+source:
+  mlflow:
+    artifacts:
+      - models:/hipposeg/Production
+destination:
+  local:
+build:
+  - bash tests/mlops/release/data/build_script.sh
+  - echo DONE!

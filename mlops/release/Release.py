@@ -1,6 +1,7 @@
 import logging
+import subprocess
 
-from mlops.release.destinations import LocalDestination, SharepointDestination, ReleaseDestination
+from mlops.release.destinations import LocalDestination, SharepointDestination
 from mlops.release.sources import MLFlowSource
 
 logger = logging.getLogger(__name__)
@@ -8,34 +9,36 @@ logger = logging.getLogger(__name__)
 
 class Release:
 
-    def __init__(self, release_target, release_source, release_destination):
+    def __init__(self, config):
         self.source = None
         self.destination = None
 
-        self.release_target = release_target
-        self.release_source = release_source
-        self.release_destination = release_destination
+        self.release_source = config['source']
+        self.release_destination = config['destination']
+        self.release_builder = config['build']
 
     def release(self):
 
         # Create release source
-        if self.release_source == 'mlflow':
-            self.source = MLFlowSource(self.release_target)
+        if 'mlflow' in self.release_source.keys():
+            self.source = MLFlowSource(self.release_source['mlflow'])
         else:
-            raise Exception(f'Unknown release source: "{self.release}"')
+            raise Exception(f'Unrecognised release source: "{self.release_source}"')
 
         # Create release destination
-        if self.release_destination == 'local':
-            self.destination = LocalDestination()
-        elif self.release_destination == 'sharepoint':
-            self.destination = SharepointDestination()
+        if 'local' in self.release_destination.keys():
+            self.destination = LocalDestination(self.release_destination['local'])
+        elif 'sharepoint' in self.release_destination.keys():
+            self.destination = SharepointDestination(self.release_destination['sharepoint'])
         else:
-            raise Exception(f'Unknown release destination: "{self.destination}"')
+            raise Exception(f'Unrecognised release destination: "{self.release_destination}"')
 
         # Collect release artifacts and push to storage
         self.source.collect()
-        destination_paths = self.destination.push(self.source.release_artifacts)
+        self.destination.push(self.source.release_artifacts)
         self.build_release()
 
     def build_release(self):
-        pass
+        for cmd in self.release_builder:
+            logger.debug(f'CMD: {cmd}')
+            subprocess.run(cmd, shell=True, check=True)

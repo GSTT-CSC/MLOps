@@ -11,7 +11,7 @@ class LocalDestination(ReleaseDestination, ABC):
     Class to handle model artifacts stored on local file system
     """
 
-    def __init__(self):
+    def __init__(self, config):
         super(LocalDestination, self).__init__()
 
     def push(self, release_artifacts: dict = None) -> dict:

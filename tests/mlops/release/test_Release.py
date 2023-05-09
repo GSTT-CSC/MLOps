@@ -3,9 +3,10 @@ from mlops.release import Release
 
 logger = logging.getLogger(__name__)
 
-release_target = ''
-release_source = ''
-release_destination = ''
+release_target = 'models:/hipposeg/Production'
+release_source = 'mlflow'
+release_destination = 'local'
+release_configuration = ''
 
 
 class TestRelease:
@@ -16,7 +17,3 @@ class TestRelease:
 
     def test_release(self):
         self.release.release()
-        pass
-
-    def test_push_artifacts(self):
-        pass
