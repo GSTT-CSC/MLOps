@@ -27,15 +27,21 @@ This project aims to build an effective MLOps framework for the development of A
 #### 1. MLOps server
 The MLOps server hosts the ML lifecycle management services. An MLFlow instance serves as the management platform, providing experiment tracking and model serving.
 #### 2. Project Template
-The [project template](https://github.com/GSTT-csc/Project_template) is the starting point for any project using this development framework. This template is flexible enough for any projects and facilitates communication with other parts of the development framework.
+The [project template](https://github.com/GSTT-csc/Project_template) is the starting point for any project using this development framework. This template is flexible enough for any projects and facilitates communication with other parts of the development framework. The figure below illustrates a high level overview of the template and supporting components provided by the MLOps server.
+![](assets/project-outline.png)
+
 #### 3. csc-mlops package
 The csc-mlops python package is available on [PyPI](https://pypi.org/project/csc-mlops) and installed by default by the [project template](https://github.com/GSTT-csc/Project_template). This package handles communication between the project and the server, performs automated tasks, and includes helper functions and classes to streamline development. 
 
 These components work together to simplify and automate many of the processes required for controlled app development. A high level schematic of the framework is illustrated below. In this case XNAT is used as a data archive platform, the framework can be adapted to use other data stores.
 
-![](assets/2022-06-05_mlops-dev-schematic.png)
-
 > This repository contains the source code for the server and csc-mlops components of the development framework. For further details on the project template component see the [project template repository](https://github.com/GSTT-csc/Project_template).
+
+## Guiding Principles
+This is an open source project and all contributions are welcome. Please see the [contribution guidelines](#Contributing).
+
+![](assets/guiding-principles.png)
+
 
 ## The MLOps server
 ### Server components
@@ -160,7 +166,10 @@ exp.run(docker_args={}, entry_point='main')
 > For more information on how to define the project configuration using a config.cfg file see the [project template](https://github.com/GSTT-csc/Project_template) documentation
 
 ### XNAT data handler
-Accessing data stored in an XNAT archive is performed through two steps.
+Accessing data stored in an XNAT archive is performed through two steps - first the XNAT database is queried for project subjects using the csc-mlops DataBuilderXNAT feature. This list of results is then loaded using the pytorch style data loading transform LoadImageXNATd.
+
+![](assets/xnat-image-import.png)
+
 
 #### 1. Create list of data samples
 A list of subjects is extracted from the XNAT archive for the specified project. This is done automatically by the helper function `xnat_build_dataset`. 
