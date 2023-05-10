@@ -56,7 +56,7 @@ jobs:
       run: |
         cd tests/data
         mlops run test_entry.py -c test_config.cfg --ignore_git_check
-        echo "{MLOPS_TEST_MODEL_URI}={$MLOPS_TEST_MODEL_URI}" >> "$GITHUB_ENV"
+        echo "MLOPS_TEST_MODEL_URI=$MLOPS_TEST_MODEL_URI" >> "$GITHUB_ENV"
         cd -
 
     - name: Test release CLI
