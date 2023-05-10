@@ -16,7 +16,10 @@ def test():
         y = model(x)
         model = mlflow.pytorch.log_model(model, 'test_model')
         print(f'model logged at {model.model_uri}')
-        os.environ['MLOPS_TEST_MODEL_URI'] = model.model_uri
+
+        env_file = os.getenv('GITHUB_ENV')
+        with open(env_file, "a") as f:
+            f.write(f"MLOPS_TEST_MODEL_URI={model.model_uri}")
 
 
 if __name__ == '__main__':
