@@ -4,6 +4,7 @@ import torch
 
 
 def test():
+
     print('test entry point')
 
     mlflow.pytorch.autolog(log_models=False)
@@ -14,8 +15,6 @@ def test():
         y = model(x)
         model = mlflow.pytorch.log_model(model, 'test_model')
         print(f'model logged at {model.model_uri}')
-
-
 
 
 if __name__ == '__main__':

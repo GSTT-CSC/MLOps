@@ -16,6 +16,14 @@ jobs:
         os: [ ubuntu-latest ]
         python-version: [ '3.9' ]
 
+    env:
+      POSTGRES_DB: mlflow
+      POSTGRES_USER: msdndfvk
+      POSTGRES_PASSWORD: adfg3245
+      AWS_ACCESS_KEY_ID: fdash
+      AWS_SECRET_ACCESS_KEY: rstjDFH345!
+      MLFLOW_S3_IGNORE_TLS: true
+
     steps:
     - uses: actions/checkout@v2
       with:  # required for GitPython checks https://github.com/actions/checkout/issues/124
@@ -46,8 +54,8 @@ jobs:
 
     - name: Test run CLI
       run: |
-        cd tests/data/
-        mlops run tests/data/test_entry.py -c tests/data/test_config.cfg
+        cd tests/data
+        mlops run test_entry.py -c test_config.cfg --ignore_git_check
         cd -
 
     - name: Test release CLI
