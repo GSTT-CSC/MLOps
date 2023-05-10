@@ -57,11 +57,11 @@ jobs:
         cd tests/data
         mlops run test_entry.py -c test_config.cfg --ignore_git_check
         echo "MLOPS_TEST_MODEL_URI=$MLOPS_TEST_MODEL_URI" >> "$GITHUB_ENV"
+        echo ${{ env.MLOPS_TEST_MODEL_URI }}
         cd -
         env
 
     - name: Test release CLI
       run: |
-        export MLOPS_TEST_MODEL_URI=${{ env.MLOPS_TEST_MODEL_URI }}
         env
         mlops release tests/mlops/release/data/release_config.yml
