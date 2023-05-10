@@ -2,8 +2,12 @@ source:
   mlflow:
     artifacts:
       - models:/hipposeg/Production
+      - s3://mlflow/4/dcda68bd64a641c8bdd684cf2fd923fd/artifacts/model_summary.txt
 destination:
   local:
+    username: ${test_uname}
+    password: ${test_pwd}
 build:
   - bash tests/mlops/release/data/build_script.sh
+  - docker build -t test_app -f tests/data/Dockerfile .
   - echo DONE!

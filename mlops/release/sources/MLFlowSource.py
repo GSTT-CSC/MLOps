@@ -18,11 +18,10 @@ class MLFlowSource(ReleaseSource):
         The run method needs to populate the `self.artifacts` property, a dict that contains the build artifacts.
         :return:
         """
-        self.release_artifacts = []
+        self.release_artifacts = {}
         for item in self.config['artifacts']:
             # todo requires error handling
-            self.release_artifacts = {
-                    str(item): mlflow.artifacts.download_artifacts(artifact_uri=item,
-                                                                   tracking_uri='http://0.0.0.0:85')
-                }
+            self.release_artifacts[str(item)] = mlflow.artifacts.download_artifacts(artifact_uri=item,
+                                                                                    tracking_uri='http://0.0.0.0:85')
+
         logger.info(f'Collected artifacts: {self.release_artifacts}')

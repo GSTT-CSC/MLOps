@@ -46,19 +46,22 @@ jobs:
         python -m build 
         pip install dist/*.whl
 
-#    - name: start MLOps server
-#      run: |
-#        mkdir -p ~/MLOps_data/mlflow_minio
-#        mkdir -p ~/MLOps_data/mlflow_db
-#        docker compose -f mlflow_server/docker-compose.yml up -d --build
+    - name: start MLOps server
+      run: |
+        mkdir -p ~/MLOps_data/mlflow_minio
+        mkdir -p ~/MLOps_data/mlflow_db
+        docker compose -f mlflow_server/docker-compose.yml up -d --build
 
     - name: Test run CLI
       run: |
-         mlops run -h
+        cd tests/data/
+        mlops run tests/data/test_entry.py -c tests/data/test_config.cfg
+        cd -
 
     - name: Test release CLI
       run: |
-         mlops release tests/mlops/release/data/release_config.yml
+        mlflow runs list
+        mlops release tests/mlops/release/data/release_config.yml
 
 #    - name: Stop containers
 #      if: always()
