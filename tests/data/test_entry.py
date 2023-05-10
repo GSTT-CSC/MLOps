@@ -1,6 +1,7 @@
 # Mock entry point
 import mlflow
 import torch
+import os
 
 
 def test():
@@ -15,6 +16,7 @@ def test():
         y = model(x)
         model = mlflow.pytorch.log_model(model, 'test_model')
         print(f'model logged at {model.model_uri}')
+        os.environ['MLOPS_TEST_MODEL_URI'] = model.model_uri
 
 
 if __name__ == '__main__':

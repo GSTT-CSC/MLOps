@@ -60,7 +60,6 @@ jobs:
 
     - name: Test release CLI
       run: |
-        mlflow runs list
         mlops release tests/mlops/release/data/release_config.yml
 
 #    - name: Stop containers
