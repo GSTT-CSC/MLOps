@@ -7,7 +7,7 @@ import os
 def test():
 
     print('test entry point')
-
+    mlflow.set_tracking_uri('http://0.0.0.0:85')
     mlflow.pytorch.autolog(log_models=False)
     with mlflow.start_run() as run:
 
