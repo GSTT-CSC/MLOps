@@ -1,7 +1,7 @@
 source:
   mlflow:
     artifacts:
-      - ${MLOPS_TEST_MODEL_URI}
+      - ${{ env.MLOPS_TEST_MODEL_URI }}
 destination:
   local:
 build:
