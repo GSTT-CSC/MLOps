@@ -16,14 +16,6 @@ jobs:
         os: [ ubuntu-latest ]
         python-version: [ '3.9' ]
 
-#    env:
-#      POSTGRES_DB: mlflow
-#      POSTGRES_USER: msdndfvk
-#      POSTGRES_PASSWORD: adfg3245
-#      AWS_ACCESS_KEY_ID: fdash
-#      AWS_SECRET_ACCESS_KEY: rstjDFH345!
-#      MLFLOW_S3_IGNORE_TLS: true
-
     steps:
     - uses: actions/checkout@v2
       with:  # required for GitPython checks https://github.com/actions/checkout/issues/124
