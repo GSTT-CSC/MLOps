@@ -78,7 +78,12 @@ def release(config):
 
     :return: 
     """
+    conf = parse_config(config)
+    candidate = Release(conf)
+    candidate.release()
 
+
+def parse_config(config_path):
     path_matcher = re.compile(r'\$\{([^}^{]+)\}')
 
     def path_constructor(loader, node):
@@ -91,14 +96,12 @@ def release(config):
     yaml.add_implicit_resolver('!path', path_matcher, None, yaml.SafeLoader)
     yaml.add_constructor('!path', path_constructor, yaml.SafeLoader)
 
-    with open(config, "r") as stream:
+    with open(config_path, "r") as stream:
         try:
             conf = yaml.safe_load(stream)
         except yaml.YAMLError as exc:
             print(exc)
-
-    candidate = Release(conf)
-    candidate.release()
+    return conf
 
 
 if __name__ == '__main__':
