@@ -55,6 +55,11 @@ jobs:
         mkdir -p ~/MLOps_data/mlflow_db
         docker compose -f mlflow_server/docker-compose.yml up -d --build
 
+    - name: Clear runner space
+      run: |
+        rm -rf /opt/hostedtoolcache
+        docker system prune -f
+
     - name: Test run CLI
       run: |
         cd tests/data
