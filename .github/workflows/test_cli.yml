@@ -38,6 +38,10 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
+    - name: Clear runner space
+      run: |
+        rm -rf /opt/hostedtoolcache
+
 #    - name: install sys requirements
 #      run: |
 #        sudo apt-get update
@@ -54,11 +58,6 @@ jobs:
         mkdir -p ~/MLOps_data/mlflow_minio
         mkdir -p ~/MLOps_data/mlflow_db
         docker compose -f mlflow_server/docker-compose.yml up -d --build
-
-    - name: Clear runner space
-      run: |
-        rm -rf /opt/hostedtoolcache
-        docker system prune -f
 
     - name: Test run CLI
       run: |
