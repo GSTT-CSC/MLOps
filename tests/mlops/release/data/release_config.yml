@@ -4,7 +4,7 @@ source:
       - models:/test-model/1
 destination:
   local:
-build:
+builder:
   - bash tests/mlops/release/data/build_script.sh
   - docker build -t test_app -f tests/data/Dockerfile .
   - echo DONE!

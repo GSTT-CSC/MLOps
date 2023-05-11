@@ -1,0 +1,60 @@
+
+name: Example release workflow
+
+on:
+  push:
+    branches:
+      - "142-automate*"
+#      - "release/*"
+
+jobs:
+
+  run-tests:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+        python-version: [ '3.9' ]
+
+    env:
+      POSTGRES_DB: mlflow
+      POSTGRES_USER: msdndfvk
+      POSTGRES_PASSWORD: adfg3245
+      AWS_ACCESS_KEY_ID: fdash
+      AWS_SECRET_ACCESS_KEY: rstjDFH345!
+      MLFLOW_S3_IGNORE_TLS: true
+      MLFLOW_TRACKING_URI: http://0.0.0.0:85
+      MLFLOW_S3_ENDPOINT_URL: http://0.0.0.0:8002
+
+    steps:
+    - name: run-tests
+      run: |
+        echo run-tests
+
+  build-documentation:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: build-documentation
+        run: |
+          echo build-documentation
+
+  build-application:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: build-application
+        run: |
+          echo build-application
+
+  build-release:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: build-release
+        run: |
+          echo build-release
