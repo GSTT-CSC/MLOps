@@ -28,9 +28,14 @@ jobs:
       MLFLOW_S3_ENDPOINT_URL: http://0.0.0.0:8002
 
     steps:
-    - name: run-tests
-      run: |
-        echo run-tests
+      - name: run-tests
+        run: |
+          echo "this is the test results" > test-results.txt
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: etc/user/artifacts/test-results.txt
 
   build-documentation:
     runs-on: ubuntu-latest
@@ -39,16 +44,26 @@ jobs:
     steps:
       - name: build-documentation
         run: |
-          echo build-documentation
+          echo "this is the documentation" > documentation.txt
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: documentation
+          path: etc/user/artifacts/documentation.txt
 
   build-application:
     runs-on: ubuntu-latest
     needs: build-documentation
 
     steps:
+      - uses: actions/download-artifact@v3
+        with:
+          path: etc/user/artifacts/
+
       - name: build-application
         run: |
           echo build-application
+          ls -l
 
   build-release:
     runs-on: ubuntu-latest
