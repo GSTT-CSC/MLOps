@@ -1,7 +1,7 @@
 import logging
 import subprocess
 
-from mlops.release.destinations import LocalDestination, SharepointDestination
+from mlops.release.destinations import LocalDestination, SharepointDestination, ZenodoDestination
 from mlops.release.sources import MLFlowSource
 
 logger = logging.getLogger(__name__)
@@ -30,6 +30,8 @@ class Release:
             self.destination = LocalDestination(self.release_destination['local'])
         elif 'sharepoint' in self.release_destination.keys():
             self.destination = SharepointDestination(self.release_destination['sharepoint'])
+        elif 'zenodo' in self.release_destination.keys():
+            self.destination = ZenodoDestination(self.release_destination['zenodo'])
         else:
             raise Exception(f'Unrecognised release destination: "{self.release_destination}"')
 

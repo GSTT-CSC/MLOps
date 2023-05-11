@@ -1,2 +1,3 @@
 from .SharepointDestination import SharepointDestination
 from .LocalDestination import LocalDestination
+from .ZenodoDestination import ZenodoDestination
