@@ -34,7 +34,7 @@ jobs:
 
   build-documentation:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: run-tests
 
     steps:
       - name: build-documentation
@@ -43,7 +43,7 @@ jobs:
 
   build-application:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: build-documentation
 
     steps:
       - name: build-application
@@ -52,7 +52,7 @@ jobs:
 
   build-release:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: build-application
 
     steps:
       - name: build-release
