@@ -35,7 +35,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: test-results
-          path: etc/user/artifacts/test-results.txt
+          path: test-results.txt
 
   build-documentation:
     runs-on: ubuntu-latest
@@ -49,7 +49,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: documentation
-          path: etc/user/artifacts/documentation.txt
+          path: documentation.txt
 
   build-application:
     runs-on: ubuntu-latest
