@@ -4,4 +4,4 @@ echo Building release: $VERSION
 git checkout -b release-demo/${VERSION}
 git add .
 git commit -m "mlops automated release commit"
-git push
+git push --set-upstream origin release-demo/${VERSION}
