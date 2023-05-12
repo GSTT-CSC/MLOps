@@ -18,7 +18,6 @@ class Release:
         self.release_builder = config['build']
 
     def release(self):
-
         # Create release source
         if 'mlflow' in self.release_source.keys():
             self.source = MLFlowSource(self.release_source['mlflow'])

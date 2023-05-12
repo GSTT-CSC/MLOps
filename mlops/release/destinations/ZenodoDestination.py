@@ -34,7 +34,7 @@ class ZenodoDestination(ReleaseDestination, ABC):
 
     def push(self, release_artifacts: dict = None) -> dict:
         """
-        pushes artifacts to zenodo
+        pushes artifacts to zenodo must add locations to self.remote_artifacts
         :param release_artifacts:
         :return:
         """
@@ -56,6 +56,8 @@ class ZenodoDestination(ReleaseDestination, ABC):
                     )
 
             self.remote_artifacts[artifact_name] = r.json()['links']['self']
+
+            self.write_destination_artifacts()
 
     def pull(self):
         """

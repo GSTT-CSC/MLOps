@@ -4,9 +4,8 @@ source:
       - models:/test-model/1
 destination:
   zenodo:
-    access_token: WAge4oRlY1WThnMkHx2l78kP8LDf6J8Hx3lN0LXxsJAB0uV7K2fIQpEXAujO
-    deposit_id: 1
+    access_token: VxwcG6AgttCmD10IQKMnAi068wdjr2WQ07IeUdiQYoqvEn21U3DTeAXiC8h2
 build:
   - bash tests/mlops/release/data/build_script.sh
-  - docker build -t test_app -f tests/data/Dockerfile .
+#  - docker build -t test_app -f tests/data/Dockerfile .
   - echo DONE!
