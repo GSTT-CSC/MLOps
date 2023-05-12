@@ -69,7 +69,7 @@ jobs:
       - name: build-application
         run: |
           echo build-application
-          ls -R
+          ls -la
 
   build-release:
     runs-on: ubuntu-latest
