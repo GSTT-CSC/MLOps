@@ -4,8 +4,7 @@ name: Example release workflow
 on:
   push:
     branches:
-      - "142-automate*"
-#      - "release/*"
+      - "release-demo/|*"
 
 jobs:
 
