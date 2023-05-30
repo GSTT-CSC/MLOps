@@ -4,7 +4,7 @@ from mlops.cli import parse_config
 
 logger = logging.getLogger(__name__)
 
-release_config = 'tests/mlops/release/data/release_config.yml'
+release_config = 'tests/mlops/release/data/release_config_local.yml'
 
 
 class TestRelease:
@@ -15,5 +15,10 @@ class TestRelease:
         self.release = Release(conf)
 
     def test_release(self):
-        pass
-        # self.release.release()
+        self.release.release()
+        assert len(self.release.source.release_artifacts) == 1
+        assert self.release.source.release_artifacts['tests/data/requirements.txt'] == 'tests/data/requirements.txt'
+
+    def test_build_release(self):
+        result = self.release.build_release()
+        assert result.returncode == 0

@@ -1,0 +1,8 @@
+source:
+  local:
+    artifacts:
+      - tests/data/requirements.txt
+destination:
+  local:
+builder:
+  - docker build -t test:dev -f tests/data/Dockerfile tests/data

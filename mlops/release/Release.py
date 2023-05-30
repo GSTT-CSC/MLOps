@@ -2,7 +2,7 @@ import logging
 import subprocess
 
 from mlops.release.destinations import LocalDestination, SharepointDestination, ZenodoDestination
-from mlops.release.sources import MLFlowSource
+from mlops.release.sources import LocalSource, MLFlowSource
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +22,8 @@ class Release:
         # Create release source
         if 'mlflow' in self.release_source.keys():
             self.source = MLFlowSource(self.release_source['mlflow'])
+        elif 'local' in self.release_source.keys():
+            self.source = LocalSource(self.release_source['local'])
         else:
             raise Exception(f'Unrecognised release source: "{self.release_source}"')
 
@@ -43,4 +45,5 @@ class Release:
     def build_release(self):
         for cmd in self.release_builder:
             logger.debug(f'CMD: {cmd}')
-            subprocess.run(cmd, shell=True, check=True)
+            result = subprocess.run(cmd, shell=True, check=True)
+        return result
