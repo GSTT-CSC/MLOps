@@ -72,13 +72,14 @@ jobs:
           ls -la
           ls -la mlops-build/artifacts/
 
+      - name: write version environment variable
+        run: |      
+          echo "VERSION=$(awk -F "=" '/version/ {print $2}' tests/data/_version.py | sed 's/'\''//g')" >> "$GITHUB_ENV"
+
       - name: bundle artifacts in package
         run: |
           rm -f Dockerfile_temp
           echo "FROM ghcr.io/gstt-csc/mlops:dev" > Dockerfile_temp
           echo "COPY mlops-build/artifacts/ /release-documents/" >> Dockerfile_temp
-          echo "VERSION=$(awk -F "=" '/version/ {print $2}' tests/data/_version.py | sed 's/'\''//g')"
-          echo "VERSION=$(awk -F "=" '/version/ {print $2}' tests/data/_version.py | sed 's/ '\''//g')" >> "$GITHUB_ENV"
           docker build -t ghcr.io/gstt-csc/mlops:"${{ env.VERSION }}" -f Dockerfile_temp .
-          echo "${{ env.VERSION }}"
           docker push ghcr.io/gstt-csc/mlops:"${{ env.VERSION }}"
