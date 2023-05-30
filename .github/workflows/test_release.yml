@@ -1,0 +1,71 @@
+name: Example release workflow
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "release-demo/*"
+
+jobs:
+
+  run-tests:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+        python-version: [ '3.9' , '3.10' ]
+
+    env:
+      POSTGRES_DB: mlflow
+      POSTGRES_USER: msdndfvk
+      POSTGRES_PASSWORD: adfg3245
+      AWS_ACCESS_KEY_ID: fdash
+      AWS_SECRET_ACCESS_KEY: rstjDFH345!
+      MLFLOW_S3_IGNORE_TLS: true
+      MLFLOW_TRACKING_URI: http://0.0.0.0:85
+      MLFLOW_S3_ENDPOINT_URL: http://0.0.0.0:8002
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: run-tests
+        run: |
+          echo "this is the test results" > test-results.txt
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: test-results.txt
+
+  build-documentation:
+    runs-on: ubuntu-latest
+    needs: run-tests
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: build-documentation
+        run: |
+          echo "this is the documentation" > documentation.txt
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: documentation
+          path: documentation.txt
+
+  build-application:
+    runs-on: ubuntu-latest
+    needs: build-documentation
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/download-artifact@v3
+        with:
+          path: etc/user/artifacts/
+
+      - name: build-application
+        run: |
+          echo application already built!
+          ls -la
