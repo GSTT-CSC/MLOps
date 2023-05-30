@@ -7,7 +7,9 @@ on:
       devBaseImage:
         description: 'base development image'
         required: true
-
+      version:
+        description: 'application version'
+        required: true
 
 jobs:
 
@@ -74,14 +76,20 @@ jobs:
           ls -la
           ls -la mlops-build/artifacts/
 
-      - name: write version environment variable
-        run: |      
-          echo "VERSION=$(awk -F "=" '/version/ {print $2}' tests/data/_version.py | sed 's/'\''//g')" >> "$GITHUB_ENV"
-
       - name: bundle artifacts in package
         run: |
           rm -f Dockerfile_temp
           echo "FROM ${{ inputs.devBaseImage }}:dev" > Dockerfile_temp
           echo "COPY mlops-build/artifacts/ /release-documents/" >> Dockerfile_temp
-          docker build -t ${{ inputs.devBaseImage }}:"${{ env.VERSION }}" -f Dockerfile_temp .
-          docker push ${{ inputs.devBaseImage }}:"${{ env.VERSION }}"
+
+      - name: build bundled image
+        run: |
+          docker build -t ${{ inputs.devBaseImage }}:${{ inputs.version }} -f Dockerfile_temp .
+
+      - name: push bundled image
+        run: |
+          docker push ${{ inputs.devBaseImage }}:${{ inputs.version }}
+
+      - name: finalise release
+        run: |
+          echo "here we should tag the commit as a release"

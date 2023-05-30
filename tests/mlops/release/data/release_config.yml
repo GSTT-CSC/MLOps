@@ -7,4 +7,4 @@ destination:
 builder:
   - docker build -t ghcr.io/gstt-csc/mlops:dev -f tests/data/Dockerfile tests/data
   - docker push ghcr.io/gstt-csc/mlops:dev
-  - gh workflow run test_release.yml --ref $(git rev-parse --abbrev-ref HEAD) -f devBaseImage=ghcr.io/gstt-csc/mlops
+  - gh workflow run test_release.yml --ref $(git rev-parse --abbrev-ref HEAD) -f devBaseImage=ghcr.io/gstt-csc/mlops -f version=$(awk -F "=" '/version/ {print $2}' tests/data/_version.py | sed 's/'\''//g')
