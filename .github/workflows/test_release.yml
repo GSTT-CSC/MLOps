@@ -77,6 +77,6 @@ jobs:
           rm -f Dockerfile_temp
           echo "FROM ghcr.io/gstt-csc/mlops:dev" > Dockerfile_temp
           echo "COPY mlops-build/artifacts/ /release-documents/" >> Dockerfile_temp
-          export VERSION="$(awk -F "=" '/version/ {print $2}' tests/data/_version.py | sed 's/'\''//g')" 
-          docker build -t ghcr.io/gstt-csc/mlops:${VERSION} -f Dockerfile_temp .
-          docker push ghcr.io/gstt-csc/mlops:${VERSION}
+          echo "VERSION=$(awk -F "=" '/version/ {print $2}' tests/data/_version.py | sed 's/ '\''//g')" >> $GITHUB_ENV
+          docker build -t ghcr.io/gstt-csc/mlops:${{ env.VERSION }} -f Dockerfile_temp .
+          docker push ghcr.io/gstt-csc/mlops:${{ env.VERSION }}
