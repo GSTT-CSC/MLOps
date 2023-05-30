@@ -7,3 +7,4 @@ destination:
 builder:
   - docker build -t ghcr.io/gstt-csc/mlops:dev -f tests/data/Dockerfile tests/data
   - docker push ghcr.io/gstt-csc/mlops:dev
+  - gh workflow run test_release.yml -f devBaseImage=ghcr.io/gstt-csc/mlops
