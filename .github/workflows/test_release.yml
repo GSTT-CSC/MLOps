@@ -5,6 +5,7 @@ on:
     devBaseImage:
       description: 'base development image'
       required: true
+      type: string
 
 jobs:
 
