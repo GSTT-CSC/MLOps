@@ -10,6 +10,7 @@ on:
       version:
         description: 'application version'
         required: true
+        type: string
 
 jobs:
   run-tests:
