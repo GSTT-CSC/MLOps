@@ -2,9 +2,9 @@ name: Example release workflow
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - "release-demo/*"
+    devBaseImage:
+      description: 'base development image'
+      required: true
 
 jobs:
 
