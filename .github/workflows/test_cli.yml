@@ -67,4 +67,4 @@ jobs:
 
     - name: Test release CLI
       run: |
-        mlops release tests/mlops/release/data/release_config.yml
+        mlops release tests/mlops/release/data/release_config_local.yml
