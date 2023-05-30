@@ -64,9 +64,19 @@ jobs:
 
       - uses: actions/download-artifact@v3
         with:
-          path: etc/user/artifacts/
+          path: mlops-build/artifacts/
 
-      - name: build-application
+      - name: check artifacts available
         run: |
           echo application already built!
           ls -la
+          ls -la mlops-build/artifacts/
+
+      - name: bundle artifacts in package
+        run: |
+          rm -f Dockerfile_temp
+          echo "FROM ghcr.io/gstt-csc/mlops:dev" > Dockerfile_temp
+          echo "COPY mlops-build/artifacts/ /release-documents/" >> Dockerfile_temp
+          export VERSION="$(awk -F "=" '/version/ {print $2}' tests/data/_version.py | sed 's/'\''//g')" 
+          docker build -t ghcr.io/gstt-csc/mlops:${VERSION} -f Dockerfile_temp .
+          docker push ghcr.io/gstt-csc/mlops:${VERSION}

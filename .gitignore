@@ -30,3 +30,4 @@ mlflow_server/pytest-coverage.txt
 /csc_mlops.egg-info/
 assests/MOps_logo.svg
 .mlops/
+Dockerfile_temp
