@@ -17,16 +17,6 @@ jobs:
         os: [ ubuntu-latest ]
         python-version: [ '3.9' , '3.10' ]
 
-    env:
-      POSTGRES_DB: mlflow
-      POSTGRES_USER: msdndfvk
-      POSTGRES_PASSWORD: adfg3245
-      AWS_ACCESS_KEY_ID: fdash
-      AWS_SECRET_ACCESS_KEY: rstjDFH345!
-      MLFLOW_S3_IGNORE_TLS: true
-      MLFLOW_TRACKING_URI: http://0.0.0.0:85
-      MLFLOW_S3_ENDPOINT_URL: http://0.0.0.0:8002
-
     steps:
       - uses: actions/checkout@v3
 
@@ -57,10 +47,20 @@ jobs:
 
   build-application:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     needs: build-documentation
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.REGISTRY_TOKEN }}
 
       - uses: actions/download-artifact@v3
         with:
