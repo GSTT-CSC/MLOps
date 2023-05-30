@@ -15,7 +15,7 @@ class Release:
 
         self.release_source = config['source']
         self.release_destination = config['destination']
-        self.release_builder = config['build']
+        self.release_builder = config['builder']
 
     def release(self):
 

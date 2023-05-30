@@ -5,6 +5,5 @@ source:
 destination:
   local:
 builder:
-  - bash tests/mlops/release/data/build_script.sh
-  - docker build -t test_app -f tests/data/Dockerfile .
-  - echo DONE!
+  - docker build -t ghcr.io/gstt-csc/mlops:dev -f tests/data/Dockerfile tests/data
+  - docker push ghcr.io/gstt-csc/mlops:dev

@@ -5,6 +5,7 @@ import os
 
 
 def test():
+    # Very basic ML project - creates and saves a pytroch model to mlflow
 
     print('test entry point')
     mlflow.set_tracking_uri('http://0.0.0.0:85')
