@@ -7,6 +7,7 @@ on:
       devBaseImage:
         description: 'base development image'
         required: true
+        type: string
       version:
         description: 'application version'
         required: true
