@@ -33,11 +33,11 @@ jobs:
         fetch-depth: 0
         ref: ${{ github.event.pull_request.head.ref }}
 
-    - name: setup XNAT
-      run: |
-        git clone https://github.com/NrgXnat/xnat-docker-compose.git ../xnat-docker-compose
-        cp ../xnat-docker-compose/default.env ../xnat-docker-compose/.env
-        docker compose -f ../xnat-docker-compose/docker-compose.yml up -d
+#    - name: setup XNAT
+#      run: |
+#        git clone https://github.com/NrgXnat/xnat-docker-compose.git ../xnat-docker-compose
+#        cp ../xnat-docker-compose/default.env ../xnat-docker-compose/.env
+#        docker compose -f ../xnat-docker-compose/docker-compose.yml up -d
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
