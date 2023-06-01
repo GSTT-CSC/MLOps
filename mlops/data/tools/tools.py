@@ -2,9 +2,10 @@ import asyncio
 import logging
 from concurrent.futures import ThreadPoolExecutor
 from itertools import chain
-import tqdm
+
 import mlflow
 import pandas as pd
+import tqdm
 import xnat
 
 logger = logging.getLogger(__name__)

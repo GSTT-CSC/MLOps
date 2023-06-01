@@ -1,3 +1,3 @@
-from .ReleaseSource import ReleaseSource
-from .MLFlowSource import MLFlowSource
 from .LocalSource import LocalSource
+from .MLFlowSource import MLFlowSource
+from .ReleaseSource import ReleaseSource

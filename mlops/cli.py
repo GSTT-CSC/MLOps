@@ -1,11 +1,14 @@
-import click
-import re
-import os
-import yaml
 import logging
+import os
+import re
+
+import click
+import yaml
+
 from mlops.Experiment import Experiment
-from mlops.release.Release import Release
 from mlops._version import __version__
+from mlops.release.Release import Release
+
 logger = logging.getLogger(__name__)
 
 CONTEXT_SETTINGS = {'help_option_names': ['-h', '--help'],

@@ -1,10 +1,12 @@
-from abc import ABC
 import logging
 import os
 import shutil
+from abc import ABC
+
 import requests
 from tqdm import tqdm
 from tqdm.utils import CallbackIOWrapper
+
 from .ReleaseDestination import ReleaseDestination
 
 logger = logging.getLogger(__name__)

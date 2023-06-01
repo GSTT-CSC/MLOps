@@ -1,8 +1,8 @@
-import os
+import logging
+
+import mlflow
 
 from mlops.release.sources import ReleaseSource
-import logging
-import mlflow
 
 logger = logging.getLogger(__name__)
 

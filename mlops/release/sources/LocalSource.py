@@ -1,7 +1,6 @@
-import os
+import logging
 
 from mlops.release.sources import ReleaseSource
-import logging
 
 logger = logging.getLogger(__name__)
 
