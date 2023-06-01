@@ -65,8 +65,8 @@ class TestExperiment:
 
     def test_build_experiment_image_subprocess(self):
         client = docker.from_env()
-        self.experiment.build_experiment_image_subprocess(context_path='.',
-                                                          dockerfile_path=self.experiment.project_path + '/Dockerfile')
+        self.experiment.build_experiment_image_subprocess(context_path='tests/data',
+                                                          dockerfile_path='Dockerfile')
         images_list = [img['RepoTags'][0] for img in client.api.images() if img['RepoTags']]
         assert self.experiment.experiment_name + ':latest' in images_list
 
