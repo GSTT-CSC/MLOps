@@ -52,8 +52,6 @@ class TestExperiment:
     def test_print_experiment_info(self, caplog):
         # Check correct information is printed to console
         with caplog.at_level(logging.INFO):
-            # self.experiment = Experiment('test_entry.py', config_path='tests/data/test_config.cfg',
-            #                              project_path='tests/data')
             self.experiment.print_experiment_info()  # Call function.
         assert 'Name: test_project' in caplog.text
 
