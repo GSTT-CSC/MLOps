@@ -16,13 +16,16 @@ jobs:
         os: [ ubuntu-latest ]
         python-version: [ '3.9' ]
 
-#    env:
-#      POSTGRES_DB: mlflow
-#      POSTGRES_USER: msdndfvk
-#      POSTGRES_PASSWORD: adfg3245
-#      AWS_ACCESS_KEY_ID: fdash
-#      AWS_SECRET_ACCESS_KEY: rstjDFH345!
-#      MLFLOW_S3_IGNORE_TLS: true
+    env:
+      POSTGRES_DB: mlflow
+      POSTGRES_USER: msdndfvk
+      POSTGRES_PASSWORD: adfg3245
+      AWS_ACCESS_KEY_ID: fdash
+      AWS_SECRET_ACCESS_KEY: rstjDFH345!
+      MLFLOW_S3_IGNORE_TLS: true
+      MLFLOW_TRACKING_URI: http://0.0.0.0:85
+      MLFLOW_S3_ENDPOINT_URL: http://0.0.0.0:8002
+
 
     steps:
     - uses: actions/checkout@v2
@@ -35,28 +38,28 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: install sys requirements
+    - name: Clear runner space
       run: |
-        sudo apt-get update
-        sudo apt-get install -y nvidia-cuda-toolkit
+        rm -rf /opt/hostedtoolcache
 
-    - name: Install python requirements
+    - name: Install csc-mlops
       run: |
         python -m pip install --upgrade pip build
         python -m build 
         pip install dist/*.whl
 
-#    - name: start MLOps server
-#      run: |
-#        mkdir -p ~/MLOps_data/mlflow_minio
-#        mkdir -p ~/MLOps_data/mlflow_db
-#        docker compose -f mlflow_server/docker-compose.yml up -d --build
-
-    - name: Test CLI
+    - name: start MLOps server
       run: |
-         mlops run -h
+        mkdir -p ~/MLOps_data/mlflow_minio
+        mkdir -p ~/MLOps_data/mlflow_db
+        docker compose -f mlflow_server/docker-compose.yml up -d --build
 
-#    - name: Stop containers
-#      if: always()
-#      run: |
-#        docker-compose -f mlflow_server/docker-compose.yml down
+    - name: Test run CLI
+      run: |
+        cd tests/data
+        mlops run test_entry.py -c test_config.cfg --ignore_git_check
+        cd -
+
+    - name: Test release CLI
+      run: |
+        mlops release tests/mlops/release/data/release_config_local.yml

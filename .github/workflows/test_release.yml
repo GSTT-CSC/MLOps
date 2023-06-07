@@ -1,3 +1,4 @@
+
 name: Example release workflow
 
 on:
@@ -7,29 +8,22 @@ on:
         description: 'base development image'
         required: true
         type: string
+      version:
+        description: 'application version'
+        required: true
+        type: string
 
 jobs:
-
   run-tests:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ ubuntu-latest ]
-        python-version: [ '3.9' , '3.10' ]
-
-    env:
-      POSTGRES_DB: mlflow
-      POSTGRES_USER: msdndfvk
-      POSTGRES_PASSWORD: adfg3245
-      AWS_ACCESS_KEY_ID: fdash
-      AWS_SECRET_ACCESS_KEY: rstjDFH345!
-      MLFLOW_S3_IGNORE_TLS: true
-      MLFLOW_TRACKING_URI: http://0.0.0.0:85
-      MLFLOW_S3_ENDPOINT_URL: http://0.0.0.0:8002
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.x'
 
       - name: run-tests
         run: |
@@ -58,16 +52,45 @@ jobs:
 
   build-application:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     needs: build-documentation
 
     steps:
       - uses: actions/checkout@v3
 
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.REGISTRY_TOKEN }}
+
       - uses: actions/download-artifact@v3
         with:
-          path: etc/user/artifacts/
+          path: mlops-build/artifacts/
 
-      - name: build-application
+      - name: check artifacts available
         run: |
           echo application already built!
           ls -la
+          ls -la mlops-build/artifacts/
+
+      - name: bundle artifacts in package
+        run: |
+          rm -f Dockerfile_temp
+          echo "FROM ${{ inputs.devBaseImage }}:dev" > Dockerfile_temp
+          echo "COPY mlops-build/artifacts/ /release-documents/" >> Dockerfile_temp
+
+      - name: build bundled image
+        run: |
+          docker build -t ${{ inputs.devBaseImage }}:${{ inputs.version }} -f Dockerfile_temp .
+
+      - name: push bundled image
+        run: |
+          docker push ${{ inputs.devBaseImage }}:${{ inputs.version }}
+
+      - name: finalise release
+        run: |
+          echo "here we should tag the commit as a release"

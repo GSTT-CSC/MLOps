@@ -100,7 +100,6 @@ services:
             mlflow db upgrade postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB} ;
             mlflow server --backend-store-uri postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB} --default-artifact-root s3://mlflow/ --host 0.0.0.0 --gunicorn-opts "--log-level=debug --timeout=8000 --graceful-timeout=75 --keep-alive=3600"
             "
-#           mlflow server --backend-store-uri postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB} --serve-artifacts --artifacts-destination s3://mlflow --host 0.0.0.0 --gunicorn-opts "--log-level=debug --timeout=8000 --graceful-timeout=75 --keep-alive=3600"
 
 # use these docker volumes for testings and development - use bind mounts in production
 #volumes:

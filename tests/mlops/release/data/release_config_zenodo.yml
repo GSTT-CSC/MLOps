@@ -1,0 +1,10 @@
+source:
+  mlflow:
+    artifacts:
+      - models:/test-model/1
+destination:
+  zenodo:
+    access_token: ${zenodo_token}
+build:
+  - bash tests/mlops/release/data/build_script.sh
+  - echo DONE!

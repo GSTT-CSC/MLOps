@@ -23,18 +23,15 @@ jobs:
       AWS_ACCESS_KEY_ID: fdash
       AWS_SECRET_ACCESS_KEY: rstjDFH345!
       MLFLOW_S3_IGNORE_TLS: true
+      MLFLOW_TRACKING_URI: http://0.0.0.0:85
+      MLFLOW_S3_ENDPOINT_URL: http://0.0.0.0:8002
+
 
     steps:
     - uses: actions/checkout@v2
       with:  # required for GitPython checks https://github.com/actions/checkout/issues/124
         fetch-depth: 0
         ref: ${{ github.event.pull_request.head.ref }}
-
-    - name: setup XNAT
-      run: |
-        git clone https://github.com/NrgXnat/xnat-docker-compose.git ../xnat-docker-compose
-        cp ../xnat-docker-compose/default.env ../xnat-docker-compose/.env
-        docker compose -f ../xnat-docker-compose/docker-compose.yml up -d
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
@@ -107,4 +104,3 @@ jobs:
       if: always()
       run: |
         docker-compose -f mlflow_server/docker-compose.yml down
-        docker-compose -f ../xnat-docker-compose/docker-compose.yml down
