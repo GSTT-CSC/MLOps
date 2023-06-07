@@ -1,12 +1,13 @@
 import configparser
+import logging
 import os
 
 import docker
-import logging
 
 from mlops.Experiment import Experiment
 
 logger = logging.getLogger(__name__)
+
 
 class TestExperiment:
 
@@ -51,8 +52,6 @@ class TestExperiment:
     def test_print_experiment_info(self, caplog):
         # Check correct information is printed to console
         with caplog.at_level(logging.INFO):
-            # self.experiment = Experiment('test_entry.py', config_path='tests/data/test_config.cfg',
-            #                              project_path='tests/data')
             self.experiment.print_experiment_info()  # Call function.
         assert 'Name: test_project' in caplog.text
 
@@ -64,12 +63,10 @@ class TestExperiment:
 
     def test_build_experiment_image_subprocess(self):
         client = docker.from_env()
-        images_1 = [img['RepoTags'][0] for img in client.api.images()]
-        # assert self.experiment.experiment_name + ':latest' not in images_1
-        self.experiment.build_experiment_image_subprocess(context_path='.',
+        self.experiment.build_experiment_image_subprocess(context_path='tests/data',
                                                           dockerfile_path=self.experiment.project_path + '/Dockerfile')
-        images_2 = [img['RepoTags'][0] for img in client.api.images()]
-        assert self.experiment.experiment_name + ':latest' in images_2
+        images_list = [img['RepoTags'][0] for img in client.api.images() if img['RepoTags']]
+        assert self.experiment.experiment_name + ':latest' in images_list
 
     def test_run(self, capsys):
         """

@@ -23,9 +23,11 @@ mlflow_server/pytest-coverage.txt
 /mlops/bin/
 /mlops/include/
 /mlops/lib/
-!/venv/
 /mlflow_server/.env
 /mlops/mlops.egg-info/
 /mlops/csc_mlops.egg-info/
 /csc_mlops.egg-info/
-assests/MOps_logo.svg
+assets/MOps_logo.svg
+.mlops/
+Dockerfile_temp
+/venv/

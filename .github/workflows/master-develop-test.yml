@@ -26,6 +26,9 @@ jobs:
       AWS_ACCESS_KEY_ID: fdash
       AWS_SECRET_ACCESS_KEY: rstjDFH345!
       MLFLOW_S3_IGNORE_TLS: true
+      MLFLOW_TRACKING_URI: http://0.0.0.0:85
+      MLFLOW_S3_ENDPOINT_URL: http://0.0.0.0:8002
+
 
     steps:
     - uses: actions/checkout@v2
@@ -36,12 +39,6 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
-
-    - name: setup XNAT
-      run: |
-        git clone https://github.com/NrgXnat/xnat-docker-compose.git ../xnat-docker-compose
-        cp ../xnat-docker-compose/default.env ../xnat-docker-compose/.env
-        docker compose -f ../xnat-docker-compose/docker-compose.yml up -d
 
     - name: create test .git in test project root
       working-directory: tests/data
