@@ -31,3 +31,4 @@ assets/MOps_logo.svg
 .mlops/
 Dockerfile_temp
 /venv/
+.vscode/settings.json
