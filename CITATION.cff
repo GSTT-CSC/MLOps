@@ -27,5 +27,5 @@ date-released: 2021-09-17
 message: "If you use MLOps in your work, please cite it using these metadata."
 repository-code: "https://github.com/GSTT-CSC/MLOps"
 title: MLOps
-version: "0.0.18"
+version: "0.9.18"
 ...
