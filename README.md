@@ -100,7 +100,7 @@ POSTGRES_DB=db
 4. To enable access to the minio artifact storage the host machine needs to be authenticated. Any of the methods supported by boto3 should be compatible, the recommended authentication method is to create an [aws credentials file](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html). e.g. for ubuntu/linux
 
 ```
-[credentials]
+[default]
 AWS_ACCESS_KEY_ID=minioUsername
 AWS_SECRET_ACCESS_KEY=minioPassword
 ```
