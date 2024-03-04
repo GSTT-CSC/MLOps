@@ -23,12 +23,14 @@ class LoadImageXNATd(MapTransform):
     def __init__(self, keys: KeysCollection, xnat_configuration: dict = None,
                  image_loader: Transform = LoadImage(), validate_data: bool = False,
                  expected_filetype_ext: str = '.dcm',
+                 image_series_option: str = 'error',
                  verbose=False):
         super().__init__(keys)
         self.image_loader = image_loader
         self.xnat_configuration = xnat_configuration
         self.expected_filetype = expected_filetype_ext
         self.validate_data = validate_data
+        self.image_series_option = image_series_option
         self.verbose = verbose
 
     def __call__(self, data):
@@ -100,9 +102,14 @@ class LoadImageXNATd(MapTransform):
                                         image_dirs = list(
                                             set(os.path.dirname(image_path) for image_path in images_path))
                                         if len(image_dirs) > 1:
-                                            raise ValueError(f'More than one image series found in {images_path}')
-                                        image = self.image_loader(image_dirs[0])
-
+                                            if self.image_series_option == 'error':
+                                                raise ValueError(f'More than one image series found in {images_path}')
+                                            elif self.image_series_option == 'keepfirst':
+                                                image = self.image_loader(image_dirs[0])
+                                            elif self.image_series_option == 'keeplast':
+                                                image = self.image_loader(image_dirs[-1])
+                                            else:
+                                                raise ValueError(f"More than one image series found in {images_path} and no option specified")
                                     break
 
                             except Exception as e:
