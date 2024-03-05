@@ -4,7 +4,7 @@ from mlops.cli import run, release, parse_config
 
 class TestCLI:
 
-    def setup(self):
+    def setup_method(self):
         self.test_config = 'tests/mlops/release/data/release_config_local.yml'
 
     def test_run(self):

@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 class TestExperiment:
 
-    def setup(self):
+    def setup_method(self):
         # currently only testing localhost code
         self.experiment = Experiment('test_entry.py', config_path='tests/data/test_config.cfg',
                                      project_path='tests/data')

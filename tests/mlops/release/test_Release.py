@@ -9,7 +9,7 @@ release_config = 'tests/mlops/release/data/release_config_local.yml'
 
 class TestRelease:
 
-    def setup(self):
+    def setup_method(self):
         # currently only testing localhost code
         conf = parse_config(release_config)
         self.release = Release(conf)
