@@ -1,4 +1,5 @@
 numpy
-torch==2.0.1
+-f https://download.pytorch.org/whl/torch_stable.html
+torch==2.0.1+cpu
 mlflow
 boto3
