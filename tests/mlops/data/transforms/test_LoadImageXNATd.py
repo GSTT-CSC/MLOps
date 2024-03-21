@@ -14,7 +14,7 @@ from requests.auth import HTTPBasicAuth
 @pytest.mark.skip(reason="unable to test XNAT features on github actions currently. Not been able to create a connection to the test XNAT instance")
 class TestLoadImageXNATd:
 
-    def setup(self):
+    def setup_method(self):
         self.test_batch_size = 1
         self.xnat_configuration = {'server': 'http://localhost:80',
                                    'user': 'admin',
