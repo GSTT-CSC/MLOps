@@ -13,6 +13,6 @@ pandas
 matplotlib
 GitPython
 PyYAML
-requests
+requests==2.31.0
 click
 setuptools
