@@ -262,6 +262,12 @@ See the [open issues](https://github.com/GSTT-CSC/MLOps/issues) for a list of pr
 ### Testing
 When contributing, you are _strongly_ encouraged to write tests for any functions or classes you add. Please uses pytest and add your tests to an appropriate location in the  `tests` directory, which also contains some examples to get you started.
 
+<!-- Warning! -->
+## Warning!
+Please be aware of unsafe deserialisation when utilising MLFlow, do not download models from publically hosted MLFlow instances and then load them locally as this can allow potentially malicious code to be run on your machine.
+
+https://github.com/advisories/GHSA-cwgg-w6mp-w9hg
+
 <!-- ACKNOWLEDGEMENTS -->
 ## Acknowledgements
 
