@@ -91,10 +91,17 @@ class DataBuilderXNAT:
 
                     elif type(xnat_obj) == list:
                         for obj in xnat_obj:
-                            action_data.append({'source_action': action.__name__,
-                                                'action_data': obj.uri,
-                                                'data_type': 'xnat_uri',
-                                                'data_label': data_label})
+                            if obj.cache_id[0] == 'ResourceCatalog':
+                                action_data.append({'source_action': action.__name__,
+                                                    'action_data': obj.uri,
+                                                    'data_type': 'xnat_uri',
+                                                    'data_label': data_label,
+                                                    'resource_files': list(obj.files)})  # retrieve filenames if xnat_obj contains Resource
+                            else:
+                                action_data.append({'source_action': action.__name__,
+                                                    'action_data': obj.uri,
+                                                    'data_type': 'xnat_uri',
+                                                    'data_label': data_label})
 
                     else:
                         action_data.append({'source_action': action.__name__,
