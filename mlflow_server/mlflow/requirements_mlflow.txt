@@ -4,3 +4,4 @@ psycopg2-binary
 sqlalchemy
 pymysql
 boto3
+requests==2.31.0
