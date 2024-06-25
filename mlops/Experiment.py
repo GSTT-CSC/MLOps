@@ -11,7 +11,7 @@ import torch.cuda
 from git import Repo
 from minio import Minio
 
-# from torch.cuda import is_available
+from torch.cuda import is_available
 from mlops import LOG_FILE
 from mlops.ProjectFile import ProjectFile
 
@@ -66,7 +66,7 @@ class Experiment:
             request_gpu = True
 
         logger.info(f'GPU requested: {request_gpu}, cuda_available {torch.cuda.is_available()}')
-        if torch.cuda.is_available() and request_gpu:
+        if request_gpu:
             return True
         else:
             return False
@@ -255,13 +255,10 @@ class Experiment:
         if self.auth.method == 'shared-credentials-file':
             logger.debug(f'Mounting shared env file for minio authentication to /root/.aws')
             docker_args_default['v'] = '~/.aws/credentials:/root/.aws/credentials:ro'
-
-        # if not self.use_localhost:
-        # if self.use_gpu and not is_available():
-        # if self.use_gpu and not is_available():
-        #     logger.warn('requested GPU resource but none available - using CPU')
-        # elif self.use_gpu and is_available():
-        elif self.use_gpu:
+        
+        if self.use_gpu and not is_available():
+            logger.warn('requested GPU resource but none available - using CPU')
+        elif self.use_gpu and is_available():
             gpu_params = {'gpus': 'all',
                           'runtime': 'nvidia'}
             logger.info('Adding docker args: {0}'.format(gpu_params))
