@@ -91,12 +91,16 @@ class Experiment:
         local_commits_ahead_iter = head.commit.iter_items(repo, f'{tracking.path}..{head.path}')
         commits_ahead = sum(1 for _ in local_commits_ahead_iter)
 
-        if repo.is_dirty():
+        ignored_paths = ['config/local_config.cfg', 'config/config.cfg']
+        diffs = repo.index.diff(None)
+        is_dirty = any(d.a_path not in ignored_paths for d in diffs)
+
+        if is_dirty:
             raise Exception('Repository is dirty. Please commit your changes before running the experiment')
         if commits_ahead > 0:
             raise Exception('Local repository ahead of remote. Please push changes before running the experiment')
 
-        if not repo.is_dirty() and commits_ahead == 0:
+        if not is_dirty and commits_ahead == 0:
             return False
         else:
             raise Exception('Please synchronise local and remote code versions before running the experiment')
