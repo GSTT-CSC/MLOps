@@ -91,9 +91,9 @@ class Experiment:
         local_commits_ahead_iter = head.commit.iter_items(repo, f'{tracking.path}..{head.path}')
         commits_ahead = sum(1 for _ in local_commits_ahead_iter)
 
-        ignored_paths = ['config/local_config.cfg', 'config/config.cfg']
+        ignored_dir = 'config/'
         diffs = repo.index.diff(None)
-        is_dirty = any(d.a_path not in ignored_paths for d in diffs)
+        is_dirty = any(not d.a_path.startswith(ignored_dir) for d in diffs)
 
         if is_dirty:
             raise Exception('Repository is dirty. Please commit your changes before running the experiment')
