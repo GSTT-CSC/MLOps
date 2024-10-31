@@ -117,4 +117,4 @@ jobs:
       if: always()
       run: |
         docker compose -f mlflow_server/docker-compose.yml down
-        docker compose -f ../xnat-docker-compose/docker-compose.yml down
+        docker compose -f xnat-docker-compose/docker-compose.yml down
