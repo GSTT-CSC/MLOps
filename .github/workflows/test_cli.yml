@@ -57,7 +57,7 @@ jobs:
     - name: Wait for MLOps server to be ready
       # The createbuckets service has a race condition with MinIO startup - without a wait,
       # the test may start before the bucket is created, causing a NoSuchBucket error.
-      run: sleep 10
+      run: sleep 20
 
     - name: Test run CLI
       run: |
