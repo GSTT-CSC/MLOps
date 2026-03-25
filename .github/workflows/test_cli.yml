@@ -54,6 +54,9 @@ jobs:
         mkdir -p ~/MLOps_data/mlflow_db
         docker compose -f mlflow_server/docker-compose.yml up -d --build
 
+    - name: Debug - generate logs to see why minio not working
+      run: docker compose -f mlflow_server/docker-compose.yml logs createbuckets
+
     - name: Test run CLI
       run: |
         cd tests/data
