@@ -38,6 +38,13 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
+    - name: debug Python version (before clear space)
+      run: |
+        which python
+        python --version
+        which pip
+        pip --version        
+
     - name: Clear runner space
       run: |
         rm -rf /opt/hostedtoolcache
