@@ -55,9 +55,9 @@ jobs:
         docker compose -f mlflow_server/docker-compose.yml up -d --build
 
     - name: Wait for MLOps server to be ready
-      # Docker Compose only waits for containers to start, not to be ready.
-      # Wait for createbuckets to finish (would mean ready).
-      run: docker compose -f mlflow_server/docker-compose.yml wait createbuckets
+      # Docker Compose only waits for containers to start, not be ready.
+      # `logs createbuckets` blocks until the createbuckets container exits and is healthy.
+      run: docker compose -f mlflow_server/docker-compose.yml logs createbuckets
 
     - name: Test run CLI
       run: |
