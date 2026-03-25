@@ -54,8 +54,10 @@ jobs:
         mkdir -p ~/MLOps_data/mlflow_db
         docker compose -f mlflow_server/docker-compose.yml up -d --build
 
-    - name: Debug createbuckets logs
-      run: docker compose -f mlflow_server/docker-compose.yml logs createbuckets
+    - name: Wait for MLOps server to be ready
+      # The createbuckets service has a race condition with MinIO startup - without a wait,
+      # the test may start before the bucket is created, causing a NoSuchBucket error.
+      run: sleep 10
 
     - name: Test run CLI
       run: |
