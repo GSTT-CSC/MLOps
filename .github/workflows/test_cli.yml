@@ -55,14 +55,9 @@ jobs:
         docker compose -f mlflow_server/docker-compose.yml up -d --build
 
     - name: Wait for MLOps server to be ready
-      # Docker Compose `depends_on` only waits for containers to start, not to be ready.
-      # We poll MinIO's health endpoint until it responds before running the test,
-      # otherwise createbuckets may fail to connect and the mlflow bucket is never created (NoSuchBucket error).
-      run: |
-        until curl -sf http://0.0.0.0:8002/minio/health/live; do
-          echo "Waiting for MinIO..."
-          sleep 2
-        done
+      # Docker Compose only waits for containers to start, not to be ready.
+      # Wait for createbuckets to finish (would mean ready).
+      run: docker compose -f mlflow_server/docker-compose.yml wait createbuckets
 
     - name: Test run CLI
       run: |
