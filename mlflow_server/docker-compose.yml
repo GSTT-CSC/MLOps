@@ -43,7 +43,7 @@ services:
               target: /data
 
     createbuckets:
-        image: minio/mc
+        image: minio/mc:RELEASE.2022-11-07T23-47-39Z
         depends_on:
             - minio
         environment:
@@ -54,7 +54,7 @@ services:
             /bin/sh -c "
             /usr/bin/mc alias set myminio http://minio:9000 ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY};
             /usr/bin/mc mb myminio/mlflow;
-            /usr/bin/mc policy set public myminio/mlflow;
+            /usr/bin/mc anonymous set public myminio/mlflow;
             exit 0;"
 
     db:
