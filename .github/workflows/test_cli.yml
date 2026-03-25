@@ -55,9 +55,14 @@ jobs:
         docker compose -f mlflow_server/docker-compose.yml up -d --build
 
     - name: Wait for MLOps server to be ready
-      # The createbuckets service has a race condition with MinIO startup - without a wait,
-      # the test may start before the bucket is created, causing a NoSuchBucket error.
-      run: sleep 20
+      # Docker Compose `depends_on` only waits for containers to start, not to be ready.
+      # We poll MinIO's health endpoint until it responds before running the test,
+      # otherwise createbuckets may fail to connect and the mlflow bucket is never created (NoSuchBucket error).
+      run: |
+        until curl -sf http://0.0.0.0:8002/minio/health/live; do
+          echo "Waiting for MinIO..."
+          sleep 2
+        done
 
     - name: Test run CLI
       run: |
