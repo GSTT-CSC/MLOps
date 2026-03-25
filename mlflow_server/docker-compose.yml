@@ -45,7 +45,8 @@ services:
     createbuckets:
         image: minio/mc:RELEASE.2022-11-07T23-47-39Z
         depends_on:
-            - minio
+            minio:
+                condition: service_healthy
         environment:
             - NO_PROXY=minio,db,localhost
         networks:
@@ -81,8 +82,12 @@ services:
         image: mlflow_server
         container_name: mlflow_server
         depends_on:
-            - "minio"
-            - "db"
+            minio:
+                condition: service_healthy
+            db:
+                condition: service_started
+            createbuckets:
+                condition: service_completed_successfully
         networks:
             - frontend
             - backend
