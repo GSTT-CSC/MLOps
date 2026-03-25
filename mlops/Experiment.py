@@ -1,6 +1,8 @@
+import atexit
 import configparser
 import logging
 import os
+import shutil
 import subprocess
 import sys
 
@@ -247,6 +249,15 @@ class Experiment:
         """
         rebuild_docker = kwargs.get('rebuild_docker', False)
         shared_memory = kwargs.get('shared_memory', '8gb')
+        include_path = kwargs.get('include_path', None)
+
+        if include_path:
+            folder_name = os.path.basename(os.path.abspath(include_path))
+            included_folder_dest = os.path.join(self.project_path, folder_name)
+            shutil.rmtree(included_folder_dest, ignore_errors=True)
+            shutil.copytree(include_path, included_folder_dest)
+            logger.info(f'Copied {include_path} to {included_folder_dest}')
+            atexit.register(shutil.rmtree, included_folder_dest, ignore_errors=True) # remove folder at exit
 
         logger.info(f'Starting experiment: {self.experiment_name}')
 
