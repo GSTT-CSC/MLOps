@@ -64,10 +64,13 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
     - name: start MLOps server
+      # --wait blocks until all services are healthy or completed before returning.
+      # createbuckets depends on minio being healthy, so the mlflow bucket is guaranteed
+      # to exist before the test runs.    
       run: |
         mkdir -p ~/MLOps_data/mlflow_minio
         mkdir -p ~/MLOps_data/mlflow_db
-        docker compose -f mlflow_server/docker-compose.yml up -d --build
+        docker compose -f mlflow_server/docker-compose.yml up -d --build --wait
 
     - name: Setup flake8 annotations
       uses: rbialon/flake8-annotations@v1
