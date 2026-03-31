@@ -58,15 +58,15 @@ def run(script, config_path, run_name, ignore_git_check, shared_memory, logging_
     # create Experiment
     exp = Experiment(script,
                      config_path=config_path,
-                     ignore_git_check=ignore_git_check
+                     ignore_git_check=ignore_git_check,
+                     include_path=include_path
                      )
 
     # run Experiment
     exp.run(docker_args={},
             run_name=run_name,
             rebuild_docker=rebuild_docker,
-            shared_memory=shared_memory,
-            include_path=include_path,
+            shared_memory=shared_memory
             )
 
 

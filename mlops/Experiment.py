@@ -23,7 +23,8 @@ logger = logging.getLogger(__name__)
 class Experiment:
 
     def __init__(self, script, config_path, project_path: str = '.',
-                 verbose: bool = True, ignore_git_check: bool = False):
+                 verbose: bool = True, ignore_git_check: bool = False, 
+                 include_path: str = None):
         """
         The Experiment class is the interface through which all projects should be run.
         :param script: path to script to run
@@ -39,6 +40,7 @@ class Experiment:
         self.project_path = project_path
         self.verbose = verbose
         self.auth = None
+        self.include_path = include_path
 
         if 'pytest' in sys.modules:
             logger.warning('DEBUG ONLY - ignoring git checks due to test run detected')
@@ -56,6 +58,7 @@ class Experiment:
         self.env_setup()
         self.build_project_file()
         self.init_experiment()
+        self.include_path()
 
         if self.verbose:
             self.print_experiment_info()
@@ -154,6 +157,27 @@ class Experiment:
         # self.configure_minio()
         self.experiment_id = exp_id
 
+    def include_path(self):
+        """
+        Copies the folder at self.include_path to current context
+        :return:
+        """
+
+        if self.include_path:
+            folder_name = os.path.basename(os.path.abspath(self.include_path))
+            included_folder_dest = os.path.join(self.project_path, folder_name)
+
+            if not os.path.exists(self.include_path):
+                raise FileNotFoundError(f"Source folder does not exist: {self.include_path}")            
+            
+            if os.path.exists(included_folder_dest):
+                raise FileExistsError(f"Destination folder already exists: {included_folder_dest}. Please remove it first or rename your source folder.")
+
+            shutil.rmtree(included_folder_dest, ignore_errors=True)
+            shutil.copytree(self.include_path, included_folder_dest)
+            logger.info(f'Copied {self.include_path} to {included_folder_dest}')
+            atexit.register(shutil.rmtree, included_folder_dest, ignore_errors=True) # remove folder at exit            
+
     def print_experiment_info(self):
         """
         Prints basic experiment info to logger
@@ -249,15 +273,6 @@ class Experiment:
         """
         rebuild_docker = kwargs.get('rebuild_docker', False)
         shared_memory = kwargs.get('shared_memory', '8gb')
-        include_path = kwargs.get('include_path', None)
-
-        if include_path:
-            folder_name = os.path.basename(os.path.abspath(include_path))
-            included_folder_dest = os.path.join(self.project_path, folder_name)
-            shutil.rmtree(included_folder_dest, ignore_errors=True)
-            shutil.copytree(include_path, included_folder_dest)
-            logger.info(f'Copied {include_path} to {included_folder_dest}')
-            atexit.register(shutil.rmtree, included_folder_dest, ignore_errors=True) # remove folder at exit
 
         logger.info(f'Starting experiment: {self.experiment_name}')
 
