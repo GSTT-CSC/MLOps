@@ -58,7 +58,7 @@ class Experiment:
         self.env_setup()
         self.build_project_file()
         self.init_experiment()
-        self.include_path()
+        self.add_path()
 
         if self.verbose:
             self.print_experiment_info()
@@ -157,7 +157,7 @@ class Experiment:
         # self.configure_minio()
         self.experiment_id = exp_id
 
-    def include_path(self):
+    def add_path(self):
         """
         Copies the folder at self.include_path to current context
         :return:
