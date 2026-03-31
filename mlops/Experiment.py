@@ -173,7 +173,6 @@ class Experiment:
             if os.path.exists(included_folder_dest):
                 raise FileExistsError(f"Destination folder already exists: {included_folder_dest}. Please remove it first or rename your source folder.")
 
-            shutil.rmtree(included_folder_dest, ignore_errors=True)
             shutil.copytree(self.include_path, included_folder_dest)
             logger.info(f'Copied {self.include_path} to {included_folder_dest}')
             atexit.register(shutil.rmtree, included_folder_dest, ignore_errors=True) # remove folder at exit            
