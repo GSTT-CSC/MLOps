@@ -47,7 +47,8 @@ def cli(ctx):
               show_default=True, default=False)
 @click.option('--ignore_git_check', is_flag=True, show_default=True, default=False,
               help='TESTING ONLY - ignore git checks, occasionally it might be necessary to ignore the git checks for example, offline testing, do not use this feature if working on tracked models')
-def run(script, config_path, run_name, ignore_git_check, shared_memory, logging_level, rebuild_docker):
+@click.option('-i', '--include_path', 'include_path', help='Path to a folder to copy into the project directory before building the Docker image', default=None, type=click.Path(exists=True, file_okay=False))
+def run(script, config_path, run_name, ignore_git_check, shared_memory, logging_level, rebuild_docker, include_path):
     """
     Runs python project using csc-mlops framework.
 
@@ -57,14 +58,15 @@ def run(script, config_path, run_name, ignore_git_check, shared_memory, logging_
     # create Experiment
     exp = Experiment(script,
                      config_path=config_path,
-                     ignore_git_check=ignore_git_check
+                     ignore_git_check=ignore_git_check,
+                     include_path=include_path
                      )
 
     # run Experiment
     exp.run(docker_args={},
             run_name=run_name,
             rebuild_docker=rebuild_docker,
-            shared_memory=shared_memory,
+            shared_memory=shared_memory
             )
 
 

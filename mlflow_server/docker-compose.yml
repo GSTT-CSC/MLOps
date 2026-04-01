@@ -43,9 +43,10 @@ services:
               target: /data
 
     createbuckets:
-        image: minio/mc
+        image: minio/mc:RELEASE.2022-11-07T23-47-39Z
         depends_on:
-            - minio
+            minio:
+                condition: service_healthy
         environment:
             - NO_PROXY=minio,db,localhost
         networks:
@@ -54,7 +55,7 @@ services:
             /bin/sh -c "
             /usr/bin/mc alias set myminio http://minio:9000 ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY};
             /usr/bin/mc mb myminio/mlflow;
-            /usr/bin/mc policy set public myminio/mlflow;
+            /usr/bin/mc anonymous set public myminio/mlflow;
             exit 0;"
 
     db:
@@ -81,8 +82,10 @@ services:
         image: mlflow_server
         container_name: mlflow_server
         depends_on:
-            - "minio"
-            - "db"
+            db:
+                condition: service_started
+            createbuckets:
+                condition: service_completed_successfully
         networks:
             - frontend
             - backend
