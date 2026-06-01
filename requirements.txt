@@ -1,4 +1,4 @@
-mlflow==2.10.0
+mlflow==3.11.1
 boto3
 docker
 minio
@@ -13,6 +13,6 @@ pandas
 matplotlib
 GitPython
 PyYAML
-requests==2.31.0
+requests==2.33.0
 click
 setuptools
