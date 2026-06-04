@@ -3,14 +3,8 @@ boto3
 docker
 minio
 pytest
-colorlog
-xnat
-monai
-itk
 fsspec
 tqdm
-pandas
-matplotlib
 GitPython
 PyYAML
 requests==2.33.0
