@@ -1,6 +1,6 @@
 numpy
 -f https://download.pytorch.org/whl/torch_stable.html
-torch==2.0.1+cpu
-mlflow==2.10.0
+torch==2.8.0
+mlflow==3.11.1
 boto3
-requests==2.31.0
+requests==2.33.0

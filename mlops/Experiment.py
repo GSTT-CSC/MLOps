@@ -9,15 +9,21 @@ import sys
 import boto3
 import docker
 import mlflow
-import torch.cuda
 from git import Repo
 from minio import Minio
 
-from torch.cuda import is_available
 from mlops import LOG_FILE
 from mlops.ProjectFile import ProjectFile
 
 logger = logging.getLogger(__name__)
+
+
+def _cuda_available():
+    try:
+        subprocess.run(['nvidia-smi'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+        return True
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return False
 
 
 class Experiment:
@@ -70,7 +76,7 @@ class Experiment:
             logger.debug(f'GPU resource not explicitly requested {e} defaulting to True')
             request_gpu = True
 
-        logger.info(f'GPU requested: {request_gpu}, cuda_available {torch.cuda.is_available()}')
+        logger.info(f'GPU requested: {request_gpu}, cuda_available {_cuda_available()}')
         if request_gpu:
             return True
         else:
@@ -285,9 +291,9 @@ class Experiment:
             logger.debug(f'Mounting shared env file for minio authentication to /root/.aws')
             docker_args_default['v'] = '~/.aws/credentials:/root/.aws/credentials:ro'
         
-        if self.use_gpu and not is_available():
+        if self.use_gpu and not _cuda_available():
             logger.warn('requested GPU resource but none available - using CPU')
-        elif self.use_gpu and is_available():
+        elif self.use_gpu and _cuda_available():
             gpu_params = {'gpus': 'all',
                           'runtime': 'nvidia'}
             logger.info('Adding docker args: {0}'.format(gpu_params))
