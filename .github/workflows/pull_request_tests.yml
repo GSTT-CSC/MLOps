@@ -64,7 +64,7 @@ jobs:
     - name: Install python dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install flake8 pytest pytest-cov .
+        pip install flake8 pytest pytest-cov torch .
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
     - name: start MLOps server
