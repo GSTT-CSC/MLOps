@@ -96,7 +96,7 @@ class Experiment:
         :return:
         """
         logger.debug('Comparing to remote git repository')
-        repo = Repo(self.project_path)
+        repo = Repo(self.project_path, search_parent_directories=True)
         head = repo.head.ref
         tracking = head.tracking_branch()
         local_commits_ahead_iter = head.commit.iter_items(repo, f'{tracking.path}..{head.path}')
