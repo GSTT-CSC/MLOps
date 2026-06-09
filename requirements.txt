@@ -9,4 +9,4 @@ GitPython
 PyYAML
 requests==2.33.0
 click
-setuptools
+setuptools<80.0.0
