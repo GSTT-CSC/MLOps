@@ -82,12 +82,12 @@ Setting these variables is a requirement, the server will fail to start if they 
 
 ```shell
 # Example env file - fill all required values before using
-AWS_ACCESS_KEY_ID=minioUsername
-AWS_SECRET_ACCESS_KEY=minioPassword
+AWS_ACCESS_KEY_ID=your_minio_username
+AWS_SECRET_ACCESS_KEY=your_minio_password
 MLFLOW_S3_IGNORE_TLS=true
-POSTGRES_USER=use
-POSTGRES_PASSWORD=pass
-POSTGRES_DB=db
+POSTGRES_USER=your_postgres_user
+POSTGRES_PASSWORD=your_postgres_password
+POSTGRES_DB=mlflow
 ```
 
 3. Navigate to the mlflow_server directory and start the service. Any docker images that are not present on your local system will be pulled from dockerhub (which might take a while).
@@ -101,8 +101,8 @@ POSTGRES_DB=db
 
 ```
 [default]
-AWS_ACCESS_KEY_ID=minioUsername
-AWS_SECRET_ACCESS_KEY=minioPassword
+AWS_ACCESS_KEY_ID=your_minio_username
+AWS_SECRET_ACCESS_KEY=your_minio_password
 ```
 
 Upon a successful build the server should now be up and running locally. By default, the mlflow user interface can be accessed at ```http:/localhost:85``` and minio can be accessed at ```https:/localhost:8002```.
