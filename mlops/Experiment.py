@@ -17,7 +17,6 @@ from mlops.ProjectFile import ProjectFile
 
 logger = logging.getLogger(__name__)
 
-
 def _cuda_available():
     try:
         subprocess.run(['nvidia-smi'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
@@ -58,10 +57,10 @@ class Experiment:
         else:
             self.check_dirty()
 
-        self.check_minio_credentials()
         self.config_setup()
-        self.use_gpu = self.check_gpu()
         self.env_setup()
+        self.check_minio_credentials()
+        self.use_gpu = self.check_gpu()
         self.build_project_file()
         self.init_experiment()
         self.add_path()
@@ -85,9 +84,10 @@ class Experiment:
     def check_minio_credentials(self):
         self.auth = boto3.session.Session().get_credentials()
         if self.auth is None:
+            logger.debug('Minio credentials NOT found')
+            raise Exception("minio credentials not found - either specify in ~/.aws/credentials or using environment variables (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)")
+        else:
             logger.debug(f'Found minio credentials in {self.auth.method}')
-            raise Exception(
-                f'minio credentials not found - either specify in ~/.aws/credentials or using environment variables (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)')
 
     def check_dirty(self) -> bool:
         """
@@ -209,7 +209,7 @@ class Experiment:
 
         self.minio_cred = {'user': os.getenv('AWS_ACCESS_KEY_ID'),
                            'password': os.getenv('AWS_SECRET_ACCESS_KEY')}
-
+        
         # todo: replace this with either a machine level IAM role or ~/.aws/credentials profile
         os.environ['MINIO_ROOT_USER'] = os.getenv('AWS_ACCESS_KEY_ID')
         os.environ['MINIO_ROOT_PASSWORD'] = os.getenv('AWS_SECRET_ACCESS_KEY')
@@ -276,6 +276,7 @@ class Experiment:
         :param kwargs:
         :return:
         """
+
         rebuild_docker = kwargs.get('rebuild_docker', False)
         shared_memory = kwargs.get('shared_memory', '8gb')
 
@@ -305,8 +306,10 @@ class Experiment:
             docker_args_default = docker_args_default
 
         # check image exists and build if not
+
         logger.info('Checking for existing image')
         client = docker.from_env()
+
         images = [str(img['RepoTags']) for img in client.api.images()]
         if all([(self.experiment_name + ':latest') not in item for item in images]) or rebuild_docker:
             logger.info(f'No existing image found, rebuild flag {rebuild_docker}')
