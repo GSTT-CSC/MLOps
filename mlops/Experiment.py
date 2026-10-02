@@ -311,10 +311,18 @@ class Experiment:
         logger.info('Checking for existing image')
         client = docker.from_env()
 
-        images = [str(img['RepoTags']) for img in client.api.images()]
-        if all([(self.experiment_name + ':latest') not in item for item in images]) or rebuild_docker:
+        try:
+            old_image = client.images.get(self.experiment_name + ':latest')
+        except docker.errors.ImageNotFound:
+            old_image = None
+
+        if old_image is None or rebuild_docker:
             logger.info(f'No existing image found, rebuild flag {rebuild_docker}')
             self.build_experiment_image_subprocess(context_path=self.project_path)
+
+            # if rebuilding docker image, then remove the previous one as it will be left here as <none>:<none> after the rebuild.
+            if old_image is not None:
+                self.remove_replaced_image(client, old_image)
         else:
             logger.info(f'Found existing project image: {self.experiment_name}:latest')
 
@@ -333,6 +341,34 @@ class Experiment:
             self.remove_run_image(client)
 
         mlflow.log_artifact(LOG_FILE)
+
+    def remove_replaced_image(self, client, old_image):
+        """
+        Removes the previous project image after a rebuild (rebuild_docker) has replaced it.
+
+        Rebuilding <experiment_name>:latest moves the tag to the new image, and the old one is left with no name,
+        showing as <none>:<none>. The old image is only removed if it has no name left: if the build failed or
+        produced the same image (cached) it is still <experiment_name>:latest, and if it has another tag it is kept.
+
+        :param client: docker client
+        :param old_image: the <experiment_name>:latest image from before the rebuild
+        :return:
+        """
+
+        try:
+            old_image.reload()
+        except docker.errors.ImageNotFound:
+            return
+
+        if old_image.tags:
+            logger.debug(f'Previous project image {old_image.short_id} still tagged {old_image.tags}, keeping it')
+            return
+
+        try:
+            client.images.remove(old_image.id)
+            logger.info(f'Removed previous project image: {old_image.short_id}')
+        except docker.errors.APIError as e:
+            logger.warning(f'Could not remove previous project image {old_image.short_id}: {e}')
 
     def remove_run_image(self, client):
         """
