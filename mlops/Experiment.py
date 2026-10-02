@@ -11,6 +11,7 @@ import docker
 import mlflow
 from git import Repo
 from minio import Minio
+from mlflow.utils.git_utils import get_git_commit
 
 from mlops import LOG_FILE
 from mlops.ProjectFile import ProjectFile
@@ -320,12 +321,50 @@ class Experiment:
         logger.debug(f'Artifact URI: {mlflow.get_artifact_uri()}')
         logger.debug(f'Project URI: {self.project_path}')
 
-        mlflow.run(uri=self.project_path,
-                   experiment_id=self.experiment_id,
-                   env_manager='local',
-                   build_image=True,
-                   # revisit this in the future, mlflow 2.0 changed this behaviour, can we be more efficient?
-                   docker_args=docker_args_default
-                   )
+        try:
+            mlflow.run(uri=self.project_path,
+                       experiment_id=self.experiment_id,
+                       env_manager='local',
+                       build_image=True,
+                       # revisit this in the future, mlflow 2.0 changed this behaviour, can we be more efficient?
+                       docker_args=docker_args_default
+                       )
+        finally:
+            self.remove_run_image(client)
 
         mlflow.log_artifact(LOG_FILE)
+
+    def remove_run_image(self, client):
+        """
+        Removes the per-run image that mlflow builds on top of the project image (<experiment_name>:latest).
+
+        mlflow tags this per-run image <experiment_name>:<first 7 chars of git commit>. Without cleanup it is
+        left behind after every run. If a later run reuses the same tag, the tag moves to the new image and
+        the old one is left with no name, showing as <none>:<none>.
+
+        As such, cleanup is useful so you don't end up with a lot of untagged images.
+
+        :param client: docker client
+        :return:
+        """
+
+        git_commit = get_git_commit(self.project_path)
+
+        if not git_commit:
+            # without a commit mlflow tags its image <experiment_name>:latest, i.e. the project image itself, so nothing to do
+            logger.debug('No git commit found, skipping removal of mlflow run image')
+            return
+
+        run_image = f'{self.experiment_name}:{git_commit[:7]}'
+        
+        try:
+            client.images.remove(run_image)
+            logger.info(f'Removed mlflow run image: {run_image}')
+        except docker.errors.ImageNotFound:
+            logger.warning(f'mlflow run image {run_image} not found, nothing removed. This is expected if the run '
+                           f'failed before mlflow built its image, in which case the run\'s own error explains why. '
+                           f'Otherwise if mlflow has been upgraded, it may have modified how it names run images:'
+                           f' check `docker images {self.experiment_name}`, remove any leftover image manually, '
+                           f'and report this as an MLOps issue.')
+        except docker.errors.APIError as e:
+            logger.warning(f'Could not remove mlflow run image {run_image}: {e}')
