@@ -21,6 +21,7 @@ A continuous integration and deployment framework for healthcare AI projects
   <img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/laurencejackson/ba102d5f3e592fcd50451c2eff8a803d/raw/19cbafdaad049423cf20c725944c52a3ed3764e7/mlops_pytest-coverage-comment.json">
 </p>
 
+## TODO: Update for minio removal!
 
 ## Overview
 This project aims to build an effective MLOps framework for the development of AI models in a healthcare setting. The application development framework has three major components:

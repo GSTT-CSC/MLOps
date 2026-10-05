@@ -19,10 +19,6 @@ class TestExperiment:
         self.experiment = Experiment('test_entry.py', config_path='tests/data/test_config.cfg',
                                      project_path='tests/data')
 
-    def test_check_minio_credentials(self):
-        self.experiment.check_minio_credentials()
-        assert self.experiment.auth
-
     def test_check_dirty(self):
         """
         Test that the local and remote experiments are the same
