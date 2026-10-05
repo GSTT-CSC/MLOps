@@ -1,7 +1,5 @@
 mlflow==3.11.1
-boto3
 docker
-minio
 pytest
 fsspec
 tqdm
