@@ -22,6 +22,11 @@ services:
         restart: always
         expose:
             - "5432"
+        healthcheck:
+            test: ["CMD-SHELL", "psql -h 127.0.0.1 -U ${POSTGRES_USER} -d ${POSTGRES_DB} -Atc 'select 1'"]
+            interval: 5s
+            timeout: 5s
+            retries: 30
         volumes:
             - type: bind
               source: ${MLFLOW_DB_PATH:-/mlflow_storage/db}
@@ -34,7 +39,7 @@ services:
         container_name: mlflow_server
         depends_on:
             db:
-                condition: service_started
+                condition: service_healthy
         networks:
             - frontend
             - backend
