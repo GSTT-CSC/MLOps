@@ -6,11 +6,9 @@ import shutil
 import subprocess
 import sys
 
-import boto3
 import docker
 import mlflow
 from git import Repo
-from minio import Minio
 
 from mlops import LOG_FILE
 from mlops.ProjectFile import ProjectFile
@@ -44,7 +42,6 @@ class Experiment:
         self.config_path = config_path
         self.project_path = project_path
         self.verbose = verbose
-        self.auth = None
         self.include_path = include_path
 
         if 'pytest' in sys.modules:
@@ -59,7 +56,6 @@ class Experiment:
 
         self.config_setup()
         self.env_setup()
-        self.check_minio_credentials()
         self.use_gpu = self.check_gpu()
         self.build_project_file()
         self.init_experiment()
@@ -80,14 +76,6 @@ class Experiment:
             return True
         else:
             return False
-
-    def check_minio_credentials(self):
-        self.auth = boto3.session.Session().get_credentials()
-        if self.auth is None:
-            logger.debug('Minio credentials NOT found')
-            raise Exception("minio credentials not found - either specify in ~/.aws/credentials or using environment variables (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)")
-        else:
-            logger.debug(f'Found minio credentials in {self.auth.method}')
 
     def check_dirty(self) -> bool:
         """
@@ -133,7 +121,6 @@ class Experiment:
         :return:
         """
         os.environ['MLFLOW_TRACKING_URI'] = self.config['server']['MLFLOW_TRACKING_URI']
-        os.environ['MLFLOW_S3_ENDPOINT_URL'] = self.config['server']['MLFLOW_S3_ENDPOINT_URL']
 
     def init_experiment(self):
         """
@@ -160,7 +147,6 @@ class Experiment:
         logger.info('Setting experiment to: {0} '.format(self.experiment_name))
         mlflow.set_experiment(self.experiment_name)
 
-        # self.configure_minio()
         self.experiment_id = exp_id
 
     def add_path(self):
@@ -194,31 +180,6 @@ class Experiment:
         logger.info("Artifact Location: {}".format(experiment.artifact_location))
         logger.info("Tags: {}".format(experiment.tags))
         logger.info("Lifecycle_stage: {}".format(experiment.lifecycle_stage))
-
-    def configure_minio(self):
-        """
-        configures the minio artifact storage.
-
-        The minio auth credentials are fetched from the environment and used to create a bucket named "mlflow" for
-        logging mlflow artifacts. If a bucket called mlflow already exists then the existing bucket is used.
-
-        :return:
-        """
-        logger.info('Configuring Minio')
-        self.uri_formatted = self.config['server']['MLFLOW_S3_ENDPOINT_URL'].replace("http://", "")
-
-        self.minio_cred = {'user': os.getenv('AWS_ACCESS_KEY_ID'),
-                           'password': os.getenv('AWS_SECRET_ACCESS_KEY')}
-        
-        # todo: replace this with either a machine level IAM role or ~/.aws/credentials profile
-        os.environ['MINIO_ROOT_USER'] = os.getenv('AWS_ACCESS_KEY_ID')
-        os.environ['MINIO_ROOT_PASSWORD'] = os.getenv('AWS_SECRET_ACCESS_KEY')
-
-        client = Minio(self.uri_formatted, self.minio_cred['user'], self.minio_cred['password'], secure=False)
-
-        if 'mlflow' not in (bucket.name for bucket in client.list_buckets()):
-            logger.info('Creating S3 bucket ''mlflow''')
-            client.make_bucket("mlflow")
 
     def build_experiment_image_subprocess(self, dockerfile_path='Dockerfile', context_path: str = '.',
                                           no_cache: bool = False, build_args: dict = {}):
@@ -278,7 +239,7 @@ class Experiment:
         """
 
         rebuild_docker = kwargs.get('rebuild_docker', False)
-        shared_memory = kwargs.get('shared_memory', '8gb')
+        shared_memory = kwargs.get('shared_memory', '32gb')
 
         logger.info(f'Starting experiment: {self.experiment_name}')
 
@@ -287,10 +248,6 @@ class Experiment:
                                'rm': '',
                                'shm-size': shared_memory
                                }
-
-        if self.auth.method == 'shared-credentials-file':
-            logger.debug(f'Mounting shared env file for minio authentication to /root/.aws')
-            docker_args_default['v'] = '~/.aws/credentials:/root/.aws/credentials:ro'
         
         if self.use_gpu and not _cuda_available():
             logger.warn('requested GPU resource but none available - using CPU')

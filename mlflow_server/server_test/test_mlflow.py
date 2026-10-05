@@ -1,4 +1,8 @@
 """
+
+TODO: UPDATE FOR REMOVING MINIO
+
+
 This script can be used to test the mlflow server has been properly configured. After setting up the server using
 
 docker-compose up -d --build
