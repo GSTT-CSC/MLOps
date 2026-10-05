@@ -1,5 +1,6 @@
 # This workflow will install Python dependencies, run tests and lint with a single version of Python
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+# TODO: Currently runs at the same time as pull_request_test, consider combining?
 
 name: CLI test
 
@@ -20,12 +21,7 @@ jobs:
       POSTGRES_DB: mlflow
       POSTGRES_USER: msdndfvk
       POSTGRES_PASSWORD: adfg3245
-      AWS_ACCESS_KEY_ID: fdash
-      AWS_SECRET_ACCESS_KEY: rstjDFH345!
-      MLFLOW_S3_IGNORE_TLS: true
       MLFLOW_TRACKING_URI: http://0.0.0.0:85
-      MLFLOW_S3_ENDPOINT_URL: http://0.0.0.0:8002
-
 
     steps:
     - uses: actions/checkout@v2
@@ -48,13 +44,14 @@ jobs:
         python -m build 
         python -m pip install dist/*.whl
 
+    - name: load MLflow storage paths
+      run: |
+        grep -E '^MLFLOW_(DB|ARTIFACTS)_PATH=' mlflow_server/default.env >> "$GITHUB_ENV"
+
     - name: start MLOps server
       # --wait blocks until all services are healthy or completed before returning.
-      # createbuckets depends on minio being healthy, so the mlflow bucket is guaranteed
-      # to exist before the test runs.
       run: |
-        mkdir -p ~/MLOps_data/mlflow_minio
-        mkdir -p ~/MLOps_data/mlflow_db
+        sudo mkdir -p "$MLFLOW_DB_PATH" "$MLFLOW_ARTIFACTS_PATH"
         docker compose -f mlflow_server/docker-compose.yml up -d --build --wait
 
     - name: Test run CLI
