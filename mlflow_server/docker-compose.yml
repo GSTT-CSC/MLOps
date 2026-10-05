@@ -50,7 +50,7 @@ services:
         command: >
             bash -c "
             mlflow db upgrade postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB} ;
-            mlflow server --backend-store-uri postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB} --serve-artifacts --artifacts-destination /mlflow-artifacts --default-artifact-root mlflow-artifacts:/ --host 0.0.0.0 --workers 4 --gunicorn-opts 'worker-class gthread --threads8 --timeout 7200'
+            mlflow server --backend-store-uri postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB} --serve-artifacts --artifacts-destination /mlflow-artifacts --default-artifact-root mlflow-artifacts:/ --host 0.0.0.0 --workers 4 --gunicorn-opts '--worker-class gthread --threads 8 --timeout 7200'
             "
 
 networks:
